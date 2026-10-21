@@ -1,0 +1,46 @@
+{
+  "id": "candidate",
+  "name": "Candidate Profile",
+  "email": "candidate@example.com",
+  "phone": "+91 9876543210",
+  "location": "Bengaluru, Karnataka, India",
+  "linkedin": "https://linkedin.com",
+  "github": "https://github.com",
+  "degree": "BTech in Computer Science & AI",
+  "institution": "Engineering Institution (CGPA: 8.5+)",
+  "skills": [
+    "Python",
+    "SQL",
+    "Machine Learning",
+    "Deep Learning",
+    "PyTorch",
+    "FastAPI",
+    "Docker",
+    "Pandas",
+    "NumPy",
+    "Scikit-Learn",
+    "NLP",
+    "LangChain",
+    "Streamlit",
+    "Computer Vision",
+    "AWS Cloud Foundations"
+  ],
+  "projects": [
+    "NeuralMatch — Semantic Resume & Job Alignment Engine",
+    "FraudLens — Real-Time Transaction Anomaly & Fraud Pipeline",
+    "Med-Verify — AI Medicine Authentication (CNN + OpenCV + OCR)"
+  ],
+  "target_roles": [
+    "AI Engineer Intern",
+    "Machine Learning Intern",
+    "Data Science Intern",
+    "Python Developer Intern",
+    "Generative AI Intern"
+  ],
+  "target_locations": [
+    "Bengaluru, Karnataka, India",
+    "Pune, Maharashtra, India",
+    "Remote",
+    "Hyderabad, Telangana, India"
+  ]
+}
