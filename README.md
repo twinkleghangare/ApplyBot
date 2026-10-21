@@ -11,6 +11,12 @@
   <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="License MIT" />
 </p>
 
+<p align="center">
+  <a href="https://render.com/deploy?repo=https://github.com/twinkleghangare/ApplyBot" target="_blank">
+    <img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render" />
+  </a>
+</p>
+
 ---
 
 ## 🌟 What is ApplyBot?
@@ -133,6 +139,21 @@ flowchart TD
 
 4. **Open in Browser:**
    Navigate to [http://localhost:8000](http://localhost:8000) to access the 3D Cockpit.
+
+---
+
+### ☁️ Cloud Deployment (Render)
+
+Deploy ApplyBot to the cloud on **Render** in 1 click:
+
+1. Click the **[Deploy to Render](https://render.com/deploy?repo=https://github.com/twinkleghangare/ApplyBot)** button above or create a **New Web Service** on [dashboard.render.com](https://dashboard.render.com).
+2. Connect your GitHub repository `https://github.com/twinkleghangare/ApplyBot`.
+3. Set the following settings:
+   - **Environment:** `Python`
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `uvicorn server:app --host 0.0.0.0 --port $PORT`
+   - **Plan:** `Free`
+4. Click **Create Web Service** — your live 3D Cockpit URL will be ready at `https://applybot-xxxx.onrender.com`!
 
 ---
 
