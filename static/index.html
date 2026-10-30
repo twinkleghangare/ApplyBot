@@ -3,20 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ApplyBot — Intelligent AI Job Automation Platform</title>
+  <title>ApplyBot — Autonomous AI Career Copilot</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Google Fonts: Inter & Geist -->
+  <!-- Google Fonts: Geist & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- GSAP for Silky Smooth Micro-Interactions -->
+  <!-- Three.js (Lightweight 3D Hero Element) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- GSAP for Smooth Bento Transitions -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
   <script>
@@ -25,22 +28,20 @@
       theme: {
         extend: {
           colors: {
-            brand: {
-              50: '#EEF2FF',
-              100: '#E0E7FF',
-              500: '#6366F1',
-              600: '#4F46E5',
-              700: '#4338CA'
-            },
-            surface: {
-              bg: '#090B10',
-              panel: '#10131B',
-              card: '#161924',
-              cardHover: '#1C202E',
+            app: {
+              bg: '#08080F',
+              surface: '#17171D',
+              secondary: '#202027',
+              violet: '#7C5CFF',
+              mint: '#30DC97',
+              green: '#30DC97',
+              blue: '#45B8FF',
+              coral: '#FF5757',
+              amber: '#FFAA2C',
+              text: '#F5F5F7',
+              muted: '#9A9AA5',
               border: 'rgba(255, 255, 255, 0.08)',
-              borderFocus: 'rgba(99, 102, 241, 0.45)',
-              muted: '#94A3B8',
-              text: '#F8FAFC'
+              borderHover: 'rgba(255, 255, 255, 0.22)'
             }
           },
           fontFamily: {
@@ -53,480 +54,724 @@
   </script>
 
   <style>
-    /* Ultra-clean minimal scrollbar */
+    /* Sleek minimal scrollbars */
     ::-webkit-scrollbar {
       width: 5px;
       height: 5px;
     }
     ::-webkit-scrollbar-track {
-      background: #090B10;
+      background: #08080F;
     }
     ::-webkit-scrollbar-thumb {
-      background: #272B38;
+      background: #272733;
       border-radius: 9999px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #4F46E5;
+      background: #7C5CFF;
     }
 
     body {
-      font-family: 'Geist', 'Inter', sans-serif;
-      background-color: #090B10;
-      color: #F8FAFC;
+      font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #08080F;
+      background-image: 
+        radial-gradient(ellipse 60% 40% at 15% 10%, rgba(124, 92, 255, 0.09) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 35% at 85% 15%, rgba(48, 220, 151, 0.07) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 40% at 50% 90%, rgba(69, 184, 255, 0.05) 0%, transparent 60%);
+      background-attachment: fixed;
+      color: #F5F5F7;
       min-height: 100vh;
       margin: 0;
       padding: 0;
       overflow-x: hidden;
-      letter-spacing: -0.01em;
+      letter-spacing: -0.012em;
     }
 
-    /* Refined Surface & Border Styling (Linear / Raycast Style) */
-    .app-card {
-      background-color: #141722;
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      border-radius: 18px;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Bento Card Architecture — 24px radius, 16px gaps, lifting hover */
+    .bento-box {
+      background-color: #17171D;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
+                  border-color 0.25s ease, 
+                  box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
     }
-    .app-card:hover {
-      border-color: rgba(99, 102, 241, 0.35);
-      background-color: #181C2A;
-      box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5), 0 0 20px -5px rgba(99, 102, 241, 0.12);
+    .bento-box:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 255, 255, 0.22);
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.75), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
     }
 
-    .app-panel {
-      background-color: #10131B;
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      border-radius: 20px;
+    .bento-box-violet:hover {
+      border-color: rgba(124, 92, 255, 0.45);
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.75), 0 0 35px -5px rgba(124, 92, 255, 0.22), inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
     }
 
-    /* Refined Buttons */
-    .btn-brand-primary {
-      background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
+    .bento-box-mint:hover {
+      border-color: rgba(48, 220, 151, 0.45);
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.75), 0 0 35px -5px rgba(48, 220, 151, 0.22), inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+    }
+
+    /* Primary Accent Buttons */
+    .btn-violet {
+      background: linear-gradient(135deg, #7C5CFF 0%, #6340FF 100%);
       border-radius: 12px;
       color: #FFFFFF;
       font-weight: 600;
-      box-shadow: 0 4px 14px -2px rgba(79, 70, 229, 0.45);
+      box-shadow: 0 4px 14px -2px rgba(124, 92, 255, 0.45);
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .btn-brand-primary:hover {
+    .btn-violet:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 20px -2px rgba(79, 70, 229, 0.65);
-      background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+      box-shadow: 0 6px 22px -2px rgba(124, 92, 255, 0.65);
     }
-    .btn-brand-primary:active {
+    .btn-violet:active {
       transform: translateY(1px);
     }
 
-    .btn-subtle {
+    .btn-neutral {
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 12px;
-      color: #E2E8F0;
+      color: #F5F5F7;
       transition: all 0.2s ease;
     }
-    .btn-subtle:hover {
+    .btn-neutral:hover {
       background: rgba(255, 255, 255, 0.08);
       border-color: rgba(255, 255, 255, 0.18);
-      color: #FFFFFF;
       transform: translateY(-1px);
     }
-    .btn-subtle:active {
-      transform: translateY(1px);
+
+    /* Active Sidebar Navigation Item */
+    .sidebar-item-active {
+      background: rgba(124, 92, 255, 0.15);
+      border: 1px solid rgba(124, 92, 255, 0.4);
+      color: #FFFFFF;
     }
 
     /* Inputs */
     .app-input {
-      background: #0B0E14;
+      background: #111116;
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 12px;
-      color: #F8FAFC;
+      color: #F5F5F7;
       transition: all 0.2s ease;
     }
     .app-input:focus {
       outline: none;
-      border-color: #6366F1;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
-    }
-
-    /* Active Nav Tab Pill */
-    .nav-tab-active {
-      background: rgba(99, 102, 241, 0.15);
-      border: 1px solid rgba(99, 102, 241, 0.45);
-      color: #FFFFFF;
-      box-shadow: 0 2px 10px rgba(99, 102, 241, 0.2);
+      border-color: #7C5CFF;
+      box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.2);
     }
   </style>
 </head>
-<body class="relative min-h-screen antialiased selection:bg-indigo-600 selection:text-white">
+<body class="relative min-h-screen text-slate-100 antialiased selection:bg-[#7C5CFF] selection:text-white flex">
 
   <!-- ======================================================== -->
-  <!-- 1. TOP GLOBAL NAVIGATION BAR                             -->
+  <!-- 1. LEFT SIDEBAR (Linear / Raycast Style)                 -->
   <!-- ======================================================== -->
-  <header class="sticky top-0 z-40 w-full bg-[#090B10]/95 backdrop-blur-md border-b border-white/5">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+  <aside class="hidden lg:flex w-64 bg-[#0C0C12] border-r border-white/5 flex-col justify-between shrink-0 h-screen sticky top-0 z-40 p-4">
+    
+    <!-- Top Brand & Navigation Links -->
+    <div class="space-y-6">
       
-      <!-- Brand & Status Pill -->
-      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchNav('dashboard')">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-blue-500 p-[1.5px] flex items-center justify-center shadow-lg shadow-indigo-500/25">
-          <div class="w-full h-full bg-[#090B10] rounded-[10px] flex items-center justify-center text-indigo-400">
+      <!-- Brand Logo -->
+      <div class="flex items-center space-x-3 px-2 py-1 cursor-pointer" onclick="switchNav('dashboard')">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#7C5CFF] via-[#45B8FF] to-[#30DC97] p-[1.5px] flex items-center justify-center shadow-lg shadow-[#7C5CFF]/25">
+          <div class="w-full h-full bg-[#0C0C12] rounded-[10px] flex items-center justify-center text-[#7C5CFF]">
             <i data-lucide="sparkles" class="w-4 h-4"></i>
           </div>
         </div>
         <div>
-          <div class="flex items-center space-x-2">
-            <span class="text-base font-bold tracking-tight text-white">ApplyBot</span>
-            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">Automated</span>
+          <div class="flex items-center space-x-1.5">
+            <span class="text-base font-extrabold tracking-tight text-white">ApplyBot</span>
+            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-[#7C5CFF]/15 border border-[#7C5CFF]/30 text-[#7C5CFF]">PRO</span>
           </div>
-          <p class="text-[11px] text-slate-400 hidden sm:block">AI Job Automation & Application Copilot</p>
+          <p class="text-[10px] text-[#9A9AA5]">Job Search Automation OS</p>
         </div>
       </div>
 
-      <!-- Core Journey Navigation (Strictly 4 Primary Sections) -->
-      <nav class="hidden md:flex items-center space-x-1 p-1 rounded-2xl bg-[#11141D] border border-white/5">
-        <button id="nav-btn-dashboard" onclick="switchNav('dashboard')" class="flex items-center space-x-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all nav-tab-active">
-          <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 text-indigo-400"></i>
+      <!-- Navigation Links -->
+      <nav class="space-y-1">
+        <button id="nav-btn-dashboard" onclick="switchNav('dashboard')" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all sidebar-item-active">
+          <i data-lucide="layout-grid" class="w-4 h-4 text-[#7C5CFF]"></i>
           <span>Dashboard</span>
         </button>
-        <button id="nav-btn-jobs" onclick="switchNav('jobs')" class="flex items-center space-x-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all text-slate-400 hover:text-white">
-          <i data-lucide="compass" class="w-3.5 h-3.5"></i>
-          <span>Find Jobs</span>
+
+        <button id="nav-btn-jobs" onclick="switchNav('jobs')" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all text-[#9A9AA5] hover:text-white hover:bg-white/5">
+          <i data-lucide="compass" class="w-4 h-4"></i>
+          <span>Discover Jobs</span>
         </button>
-        <button id="nav-btn-career" onclick="switchNav('career')" class="flex items-center space-x-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all text-slate-400 hover:text-white">
-          <i data-lucide="briefcase" class="w-3.5 h-3.5"></i>
-          <span>My Career</span>
+
+        <button id="nav-btn-applications" onclick="switchNav('applications')" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all text-[#9A9AA5] hover:text-white hover:bg-white/5">
+          <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+          <span>My Applications</span>
         </button>
-        <button id="nav-btn-applications" onclick="switchNav('applications')" class="flex items-center space-x-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all text-slate-400 hover:text-white">
-          <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
-          <span>Applications</span>
+
+        <button id="nav-btn-resume" onclick="switchNav('resume')" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all text-[#9A9AA5] hover:text-white hover:bg-white/5">
+          <i data-lucide="file-text" class="w-4 h-4"></i>
+          <span>Resume Studio</span>
+        </button>
+
+        <button id="nav-btn-interview" onclick="switchNav('interview')" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all text-[#9A9AA5] hover:text-white hover:bg-white/5">
+          <i data-lucide="message-square-quote" class="w-4 h-4"></i>
+          <span>Interview Prep</span>
+        </button>
+
+        <button id="nav-btn-settings" onclick="switchNav('settings')" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all text-[#9A9AA5] hover:text-white hover:bg-white/5">
+          <i data-lucide="user-cog" class="w-4 h-4"></i>
+          <span>Profile & Settings</span>
         </button>
       </nav>
 
-      <!-- Right Actions: Landing Toggle & Profile Selector -->
-      <div class="flex items-center space-x-3">
-        <button onclick="toggleLandingView()" class="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-medium btn-subtle text-slate-300">
-          <i data-lucide="presentation" class="w-3.5 h-3.5 text-indigo-400"></i>
-          <span id="landing-toggle-text">Product Overview</span>
-        </button>
+    </div>
 
-        <button onclick="openAuthModal()" class="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-semibold btn-subtle text-slate-200 group">
-          <div class="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 flex items-center justify-center text-[10px] font-bold">
-            <span id="nav-user-initial">C</span>
+    <!-- Bottom User Profile Pill in Sidebar -->
+    <div class="pt-4 border-t border-white/5">
+      <div onclick="openAuthModal()" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-white/5 cursor-pointer transition">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#7C5CFF] to-[#45B8FF] flex items-center justify-center text-xs font-bold text-white shadow-md">
+          <span id="sidebar-user-initial">C</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div id="sidebar-user-name" class="text-xs font-bold text-white truncate">Candidate</div>
+          <div class="text-[10px] text-[#30DC97] font-medium flex items-center space-x-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#30DC97]"></span>
+            <span>LuaLaTeX Active</span>
           </div>
-          <span id="nav-user-name" class="max-w-[120px] truncate">Candidate</span>
-          <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 group-hover:text-white transition"></i>
-        </button>
+        </div>
+        <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5 text-[#9A9AA5]"></i>
       </div>
-
     </div>
 
-    <!-- Mobile Nav Bar -->
-    <div class="flex md:hidden items-center justify-around px-2 py-2 border-t border-white/5 bg-[#090B10]">
-      <button onclick="switchNav('dashboard')" class="flex flex-col items-center py-1 text-[11px] font-medium text-indigo-400">
-        <i data-lucide="layout-dashboard" class="w-4 h-4 mb-0.5"></i>
-        <span>Dashboard</span>
-      </button>
-      <button onclick="switchNav('jobs')" class="flex flex-col items-center py-1 text-[11px] font-medium text-slate-400">
-        <i data-lucide="compass" class="w-4 h-4 mb-0.5"></i>
-        <span>Jobs</span>
-      </button>
-      <button onclick="switchNav('career')" class="flex flex-col items-center py-1 text-[11px] font-medium text-slate-400">
-        <i data-lucide="briefcase" class="w-4 h-4 mb-0.5"></i>
-        <span>Career</span>
-      </button>
-      <button onclick="switchNav('applications')" class="flex flex-col items-center py-1 text-[11px] font-medium text-slate-400">
-        <i data-lucide="check-circle-2" class="w-4 h-4 mb-0.5"></i>
-        <span>Tracker</span>
-      </button>
-    </div>
-  </header>
+  </aside>
 
 
   <!-- ======================================================== -->
-  <!-- LANDING PAGE VIEW (Hero & Product Intro)                 -->
+  <!-- 2. MAIN CONTENT AREA + TOP HEADER                       -->
   <!-- ======================================================== -->
-  <section id="view-landing" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 space-y-12">
+  <div class="flex-1 flex flex-col min-h-screen min-w-0">
     
-    <!-- Hero Header -->
-    <div class="text-center max-w-3xl mx-auto space-y-5">
-      <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold">
-        <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
-        <span>Version 2.0 &bull; Local-First Job Search OS</span>
-      </div>
-
-      <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-        Your Job Search.<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-blue-400 to-emerald-400">Smarter. Faster. Automated.</span>
-      </h1>
-
-      <p class="text-sm sm:text-base text-slate-400 leading-relaxed max-w-2xl mx-auto">
-        Discover relevant opportunities, prepare tailored applications, and manage your job search — all in one intelligent workspace.
-      </p>
-
-      <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
-        <button onclick="switchNav('jobs')" class="px-6 py-3 rounded-xl btn-brand-primary text-xs sm:text-sm font-bold flex items-center space-x-2">
-          <span>Get Started Free</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
-        </button>
-        <button onclick="switchNav('dashboard')" class="px-5 py-3 rounded-xl btn-subtle text-xs sm:text-sm font-semibold text-slate-300 hover:text-white">
-          Explore Platform
-        </button>
-      </div>
-    </div>
-
-    <!-- Live Interactive Dashboard Preview -->
-    <div class="app-panel p-6 sm:p-8 border border-white/10 shadow-2xl space-y-6">
-      <div class="flex items-center justify-between border-b border-white/5 pb-4">
-        <div class="flex items-center space-x-2">
-          <span class="w-3 h-3 rounded-full bg-rose-500/70"></span>
-          <span class="w-3 h-3 rounded-full bg-amber-500/70"></span>
-          <span class="w-3 h-3 rounded-full bg-emerald-500/70"></span>
-          <span class="text-xs text-slate-400 ml-2 font-mono">applybot.local/cockpit</span>
-        </div>
-        <span class="text-xs font-semibold text-indigo-400">Live Architecture Preview</span>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="app-card p-5 space-y-2">
-          <div class="text-xs font-semibold text-indigo-400">1. Discover Jobs</div>
-          <p class="text-xs text-slate-300">Multi-portal ingestion across LinkedIn, FreeHire, Indeed, and Naukri with zero API keys required.</p>
-        </div>
-        <div class="app-card p-5 space-y-2">
-          <div class="text-xs font-semibold text-emerald-400">2. Tailor Resumes</div>
-          <p class="text-xs text-slate-300">LuaLaTeX compilation engine creating pixel-perfect, ATS-verified 1-page moderncv resumes.</p>
-        </div>
-        <div class="app-card p-5 space-y-2">
-          <div class="text-xs font-semibold text-blue-400">3. Track Progress</div>
-          <p class="text-xs text-slate-300">Local CSV pipeline tracker logging applications, interviews, notes, and direct links.</p>
-        </div>
-      </div>
-    </div>
-
-  </section>
-
-
-  <!-- ======================================================== -->
-  <!-- MAIN APPLICATION SECTIONS                                -->
-  <!-- ======================================================== -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-
-    <!-- ====================================================== -->
-    <!-- 1. DASHBOARD SECTION                                   -->
-    <!-- ====================================================== -->
-    <section id="sec-dashboard" class="space-y-6">
-      
-      <!-- Top Personalized Greeting & Recommended Action Banner -->
-      <div class="app-panel p-6 sm:p-7 border border-white/10 relative overflow-hidden">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-          
-          <div class="space-y-2">
-            <div class="inline-flex items-center space-x-2 text-xs font-semibold text-indigo-400">
-              <i data-lucide="zap" class="w-3.5 h-3.5"></i>
-              <span>Next Recommended Action</span>
-            </div>
-            <h1 class="text-xl sm:text-2xl font-bold text-white tracking-tight">
-              <span id="dashboard-greeting">Good day</span>, <span id="dash-user-name">Candidate</span>
-            </h1>
-            <p id="dashboard-next-action-text" class="text-xs sm:text-sm text-slate-400 max-w-xl leading-relaxed">
-              You have high-compatibility vacancies matching your technical profile. Prepare your tailored LaTeX application to maximize ATS score.
-            </p>
-          </div>
-
-          <!-- Quick Action Buttons -->
-          <div class="flex flex-wrap items-center gap-3">
-            <button onclick="switchNav('jobs')" class="px-5 py-2.5 rounded-xl btn-brand-primary text-xs font-bold flex items-center space-x-2">
-              <i data-lucide="compass" class="w-4 h-4"></i>
-              <span>Find Matching Jobs</span>
-            </button>
-            <button onclick="openJDAnalyzeModal()" class="px-4 py-2.5 rounded-xl btn-subtle text-xs font-semibold text-slate-300 hover:text-white flex items-center space-x-1.5">
-              <i data-lucide="scan-search" class="w-4 h-4 text-indigo-400"></i>
-              <span>Analyze Job Description</span>
-            </button>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Compact Application Overview (4 Stat Cards) -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-30 w-full bg-[#08080F]/90 backdrop-blur-md border-b border-white/5">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         
-        <div class="app-card p-5">
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-slate-400 font-medium">Total Tracked</span>
-            <span class="w-2 h-2 rounded-full bg-slate-500"></span>
-          </div>
-          <div id="dash-stat-total" class="text-2xl sm:text-3xl font-extrabold text-white mt-1">0</div>
-          <span class="text-[11px] text-slate-500 mt-1 block">In local pipeline</span>
+        <!-- Search bar inside Top Nav -->
+        <div class="flex-1 max-w-md relative">
+          <i data-lucide="search" class="w-4 h-4 text-[#9A9AA5] absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+          <input id="top-search-query" type="text" placeholder="Search roles, skills, portals (e.g. AI Engineer, Python)..." 
+                 class="w-full pl-10 pr-4 py-2 app-input text-xs font-medium" 
+                 onkeydown="if(event.key==='Enter') executeTopSearch()" />
         </div>
 
-        <div class="app-card p-5">
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-slate-400 font-medium">Applied / Pending</span>
-            <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
-          </div>
-          <div id="dash-stat-applied" class="text-2xl sm:text-3xl font-extrabold text-indigo-400 mt-1">0</div>
-          <span class="text-[11px] text-slate-500 mt-1 block">Awaiting response</span>
-        </div>
+        <!-- Right Action Items -->
+        <div class="flex items-center space-x-3">
+          <button onclick="openJDAnalyzeModal()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold btn-neutral text-slate-200">
+            <i data-lucide="scan-search" class="w-3.5 h-3.5 text-[#7C5CFF]"></i>
+            <span class="hidden sm:inline">Analyze JD</span>
+          </button>
 
-        <div class="app-card p-5">
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-slate-400 font-medium">Interviews</span>
-            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-          </div>
-          <div id="dash-stat-interviews" class="text-2xl sm:text-3xl font-extrabold text-emerald-400 mt-1">0</div>
-          <span class="text-[11px] text-slate-500 mt-1 block">In active stages</span>
-        </div>
-
-        <div class="app-card p-5">
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-slate-400 font-medium">ATS Readiness</span>
-            <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
-          </div>
-          <div id="dash-stat-ats" class="text-2xl sm:text-3xl font-extrabold text-cyan-400 mt-1">94%</div>
-          <span class="text-[11px] text-slate-500 mt-1 block">LuaLaTeX compiled</span>
-        </div>
-
-      </div>
-
-      <!-- Dashboard Curated Opportunities -->
-      <div class="app-panel p-6 border border-white/10 space-y-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-base font-bold text-white">Recommended Opportunities For You</h2>
-            <p class="text-xs text-slate-400">High semantic alignment with your profile & technical competencies</p>
-          </div>
-          <button onclick="switchNav('jobs')" class="text-xs text-indigo-400 font-semibold hover:underline flex items-center space-x-1">
-            <span>View All Jobs</span>
-            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          <!-- Mobile Nav Drawer Trigger -->
+          <button onclick="toggleMobileNav()" class="lg:hidden p-2 rounded-xl btn-neutral text-slate-300">
+            <i data-lucide="menu" class="w-4 h-4"></i>
           </button>
         </div>
 
-        <div id="dash-curated-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Curated recommendations rendered here -->
-        </div>
       </div>
 
-    </section>
-
-
-    <!-- ====================================================== -->
-    <!-- 2. FIND JOBS SECTION (Job Discovery Experience)         -->
-    <!-- ====================================================== -->
-    <section id="sec-jobs" class="hidden space-y-6">
-      
-      <!-- Search & Faceted Filter Bar -->
-      <div class="app-panel p-5 border border-white/10 space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
-          
-          <!-- Role input -->
-          <div class="sm:col-span-5 relative">
-            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
-            <input id="search-query" type="text" placeholder="Job title, keywords, skills (e.g. AI Engineer, Python)..." 
-                   class="w-full pl-10 pr-4 py-2.5 app-input text-xs sm:text-sm font-medium" />
-          </div>
-
-          <!-- Location input -->
-          <div class="sm:col-span-4 relative">
-            <i data-lucide="map-pin" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
-            <input id="search-location" type="text" placeholder="Location or Remote (e.g. Remote, Bengaluru)..." 
-                   class="w-full pl-10 pr-4 py-2.5 app-input text-xs sm:text-sm font-medium" />
-          </div>
-
-          <!-- Portal Selector & Action -->
-          <div class="sm:col-span-3 flex items-center space-x-2">
-            <select id="search-portal" class="flex-1 px-3 py-2.5 app-input text-xs sm:text-sm font-medium text-slate-200">
-              <option value="all">All Portals</option>
-              <option value="freehire">FreeHire (ATS)</option>
-              <option value="linkedin">LinkedIn</option>
-              <option value="jobindex">Jobindex</option>
-            </select>
-            <button id="btn-search-jobs" onclick="executeJobSearch()" class="px-5 py-2.5 btn-brand-primary text-xs font-bold shrink-0">
-              Search
-            </button>
-          </div>
-
-        </div>
-
-        <!-- Faceted Filters -->
-        <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-white/5 text-xs">
-          <div class="flex flex-wrap items-center gap-1.5">
-            <span class="text-slate-400 text-[11px] font-medium mr-1">Work Mode:</span>
-            <button onclick="setWorkModeFilter('all')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 text-[11px] font-medium" id="filter-wm-all">
-              All
-            </button>
-            <button onclick="setWorkModeFilter('remote')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 text-[11px] font-medium" id="filter-wm-remote">
-              🌐 Remote Only
-            </button>
-            <button onclick="applyPresetRole('AI Engineer')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 text-[11px] font-medium">
-              🤖 AI & ML
-            </button>
-            <button onclick="applyPresetRole('Python Developer')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 text-[11px] font-medium">
-              🐍 Python Backend
-            </button>
-          </div>
-
-          <span id="jobs-count-badge" class="text-slate-400 text-xs font-semibold">Scanning vacancies...</span>
-        </div>
+      <!-- Mobile Navigation Drawer -->
+      <div id="mobile-nav" class="hidden lg:hidden border-t border-white/5 bg-[#0C0C12] px-4 py-3 space-y-1 text-xs">
+        <button onclick="switchNav('dashboard'); toggleMobileNav()" class="w-full text-left py-2 font-semibold text-white">Dashboard</button>
+        <button onclick="switchNav('jobs'); toggleMobileNav()" class="w-full text-left py-2 font-semibold text-slate-400">Discover Jobs</button>
+        <button onclick="switchNav('applications'); toggleMobileNav()" class="w-full text-left py-2 font-semibold text-slate-400">My Applications</button>
+        <button onclick="switchNav('resume'); toggleMobileNav()" class="w-full text-left py-2 font-semibold text-slate-400">Resume Studio</button>
+        <button onclick="switchNav('interview'); toggleMobileNav()" class="w-full text-left py-2 font-semibold text-slate-400">Interview Prep</button>
+        <button onclick="switchNav('settings'); toggleMobileNav()" class="w-full text-left py-2 font-semibold text-slate-400">Profile & Settings</button>
       </div>
-
-      <!-- Job Cards Grid -->
-      <div id="jobs-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Job cards rendered dynamically -->
-      </div>
-
-    </section>
+    </header>
 
 
-    <!-- ====================================================== -->
-    <!-- 3. MY CAREER SECTION (Resume, Profile & Anti-AI)       -->
-    <!-- ====================================================== -->
-    <section id="sec-career" class="hidden space-y-6">
-      
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- ======================================================== -->
+    <!-- 3. MAIN DASHBOARD BENTO GRID                             -->
+    <!-- ======================================================== -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+      <!-- ====================================================== -->
+      <!-- VIEW 1: DASHBOARD BENTO GRID (Field Guide 03 Redesign) -->
+      <!-- ====================================================== -->
+      <section id="sec-dashboard" class="space-y-4">
         
-        <!-- Left: Master Profile & Skills Editor (7 cols) -->
-        <div class="lg:col-span-7 space-y-6">
+        <!-- Browser Window Mock Header (Per Reference Image) -->
+        <div class="flex items-center justify-between px-4 py-2 rounded-2xl bg-[#17171D] border border-white/5 text-[11px] text-[#9A9AA5] shadow-sm">
+          <div class="flex items-center space-x-2.5">
+            <div class="flex items-center space-x-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#FF5F56]/80"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]/80"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-[#27C93F]/80"></span>
+            </div>
+            <span class="font-mono text-[11px] text-[#9A9AA5] pl-1">bento-grid.design / applybot</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#30DC97]/15 text-[#30DC97]">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#30DC97] mr-1.5 animate-pulse"></span>
+              Clean &amp; Structured &bull; 03 / 28
+            </span>
+          </div>
+        </div>
+
+        <!-- 4-Column Bento Grid: Mixed Spans (1 Hero 2x2, 2 Tiles 2x1, 3 Tiles 1x1 + 1 Stat 1x1) -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           
-          <div class="app-panel p-6 border border-white/10 space-y-5">
+          <!-- TILE 1: 2x2 Hero Tile (Introducing ApplyBot. Your career, beautifully boxed.) -->
+          <div class="md:col-span-2 md:row-span-2 bento-box bento-box-violet p-7 sm:p-8 flex flex-col justify-between relative min-h-[380px]">
+            <div class="space-y-3 z-10 max-w-xs">
+              <span class="text-[11px] font-bold text-[#9A9AA5] uppercase tracking-wider block">Introducing ApplyBot</span>
+              <h1 class="text-3xl sm:text-4xl font-extrabold text-[#F5F5F7] tracking-tight leading-tight">
+                Your career,<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-[#7C5CFF]">beautifully boxed.</span>
+              </h1>
+              <p class="text-xs text-[#9A9AA5] leading-relaxed mt-2">
+                Autonomous job discovery, semantic match scoring, and LuaLaTeX resume tailoring across 50+ ATS platforms.
+              </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-6 z-10 flex flex-wrap items-center gap-2.5 pt-4 border-t border-white/5">
+              <button onclick="switchNav('jobs')" class="px-5 py-2.5 btn-violet text-xs font-bold flex items-center space-x-2">
+                <span>Explore Matching Jobs</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </button>
+              <button onclick="openJDAnalyzeModal()" class="px-4 py-2.5 btn-neutral text-xs font-semibold text-slate-300 hover:text-white">
+                Analyze JD
+              </button>
+            </div>
+
+            <!-- Three.js 3D Floating Glowing Device Canvas on the right side -->
+            <div class="absolute right-0 top-0 bottom-0 w-1/2 pointer-events-none hidden sm:block overflow-hidden">
+              <canvas id="hero-three-canvas" class="w-full h-full"></canvas>
+            </div>
+          </div>
+
+          <!-- TILE 2: 1x1 Big Stat Tile (94.8% ATS Match Fit in mint #30DC97) -->
+          <div class="bento-box bento-box-mint p-6 flex flex-col justify-between min-h-[180px]">
+            <div>
+              <div id="bento-match-fit-stat" class="text-4xl sm:text-5xl font-black text-[#30DC97] tracking-tight">94.8%</div>
+              <div class="text-xs font-bold text-[#F5F5F7] mt-1">ATS Match Fit</div>
+            </div>
+            <div class="text-[11px] text-[#9A9AA5] mt-auto">
+              Zero parsing defects &bull; 100% clean LuaLaTeX text layer
+            </div>
+          </div>
+
+          <!-- TILE 3: 1x1 Feature with Icon (Instant sync across 50+ ATS platforms in violet #7C5CFF) -->
+          <div class="bento-box bento-box-violet p-6 flex flex-col justify-between min-h-[180px]">
+            <div class="w-11 h-11 rounded-2xl bg-[#7C5CFF] text-white flex items-center justify-center shadow-lg shadow-[#7C5CFF]/30">
+              <i data-lucide="zap" class="w-5 h-5 fill-current"></i>
+            </div>
+            <div class="mt-auto">
+              <div class="text-sm font-bold text-[#F5F5F7]">Instant sync</div>
+              <div class="text-[11px] text-[#9A9AA5] mt-0.5">Across 50+ ATS platforms</div>
+            </div>
+          </div>
+
+          <!-- TILE 4: 2x1 Mini Chart Tile (Weekly output +42% with glowing vertical bar chart) -->
+          <div class="md:col-span-2 bento-box p-6 flex flex-col justify-between min-h-[180px]">
+            <div class="flex items-start justify-between">
+              <div>
+                <div class="text-sm font-bold text-[#F5F5F7]">Weekly output</div>
+                <div class="text-[11px] text-[#30DC97] font-semibold mt-0.5">+42% vs last month</div>
+              </div>
+              <div class="text-right">
+                <span id="dash-output-total" class="text-xs font-bold text-[#F5F5F7]">38</span>
+                <span class="text-[11px] text-[#9A9AA5]">actions</span>
+              </div>
+            </div>
+
+            <!-- Glowing Violet Animated Vertical Bars -->
+            <div class="flex items-end justify-between gap-2.5 h-20 pt-3">
+              <div class="flex-1 flex flex-col items-center gap-1 group relative">
+                <div class="w-full bg-[#202027] rounded-t-lg overflow-hidden h-20 flex items-end">
+                  <div class="bento-bar w-full bg-gradient-to-t from-[#7C5CFF]/30 to-[#7C5CFF] rounded-t-lg transition-all duration-300 group-hover:brightness-125 group-hover:from-[#7C5CFF] group-hover:to-[#30DC97]" style="height: 38%;"></div>
+                </div>
+                <span class="text-[9px] text-[#9A9AA5] font-mono">M</span>
+                <div class="absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity bg-[#08080F] border border-white/10 text-[9px] px-1.5 py-0.5 rounded shadow pointer-events-none whitespace-nowrap z-20">Mon: 4 apps</div>
+              </div>
+
+              <div class="flex-1 flex flex-col items-center gap-1 group relative">
+                <div class="w-full bg-[#202027] rounded-t-lg overflow-hidden h-20 flex items-end">
+                  <div class="bento-bar w-full bg-gradient-to-t from-[#7C5CFF]/30 to-[#7C5CFF] rounded-t-lg transition-all duration-300 group-hover:brightness-125 group-hover:from-[#7C5CFF] group-hover:to-[#30DC97]" style="height: 60%;"></div>
+                </div>
+                <span class="text-[9px] text-[#9A9AA5] font-mono">T</span>
+                <div class="absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity bg-[#08080F] border border-white/10 text-[9px] px-1.5 py-0.5 rounded shadow pointer-events-none whitespace-nowrap z-20">Tue: 7 tailor</div>
+              </div>
+
+              <div class="flex-1 flex flex-col items-center gap-1 group relative">
+                <div class="w-full bg-[#202027] rounded-t-lg overflow-hidden h-20 flex items-end">
+                  <div class="bento-bar w-full bg-gradient-to-t from-[#7C5CFF]/30 to-[#7C5CFF] rounded-t-lg transition-all duration-300 group-hover:brightness-125 group-hover:from-[#7C5CFF] group-hover:to-[#30DC97]" style="height: 45%;"></div>
+                </div>
+                <span class="text-[9px] text-[#9A9AA5] font-mono">W</span>
+                <div class="absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity bg-[#08080F] border border-white/10 text-[9px] px-1.5 py-0.5 rounded shadow pointer-events-none whitespace-nowrap z-20">Wed: 5 scans</div>
+              </div>
+
+              <div class="flex-1 flex flex-col items-center gap-1 group relative">
+                <div class="w-full bg-[#202027] rounded-t-lg overflow-hidden h-20 flex items-end">
+                  <div class="bento-bar w-full bg-gradient-to-t from-[#7C5CFF]/30 to-[#7C5CFF] rounded-t-lg transition-all duration-300 group-hover:brightness-125 group-hover:from-[#7C5CFF] group-hover:to-[#30DC97]" style="height: 85%;"></div>
+                </div>
+                <span class="text-[9px] text-[#9A9AA5] font-mono">T</span>
+                <div class="absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity bg-[#08080F] border border-white/10 text-[9px] px-1.5 py-0.5 rounded shadow pointer-events-none whitespace-nowrap z-20">Thu: 10 sync</div>
+              </div>
+
+              <div class="flex-1 flex flex-col items-center gap-1 group relative">
+                <div class="w-full bg-[#202027] rounded-t-lg overflow-hidden h-20 flex items-end">
+                  <div class="bento-bar w-full bg-gradient-to-t from-[#7C5CFF]/30 to-[#7C5CFF] rounded-t-lg transition-all duration-300 group-hover:brightness-125 group-hover:from-[#7C5CFF] group-hover:to-[#30DC97]" style="height: 70%;"></div>
+                </div>
+                <span class="text-[9px] text-[#9A9AA5] font-mono">F</span>
+                <div class="absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity bg-[#08080F] border border-white/10 text-[9px] px-1.5 py-0.5 rounded shadow pointer-events-none whitespace-nowrap z-20">Fri: 8 match</div>
+              </div>
+
+              <div class="flex-1 flex flex-col items-center gap-1 group relative">
+                <div class="w-full bg-[#202027] rounded-t-lg overflow-hidden h-20 flex items-end">
+                  <div class="bento-bar w-full bg-gradient-to-t from-[#7C5CFF]/30 to-[#7C5CFF] rounded-t-lg transition-all duration-300 group-hover:brightness-125 group-hover:from-[#7C5CFF] group-hover:to-[#30DC97]" style="height: 95%;"></div>
+                </div>
+                <span class="text-[9px] text-[#9A9AA5] font-mono">S</span>
+                <div class="absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity bg-[#08080F] border border-white/10 text-[9px] px-1.5 py-0.5 rounded shadow pointer-events-none whitespace-nowrap z-20">Sat: 12 interview</div>
+              </div>
+
+              <div class="flex-1 flex flex-col items-center gap-1 group relative">
+                <div class="w-full bg-[#202027] rounded-t-lg overflow-hidden h-20 flex items-end">
+                  <div class="bento-bar w-full bg-gradient-to-t from-[#7C5CFF]/30 to-[#7C5CFF] rounded-t-lg transition-all duration-300 group-hover:brightness-125 group-hover:from-[#7C5CFF] group-hover:to-[#30DC97]" style="height: 65%;"></div>
+                </div>
+                <span class="text-[9px] text-[#9A9AA5] font-mono">S</span>
+                <div class="absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity bg-[#08080F] border border-white/10 text-[9px] px-1.5 py-0.5 rounded shadow pointer-events-none whitespace-nowrap z-20">Sun: 6 prep</div>
+              </div>
+
+              <div class="flex-1 flex flex-col items-center gap-1 group relative">
+                <div class="w-full bg-[#202027] rounded-t-lg overflow-hidden h-20 flex items-end">
+                  <div class="bento-bar w-full bg-gradient-to-t from-[#7C5CFF]/40 to-[#30DC97] rounded-t-lg transition-all duration-300 group-hover:brightness-125" style="height: 92%;"></div>
+                </div>
+                <span class="text-[9px] text-[#30DC97] font-mono font-bold">Now</span>
+                <div class="absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity bg-[#08080F] border border-white/10 text-[9px] px-1.5 py-0.5 rounded shadow pointer-events-none whitespace-nowrap z-20 text-[#30DC97]">Today: Active</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TILE 5: 1x1 Feature Tile (Private by default in mint #30DC97) -->
+          <div class="bento-box bento-box-mint p-6 flex flex-col justify-between min-h-[160px]">
+            <div class="w-11 h-11 rounded-2xl bg-[#30DC97] text-[#08080F] flex items-center justify-center shadow-lg shadow-[#30DC97]/25">
+              <i data-lucide="shield-check" class="w-5 h-5"></i>
+            </div>
+            <div class="mt-auto">
+              <div class="text-sm font-bold text-[#F5F5F7]">Private by default</div>
+              <div class="text-[11px] text-[#9A9AA5] mt-0.5">100% local LaTeX &amp; data</div>
+            </div>
+          </div>
+
+          <!-- TILE 6: 1x1 Big Stat Tile (2.4k Teams onboard / Active Tech Roles) -->
+          <div class="bento-box p-6 flex flex-col justify-between min-h-[160px]">
+            <div>
+              <div id="bento-roles-stat" class="text-4xl sm:text-5xl font-black text-[#F5F5F7] tracking-tight">2.4k</div>
+              <div class="text-xs font-bold text-[#F5F5F7] mt-1">Live Roles Indexed</div>
+            </div>
+            <div class="text-[11px] text-[#9A9AA5] mt-auto">
+              FreeHire, LinkedIn, Jobindex
+            </div>
+          </div>
+
+          <!-- TILE 7: 2x1 Integrations Tile (Plug into the tools you already love) with 6 Colorful Pills -->
+          <div class="md:col-span-2 bento-box p-6 flex flex-col justify-between min-h-[160px]">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-sm font-bold text-[#F5F5F7]">Integrations</div>
+                <div class="text-[11px] text-[#9A9AA5] mt-0.5">Plug into the tools you already love</div>
+              </div>
+              <span class="text-[10px] font-mono text-[#9A9AA5] bg-white/5 px-2 py-0.5 rounded-full border border-white/5">6 Connected</span>
+            </div>
+
+            <!-- 6 Colorful Rounded App Icon Pills matching the reference colors -->
+            <div class="flex items-center gap-2.5 pt-4">
+              <button onclick="filterByIntegration('linkedin')" title="LinkedIn Portal" class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#7C5CFF] text-white flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-md shadow-[#7C5CFF]/20">
+                <i data-lucide="share-2" class="w-4 h-4"></i>
+              </button>
+
+              <button onclick="filterByIntegration('jobindex')" title="Jobindex Portal" class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#30DC97] text-[#08080F] flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-md shadow-[#30DC97]/20">
+                <i data-lucide="compass" class="w-4 h-4"></i>
+              </button>
+
+              <button onclick="filterByIntegration('freehire')" title="FreeHire Aggregator" class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#FF5757] text-white flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-md shadow-[#FF5757]/20">
+                <i data-lucide="briefcase" class="w-4 h-4"></i>
+              </button>
+
+              <button onclick="filterByIntegration('jobnet')" title="Jobnet STAR Registry" class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#FFAA2C] text-[#08080F] flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-md shadow-[#FFAA2C]/20">
+                <i data-lucide="globe" class="w-4 h-4"></i>
+              </button>
+
+              <button onclick="switchNav('resume')" title="LuaLaTeX Moderncv Engine" class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#45B8FF] text-[#08080F] flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-md shadow-[#45B8FF]/20">
+                <i data-lucide="file-text" class="w-4 h-4"></i>
+              </button>
+
+              <button onclick="switchNav('interview')" title="STAR Story AI Generator" class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-white text-[#08080F] flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-md shadow-white/20">
+                <i data-lucide="sparkles" class="w-4 h-4 text-[#7C5CFF]"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 4. RECOMMENDED ROLES BENTO DECK -->
+        <div class="bento-box p-6 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3">
+            <div>
+              <div class="flex items-center space-x-2">
+                <h3 class="text-sm font-bold text-[#F5F5F7]">Recommended Roles For You</h3>
+                <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#7C5CFF]/15 border border-[#7C5CFF]/30 text-[#7C5CFF]">AI Matched</span>
+              </div>
+              <p class="text-xs text-[#9A9AA5] mt-0.5">Top vacancies aligned with candidate profile and verified skills</p>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+              <button onclick="switchNav('jobs')" class="text-xs text-[#7C5CFF] hover:underline font-bold flex items-center space-x-1">
+                <span>View All 240+ Roles</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <div id="dash-curated-container" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <!-- Populated dynamically with rich job cards -->
+          </div>
+        </div>
+
+        <!-- 5. APPLICATION PIPELINE ACTIVITY STRIP -->
+        <div class="bento-box p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="flex items-center space-x-4">
+            <div class="w-10 h-10 rounded-2xl bg-[#7C5CFF]/15 border border-[#7C5CFF]/30 text-[#7C5CFF] flex items-center justify-center">
+              <i data-lucide="activity" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-white">Central Application Tracker</h4>
+              <p class="text-[11px] text-[#9A9AA5]">Real-time synchronization with local job_search_tracker.csv</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-4 text-xs">
+            <div class="flex items-center space-x-2 bg-[#111116] px-3 py-1.5 rounded-xl border border-white/5">
+              <span class="text-[#9A9AA5]">Tracked:</span>
+              <span id="bento-stat-total" class="font-extrabold text-white">0</span>
+            </div>
+            <div class="flex items-center space-x-2 bg-[#111116] px-3 py-1.5 rounded-xl border border-white/5">
+              <span class="text-[#9A9AA5]">Applied:</span>
+              <span id="bento-stat-applied" class="font-extrabold text-[#7C5CFF]">0</span>
+            </div>
+            <div class="flex items-center space-x-2 bg-[#111116] px-3 py-1.5 rounded-xl border border-white/5">
+              <span class="text-[#9A9AA5]">Interviews:</span>
+              <span id="bento-stat-interviews" class="font-extrabold text-[#30DC97]">0</span>
+            </div>
+            <div class="flex items-center space-x-2 bg-[#111116] px-3 py-1.5 rounded-xl border border-white/5">
+              <span class="text-[#9A9AA5]">Offers:</span>
+              <span id="bento-stat-offers" class="font-extrabold text-[#45B8FF]">0</span>
+            </div>
+            <button onclick="switchNav('applications')" class="px-3.5 py-1.5 btn-violet text-xs font-bold flex items-center space-x-1.5">
+              <span>Open Pipeline</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ====================================================== -->
+      <!-- VIEW 2: DISCOVER JOBS                                  -->
+      <!-- ====================================================== -->
+      <section id="sec-jobs" class="hidden space-y-4">
+        
+        <!-- Search & Filter Header -->
+        <div class="bento-box p-5 space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+            
+            <div class="sm:col-span-5 relative">
+              <i data-lucide="search" class="w-4 h-4 text-[#92929D] absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+              <input id="search-query" type="text" placeholder="Job title, keywords, skills (e.g. AI Engineer, Python)..." 
+                     class="w-full pl-10 pr-4 py-2.5 app-input text-xs sm:text-sm font-medium" />
+            </div>
+
+            <div class="sm:col-span-4 relative">
+              <i data-lucide="map-pin" class="w-4 h-4 text-[#92929D] absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+              <input id="search-location" type="text" placeholder="Location or Remote (e.g. Remote, Bengaluru)..." 
+                     class="w-full pl-10 pr-4 py-2.5 app-input text-xs sm:text-sm font-medium" />
+            </div>
+
+            <div class="sm:col-span-3 flex items-center space-x-2">
+              <select id="search-portal" class="flex-1 px-3 py-2.5 app-input text-xs sm:text-sm font-medium text-slate-200">
+                <option value="all">All Portals</option>
+                <option value="freehire">FreeHire (ATS)</option>
+                <option value="linkedin">LinkedIn</option>
+                <option value="jobindex">Jobindex</option>
+              </select>
+              <button id="btn-search-jobs" onclick="executeJobSearch()" class="px-5 py-2.5 btn-violet text-xs font-bold shrink-0">
+                Search
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Faceted Filter Pills -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-white/5 text-xs">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span class="text-[#92929D] text-[11px] font-medium mr-1">Work Mode:</span>
+              <button onclick="setWorkModeFilter('all')" class="px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-[11px] font-bold" id="filter-wm-all">
+                All
+              </button>
+              <button onclick="setWorkModeFilter('remote')" class="px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-[11px] font-bold" id="filter-wm-remote">
+                🌐 Remote Only
+              </button>
+              <button onclick="applyPresetRole('AI Engineer')" class="px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-[11px] font-bold">
+                🤖 AI & ML
+              </button>
+              <button onclick="applyPresetRole('Python Developer')" class="px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-[11px] font-bold">
+                🐍 Python Backend
+              </button>
+            </div>
+
+            <span id="jobs-count-badge" class="text-[#92929D] text-xs font-bold">Scanning vacancies...</span>
+          </div>
+        </div>
+
+        <!-- Job Cards Grid -->
+        <div id="jobs-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Dynamically populated -->
+        </div>
+
+      </section>
+
+
+      <!-- ====================================================== -->
+      <!-- VIEW 3: MY APPLICATIONS TRACKER                       -->
+      <!-- ====================================================== -->
+      <section id="sec-applications" class="hidden space-y-4">
+        
+        <!-- Status KPI Tiles -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div class="bento-box p-5">
+            <span class="text-xs text-[#92929D] font-bold uppercase tracking-wider">Total Applications</span>
+            <div id="track-stat-total" class="text-3xl font-extrabold text-white mt-1">0</div>
+          </div>
+          <div class="bento-box p-5">
+            <span class="text-xs text-[#92929D] font-bold uppercase tracking-wider">Pending Review</span>
+            <div id="track-stat-review" class="text-3xl font-extrabold text-[#7C5CFF] mt-1">0</div>
+          </div>
+          <div class="bento-box p-5">
+            <span class="text-xs text-[#92929D] font-bold uppercase tracking-wider">Interview Stage</span>
+            <div id="track-stat-interview" class="text-3xl font-extrabold text-[#35D6A0] mt-1">0</div>
+          </div>
+          <div class="bento-box p-5">
+            <span class="text-xs text-[#92929D] font-bold uppercase tracking-wider">Offers Received</span>
+            <div id="track-stat-offers" class="text-3xl font-extrabold text-[#45B8FF] mt-1">0</div>
+          </div>
+        </div>
+
+        <!-- Pipeline Table Panel -->
+        <div class="bento-box overflow-hidden">
+          
+          <div class="p-5 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-base font-bold text-white">Central Application Pipeline</h2>
+              <p class="text-xs text-[#92929D]">Track every submission locally in job_search_tracker.csv</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <input id="tracker-filter-query" type="text" placeholder="Filter company or role..." 
+                     class="px-3 py-1.5 app-input text-xs w-48" oninput="filterTrackerRows()" />
+
+              <select id="tracker-filter-status" onchange="filterTrackerRows()" class="px-3 py-1.5 app-input text-xs text-slate-200">
+                <option value="all">All Statuses</option>
+                <option value="applied">Applied</option>
+                <option value="interview">Interview</option>
+                <option value="assessment">Assessment</option>
+                <option value="offer">Offer</option>
+                <option value="rejected">Rejected</option>
+              </select>
+
+              <button onclick="loadTrackerData()" class="p-1.5 btn-neutral text-slate-300" title="Refresh">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-[#111116] border-b border-white/5 text-[#92929D] uppercase text-[10px] tracking-wider font-semibold">
+                <tr>
+                  <th class="p-3.5 pl-6">Date</th>
+                  <th class="p-3.5">Company</th>
+                  <th class="p-3.5">Role</th>
+                  <th class="p-3.5">Location</th>
+                  <th class="p-3.5">Status (Live Update)</th>
+                  <th class="p-3.5">Notes</th>
+                  <th class="p-3.5 pr-6 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tracker-table-body" class="divide-y divide-white/5 font-medium">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ====================================================== -->
+      <!-- VIEW 4: RESUME STUDIO                                  -->
+      <!-- ====================================================== -->
+      <section id="sec-resume" class="hidden space-y-4">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          
+          <!-- Master Profile & Upload (7 cols) -->
+          <div class="lg:col-span-7 bento-box p-6 space-y-5">
             <div class="flex items-center justify-between border-b border-white/5 pb-4">
               <div>
                 <h2 class="text-base font-bold text-white">Master Profile & Credentials</h2>
-                <p class="text-xs text-slate-400">Powers automatic resume tailoring and alignment checks</p>
+                <p class="text-xs text-[#92929D]">Used as ground-truth for LaTeX compilation and fit evaluation</p>
               </div>
-              <button onclick="saveProfile()" class="px-4 py-2 btn-brand-primary text-xs font-bold">
+              <button onclick="saveProfile()" class="px-4 py-2 btn-violet text-xs font-bold">
                 Save Profile
               </button>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div>
-                <label class="block text-slate-400 font-medium mb-1">Full Name</label>
+                <label class="block text-[#92929D] font-medium mb-1">Full Name</label>
                 <input id="prof-name" type="text" class="w-full px-3 py-2 app-input" />
               </div>
               <div>
-                <label class="block text-slate-400 font-medium mb-1">Email Address</label>
+                <label class="block text-[#92929D] font-medium mb-1">Email Address</label>
                 <input id="prof-email" type="email" class="w-full px-3 py-2 app-input" />
               </div>
               <div>
-                <label class="block text-slate-400 font-medium mb-1">Phone Number</label>
+                <label class="block text-[#92929D] font-medium mb-1">Phone Number</label>
                 <input id="prof-phone" type="text" class="w-full px-3 py-2 app-input" />
               </div>
               <div>
-                <label class="block text-slate-400 font-medium mb-1">Location</label>
+                <label class="block text-[#92929D] font-medium mb-1">Location</label>
                 <input id="prof-location" type="text" class="w-full px-3 py-2 app-input" />
               </div>
               <div>
-                <label class="block text-slate-400 font-medium mb-1">Degree / Specialization</label>
+                <label class="block text-[#92929D] font-medium mb-1">Degree / Specialization</label>
                 <input id="prof-degree" type="text" class="w-full px-3 py-2 app-input" />
               </div>
               <div>
-                <label class="block text-slate-400 font-medium mb-1">Institution & CGPA</label>
+                <label class="block text-[#92929D] font-medium mb-1">Institution & CGPA</label>
                 <input id="prof-inst" type="text" class="w-full px-3 py-2 app-input" />
               </div>
               <div>
-                <label class="block text-slate-400 font-medium mb-1">LinkedIn Profile</label>
+                <label class="block text-[#92929D] font-medium mb-1">LinkedIn Profile</label>
                 <input id="prof-linkedin" type="url" class="w-full px-3 py-2 app-input" />
               </div>
               <div>
-                <label class="block text-slate-400 font-medium mb-1">GitHub / Portfolio</label>
+                <label class="block text-[#92929D] font-medium mb-1">GitHub / Portfolio</label>
                 <input id="prof-github" type="url" class="w-full px-3 py-2 app-input" />
               </div>
             </div>
@@ -534,284 +779,313 @@
             <!-- Skills Box -->
             <div class="pt-3 border-t border-white/5 space-y-2.5">
               <div class="flex items-center justify-between">
-                <label class="block text-xs font-semibold text-white">Technical Skills & Stacks</label>
-                <span id="skills-count-badge" class="text-[11px] text-indigo-400 font-semibold">0 skills</span>
+                <label class="block text-xs font-bold text-white">Technical Skills & Stacks</label>
+                <span id="skills-count-badge" class="text-[11px] text-[#7C5CFF] font-bold">0 skills</span>
               </div>
               <div class="flex items-center space-x-2">
-                <input id="new-skill-input" type="text" placeholder="Add technical skill (e.g. PyTorch, Docker, FastAPI)..." 
+                <input id="new-skill-input" type="text" placeholder="Add skill (e.g. PyTorch, Docker, FastAPI)..." 
                        class="flex-1 px-3 py-2 app-input text-xs" onkeydown="if(event.key==='Enter') addSkillTag()" />
-                <button onclick="addSkillTag()" class="px-3.5 py-2 btn-subtle text-xs font-semibold">
+                <button onclick="addSkillTag()" class="px-3.5 py-2 btn-neutral text-xs font-bold">
                   Add
                 </button>
               </div>
-              <div id="skills-container" class="flex flex-wrap gap-1.5 p-3 rounded-xl bg-[#0B0E14] border border-white/5 min-h-[55px] max-h-[140px] overflow-y-auto">
+              <div id="skills-container" class="flex flex-wrap gap-1.5 p-3 rounded-2xl bg-[#111116] border border-white/5 min-h-[55px] max-h-[140px] overflow-y-auto">
                 <!-- tags -->
               </div>
             </div>
 
             <!-- Drag & Drop PDF Resume Import -->
-            <div id="drop-zone" class="border-2 border-dashed border-white/10 hover:border-indigo-500/50 rounded-2xl p-5 text-center cursor-pointer transition bg-[#0B0E14]/60">
-              <i data-lucide="upload-cloud" class="w-6 h-6 text-indigo-400 mx-auto mb-1.5"></i>
-              <p class="text-xs font-semibold text-slate-300">Drag & drop your existing PDF resume to auto-populate</p>
-              <p class="text-[10px] text-slate-500 mt-0.5">Parsed locally with pypdf &bull; Zero external cloud leaks</p>
+            <div id="drop-zone" class="border-2 border-dashed border-white/10 hover:border-[#7C5CFF]/60 rounded-2xl p-5 text-center cursor-pointer transition bg-[#111116]/60">
+              <i data-lucide="upload-cloud" class="w-6 h-6 text-[#7C5CFF] mx-auto mb-1.5"></i>
+              <p class="text-xs font-bold text-slate-200">Drag & drop your existing PDF resume to auto-populate</p>
+              <p class="text-[10px] text-[#92929D] mt-0.5">Parsed locally with pypdf &bull; Zero external cloud leaks</p>
               <input id="resume-file-input" type="file" accept=".pdf" class="hidden" />
+            </div>
+
+            <!-- Integrated Anti-AI Humanizer -->
+            <div class="pt-3 border-t border-white/5 space-y-3">
+              <div class="flex items-center space-x-2 text-[#35D6A0]">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-white">Anti-AI Detection Humanizer</h3>
+              </div>
+              <textarea id="humanize-input" rows="2" placeholder="Paste robotic ChatGPT resume bullet points to rewrite into authentic human style..." 
+                        class="w-full p-3 app-input text-xs resize-none"></textarea>
+              <button onclick="runAntiAiHumanizer()" class="w-full py-2 btn-neutral text-xs font-bold flex items-center justify-center space-x-2">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#35D6A0]"></i>
+                <span>Humanize Bullet Points</span>
+              </button>
+              <div id="humanize-output-box" class="hidden p-3 rounded-2xl bg-[#111116] border border-white/5 text-xs text-slate-300 leading-relaxed font-normal whitespace-pre-line"></div>
             </div>
 
           </div>
 
-          <!-- Integrated Anti-AI Humanizer & STAR Story Solver -->
-          <div class="app-panel p-6 border border-white/10 space-y-4">
+          <!-- Right: ATS Readiness & Compiled Resumes (5 cols) -->
+          <div class="lg:col-span-5 space-y-4">
+            
+            <!-- ATS Readiness Tile -->
+            <div class="bento-box p-6 space-y-3">
+              <div class="flex items-center justify-between">
+                <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-[#35D6A0]"></i>
+                  <span>ATS Readiness Analysis</span>
+                </h3>
+                <span id="ats-score-badge" class="text-sm font-black text-[#35D6A0]">94%</span>
+              </div>
+
+              <div class="w-full bg-[#111116] rounded-full h-2 overflow-hidden">
+                <div id="ats-progress-bar" class="bg-gradient-to-r from-[#7C5CFF] to-[#35D6A0] h-2 rounded-full transition-all duration-500" style="width: 94%"></div>
+              </div>
+
+              <div class="space-y-1.5 text-xs text-[#92929D] pt-1">
+                <div class="flex justify-between py-1 border-b border-white/5">
+                  <span>Text Layer Extraction</span>
+                  <span class="text-[#35D6A0] font-bold">100% Clean</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-white/5">
+                  <span>LuaLaTeX Font Embedding</span>
+                  <span class="text-[#35D6A0] font-bold">Verified</span>
+                </div>
+                <div class="flex justify-between py-1">
+                  <span>Layout Constraints</span>
+                  <span class="text-[#7C5CFF] font-bold">2-Page Enforced</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tailored Documents Gallery -->
+            <div class="bento-box p-6 space-y-3">
+              <div class="flex items-center justify-between border-b border-white/5 pb-2.5">
+                <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+                  <i data-lucide="files" class="w-4 h-4 text-[#7C5CFF]"></i>
+                  <span>Compiled Resumes & Letters</span>
+                </h3>
+                <button onclick="loadTailoredPackages()" class="p-1 rounded-lg hover:bg-white/5 text-[#92929D]" title="Refresh">
+                  <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+
+              <div id="tailored-docs-list" class="space-y-2 max-h-[340px] overflow-y-auto pr-1">
+                <!-- dynamic list -->
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ====================================================== -->
+      <!-- VIEW 5: INTERVIEW PREP (STAR & Recruiter Outreach)     -->
+      <!-- ====================================================== -->
+      <section id="sec-interview" class="hidden space-y-4">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          
+          <!-- STAR Story Solver -->
+          <div class="bento-box p-6 space-y-4">
             <div class="flex items-center space-x-3 border-b border-white/5 pb-3">
-              <div class="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center">
-                <i data-lucide="shield-check" class="w-4 h-4"></i>
+              <div class="w-9 h-9 rounded-xl bg-[#7C5CFF]/15 border border-[#7C5CFF]/30 flex items-center justify-center text-[#7C5CFF]">
+                <i data-lucide="award" class="w-5 h-5"></i>
               </div>
               <div>
-                <h3 class="text-sm font-bold text-white">Anti-AI Detection Humanizer</h3>
-                <p class="text-xs text-slate-400">Rewrites robotic resume bullet points into authentic, high-impact human copy</p>
+                <h3 class="text-sm font-bold text-white">STAR Story Generator</h3>
+                <p class="text-xs text-[#92929D]">Authentic interview answers strictly grounded in your experience</p>
               </div>
             </div>
 
             <div>
-              <textarea id="humanize-input" rows="3" placeholder="Paste robotic or AI-generated resume bullet points here..." 
+              <label class="block text-xs font-medium text-[#92929D] mb-1.5">Interview Question or Behavioral Prompt</label>
+              <textarea id="star-question-input" rows="3" placeholder="e.g. Describe a challenging bug you fixed or how you handled competing priorities..." 
                         class="w-full p-3 app-input text-xs resize-none"></textarea>
             </div>
 
-            <button onclick="runAntiAiHumanizer()" class="w-full py-2.5 btn-subtle text-xs font-semibold flex items-center justify-center space-x-2">
-              <i data-lucide="sparkles" class="w-4 h-4 text-emerald-400"></i>
-              <span>Humanize Bullet Points</span>
+            <button onclick="generateStarAnswer()" id="btn-generate-star" class="w-full py-2.5 btn-violet text-xs font-bold flex items-center justify-center space-x-2">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span>Generate Structured STAR Answer</span>
             </button>
 
-            <div id="humanize-output-box" class="hidden p-3.5 rounded-xl bg-[#0B0E14] border border-white/5 text-xs text-slate-300 leading-relaxed font-normal whitespace-pre-line">
-              <!-- Humanized output -->
+            <div id="star-output-box" class="hidden p-4 rounded-2xl bg-[#111116] border border-white/5 space-y-2">
+              <div class="flex items-center justify-between text-xs font-semibold text-[#7C5CFF]">
+                <span>STAR Protocol Response:</span>
+                <button onclick="copyText('star-output-text')" class="text-[#92929D] hover:text-white flex items-center space-x-1 text-[11px]">
+                  <i data-lucide="copy" class="w-3 h-3"></i>
+                  <span>Copy</span>
+                </button>
+              </div>
+              <p id="star-output-text" class="text-xs text-slate-300 leading-relaxed whitespace-pre-line font-normal"></p>
             </div>
           </div>
 
-        </div>
-
-        <!-- Right: ATS Readiness & Tailored Documents (5 cols) -->
-        <div class="lg:col-span-5 space-y-6">
-          
-          <!-- ATS Readiness Tile -->
-          <div class="app-card p-6 space-y-3">
-            <div class="flex items-center justify-between">
-              <h3 class="text-sm font-bold text-white flex items-center space-x-2">
-                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
-                <span>ATS Readiness Analysis</span>
-              </h3>
-              <span id="ats-score-badge" class="text-sm font-black text-emerald-400">94%</span>
-            </div>
-
-            <div class="w-full bg-[#0B0E14] rounded-full h-2 overflow-hidden">
-              <div id="ats-progress-bar" class="bg-gradient-to-r from-indigo-500 to-emerald-400 h-2 rounded-full transition-all duration-500" style="width: 94%"></div>
-            </div>
-
-            <div class="space-y-1.5 text-xs text-slate-400 pt-1">
-              <div class="flex justify-between py-1 border-b border-white/5">
-                <span>Text Layer Extraction</span>
-                <span class="text-emerald-400 font-semibold">100% Clean</span>
+          <!-- Recruiter Cold Outreach Drafter -->
+          <div class="bento-box p-6 space-y-4">
+            <div class="flex items-center space-x-3 border-b border-white/5 pb-3">
+              <div class="w-9 h-9 rounded-xl bg-[#45B8FF]/15 border border-[#45B8FF]/30 flex items-center justify-center text-[#45B8FF]">
+                <i data-lucide="send" class="w-5 h-5"></i>
               </div>
-              <div class="flex justify-between py-1 border-b border-white/5">
-                <span>LuaLaTeX Font Embedding</span>
-                <span class="text-emerald-400 font-semibold">Verified</span>
-              </div>
-              <div class="flex justify-between py-1">
-                <span>Layout Constraints</span>
-                <span class="text-indigo-400 font-semibold">2-Page Enforced</span>
+              <div>
+                <h3 class="text-sm font-bold text-white">Cold Outreach Drafter</h3>
+                <p class="text-xs text-[#92929D]">High-converting recruiter messages tailored to target roles</p>
               </div>
             </div>
-          </div>
 
-          <!-- Tailored Documents Gallery -->
-          <div class="app-panel p-6 border border-white/10 space-y-3">
-            <div class="flex items-center justify-between border-b border-white/5 pb-2.5">
-              <h3 class="text-sm font-bold text-white flex items-center space-x-2">
-                <i data-lucide="files" class="w-4 h-4 text-indigo-400"></i>
-                <span>Compiled Resumes & Cover Letters</span>
-              </h3>
-              <button onclick="loadTailoredPackages()" class="p-1 rounded-lg hover:bg-white/5 text-slate-400" title="Refresh">
-                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-              </button>
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div>
+                <label class="block text-[#92929D] font-medium mb-1">Company</label>
+                <input id="outreach-company" type="text" placeholder="e.g. Stripe, DeepMind" class="w-full px-3 py-2 app-input" />
+              </div>
+              <div>
+                <label class="block text-[#92929D] font-medium mb-1">Role Title</label>
+                <input id="outreach-role" type="text" placeholder="e.g. AI Engineer Intern" class="w-full px-3 py-2 app-input" />
+              </div>
             </div>
 
-            <div id="tailored-docs-list" class="space-y-2 max-h-[380px] overflow-y-auto pr-1">
-              <!-- dynamic list -->
+            <div>
+              <label class="block text-xs font-medium text-[#92929D] mb-1.5">Key Hook / Alignment Detail</label>
+              <input id="outreach-note" type="text" placeholder="e.g. Excited by your team's work on low-latency inference..." class="w-full px-3 py-2 app-input text-xs" />
             </div>
-          </div>
 
-          <!-- Behavioral STAR Story Solver Card -->
-          <div class="app-card p-6 space-y-3">
-            <div class="flex items-center space-x-2 text-indigo-400">
-              <i data-lucide="award" class="w-4 h-4"></i>
-              <h3 class="text-xs font-bold uppercase tracking-wider text-white">Interview STAR Solver</h3>
-            </div>
-            <p class="text-xs text-slate-400">Generate structured answers for behavioral questions grounded in your actual projects.</p>
-            <input id="star-question-quick" type="text" placeholder="e.g. Challenging technical bug or trade-off..." class="w-full px-3 py-2 app-input text-xs" />
-            <button onclick="generateQuickStarAnswer()" class="w-full py-2 btn-brand-primary text-xs font-semibold">
-              Generate STAR Response
+            <button onclick="generateOutreachMessage()" id="btn-generate-outreach" class="w-full py-2.5 btn-violet text-xs font-bold flex items-center justify-center space-x-2">
+              <i data-lucide="send" class="w-4 h-4"></i>
+              <span>Draft Recruiter Note</span>
             </button>
-            <div id="quick-star-output" class="hidden p-3 rounded-xl bg-[#0B0E14] text-xs text-slate-300 leading-relaxed font-normal whitespace-pre-line border border-white/5 max-h-48 overflow-y-auto"></div>
+
+            <div id="outreach-output-box" class="hidden p-4 rounded-2xl bg-[#111116] border border-white/5 space-y-2">
+              <div class="flex items-center justify-between text-xs font-semibold text-[#45B8FF]">
+                <span>Personalized Recruiter Note:</span>
+                <button onclick="copyText('outreach-output-text')" class="text-[#92929D] hover:text-white flex items-center space-x-1 text-[11px]">
+                  <i data-lucide="copy" class="w-3 h-3"></i>
+                  <span>Copy</span>
+                </button>
+              </div>
+              <p id="outreach-output-text" class="text-xs text-slate-300 leading-relaxed whitespace-pre-line font-normal"></p>
+            </div>
           </div>
 
         </div>
 
-      </div>
-
-    </section>
+      </section>
 
 
-    <!-- ====================================================== -->
-    <!-- 4. APPLICATIONS SECTION (Central Tracker)             -->
-    <!-- ====================================================== -->
-    <section id="sec-applications" class="hidden space-y-6">
-      
-      <!-- Top Overview Stats -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div class="app-card p-5">
-          <span class="text-xs text-slate-400 font-medium">Total Applied</span>
-          <div id="track-stat-total" class="text-2xl font-extrabold text-white mt-1">0</div>
-        </div>
-        <div class="app-card p-5">
-          <span class="text-xs text-slate-400 font-medium">Under Review</span>
-          <div id="track-stat-review" class="text-2xl font-extrabold text-indigo-400 mt-1">0</div>
-        </div>
-        <div class="app-card p-5">
-          <span class="text-xs text-slate-400 font-medium">Interviews</span>
-          <div id="track-stat-interview" class="text-2xl font-extrabold text-emerald-400 mt-1">0</div>
-        </div>
-        <div class="app-card p-5">
-          <span class="text-xs text-slate-400 font-medium">Offers</span>
-          <div id="track-stat-offers" class="text-2xl font-extrabold text-cyan-400 mt-1">0</div>
-        </div>
-      </div>
-
-      <!-- Application Table Panel -->
-      <div class="app-panel border border-white/10 overflow-hidden shadow-lg">
+      <!-- ====================================================== -->
+      <!-- VIEW 6: SETTINGS & PERSONAS                            -->
+      <!-- ====================================================== -->
+      <section id="sec-settings" class="hidden space-y-4">
         
-        <!-- Controls: Search & Status Filters -->
-        <div class="p-5 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h2 class="text-base font-bold text-white">Application Pipeline</h2>
-            <p class="text-xs text-slate-400">Synchronized locally with job_search_tracker.csv</p>
+        <div class="bento-box p-6 space-y-5 max-w-2xl">
+          <div class="flex items-center justify-between border-b border-white/5 pb-3">
+            <div>
+              <h2 class="text-base font-bold text-white">Platform Settings & Personas</h2>
+              <p class="text-xs text-[#92929D]">Switch between preset applicant profiles or reset configurations</p>
+            </div>
           </div>
 
-          <div class="flex flex-wrap items-center gap-2">
-            <!-- Search in tracker -->
-            <input id="tracker-filter-query" type="text" placeholder="Filter company or role..." 
-                   class="px-3 py-1.5 app-input text-xs w-48" oninput="filterTrackerRows()" />
+          <div class="space-y-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#92929D]">Select Active Persona</span>
+            
+            <button onclick="quickLoginPreset('candidate')" class="w-full text-left p-4 rounded-2xl bento-box hover:border-[#7C5CFF]/50 flex items-center justify-between">
+              <div>
+                <div class="font-bold text-xs text-white">Candidate Profile (Default)</div>
+                <div class="text-[11px] text-[#92929D]">BTech in CS & AI &bull; Bengaluru</div>
+              </div>
+              <span class="text-xs text-[#7C5CFF] font-bold">Select &rarr;</span>
+            </button>
 
-            <!-- Status Filter -->
-            <select id="tracker-filter-status" onchange="filterTrackerRows()" class="px-3 py-1.5 app-input text-xs text-slate-200">
-              <option value="all">All Statuses</option>
-              <option value="applied">Applied</option>
-              <option value="interview">Interview</option>
-              <option value="assessment">Assessment</option>
-              <option value="offer">Offer</option>
-              <option value="rejected">Rejected</option>
-            </select>
+            <button onclick="quickLoginPreset('alex')" class="w-full text-left p-4 rounded-2xl bento-box hover:border-[#7C5CFF]/50 flex items-center justify-between">
+              <div>
+                <div class="font-bold text-xs text-white">Alex Sharma</div>
+                <div class="text-[11px] text-[#92929D]">Full-Stack AI Developer &bull; Bengaluru</div>
+              </div>
+              <span class="text-xs text-[#7C5CFF] font-bold">Select &rarr;</span>
+            </button>
 
-            <button onclick="loadTrackerData()" class="p-1.5 btn-subtle text-slate-300" title="Refresh">
-              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <button onclick="quickLoginPreset('guest')" class="w-full text-left p-4 rounded-2xl bento-box hover:border-[#7C5CFF]/50 flex items-center justify-between">
+              <div>
+                <div class="font-bold text-xs text-white">Guest Candidate</div>
+                <div class="text-[11px] text-[#92929D]">Blank slate for custom information</div>
+              </div>
+              <span class="text-xs text-[#7C5CFF] font-bold">Select &rarr;</span>
             </button>
           </div>
+
+          <div class="pt-4 border-t border-white/5 flex items-center justify-between text-xs text-[#92929D]">
+            <span>Local Engine Port: 8000</span>
+            <span class="text-[#35D6A0]">Health: OK (Status 200)</span>
+          </div>
         </div>
 
-        <!-- Table View -->
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-[#0B0E14] border-b border-white/5 text-slate-400 uppercase text-[10px] tracking-wider font-semibold">
-              <tr>
-                <th class="p-3.5 pl-6">Date</th>
-                <th class="p-3.5">Company</th>
-                <th class="p-3.5">Role</th>
-                <th class="p-3.5">Location</th>
-                <th class="p-3.5">Status</th>
-                <th class="p-3.5">Notes</th>
-                <th class="p-3.5 pr-6 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="tracker-table-body" class="divide-y divide-white/5 font-medium">
-              <!-- Dynamically populated -->
-            </tbody>
-          </table>
-        </div>
+      </section>
 
-      </div>
+    </main>
 
-    </section>
-
-  </main>
+  </div>
 
 
   <!-- ======================================================== -->
   <!-- MODAL: APPLICATION PREPARATION WORKFLOW                  -->
   <!-- ======================================================== -->
   <div id="prep-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
-    <div id="prep-modal-card" class="app-panel bg-[#12151F] w-full max-w-2xl border border-white/10 shadow-2xl flex flex-col max-h-[90vh]">
+    <div id="prep-modal-card" class="bento-box bg-[#17171B] w-full max-w-2xl border border-white/10 shadow-2xl flex flex-col max-h-[90vh]">
       
-      <!-- Modal Header -->
       <div class="p-5 border-b border-white/5 flex items-center justify-between">
         <div>
-          <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400">Application Preparation</span>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#7C5CFF]">Application Preparation</span>
           <h3 id="prep-modal-title" class="text-base font-bold text-white mt-0.5">Role Title</h3>
-          <p id="prep-modal-subtitle" class="text-xs text-slate-400">Company &bull; Location</p>
+          <p id="prep-modal-subtitle" class="text-xs text-[#92929D]">Company &bull; Location</p>
         </div>
-        <button onclick="closePrepModal()" class="w-8 h-8 rounded-lg hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white">
+        <button onclick="closePrepModal()" class="w-8 h-8 rounded-lg hover:bg-white/10 flex items-center justify-center text-[#92929D] hover:text-white">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <!-- Modal Body -->
       <div class="p-5 overflow-y-auto space-y-4 text-xs">
         
-        <!-- Two Primary Preparation Actions -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <button id="prep-btn-tailor-cv" onclick="triggerTailorFromModal()" class="flex items-center justify-center space-x-2 p-3 rounded-xl btn-brand-primary text-xs font-bold">
+          <button id="prep-btn-tailor-cv" onclick="triggerTailorFromModal()" class="flex items-center justify-center space-x-2 p-3 rounded-xl btn-violet text-xs font-bold">
             <i data-lucide="file-check" class="w-4 h-4"></i>
             <span>Tailor LuaLaTeX Resume (PDF)</span>
           </button>
-          <button id="prep-btn-mark-applied" onclick="markJobAppliedFromModal()" class="flex items-center justify-center space-x-2 p-3 rounded-xl btn-subtle text-xs font-bold">
-            <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+          <button id="prep-btn-mark-applied" onclick="markJobAppliedFromModal()" class="flex items-center justify-center space-x-2 p-3 rounded-xl btn-neutral text-xs font-bold">
+            <i data-lucide="check" class="w-4 h-4 text-[#35D6A0]"></i>
             <span>Apply & Log to Tracker</span>
           </button>
         </div>
 
-        <!-- Cover Letter Draft -->
         <div class="space-y-1.5">
           <div class="flex items-center justify-between">
             <h4 class="font-bold text-white flex items-center space-x-1.5">
-              <i data-lucide="mail" class="w-3.5 h-3.5 text-indigo-400"></i>
+              <i data-lucide="mail" class="w-3.5 h-3.5 text-[#7C5CFF]"></i>
               <span>Tailored Cover Letter Draft</span>
             </h4>
-            <button onclick="copyText('prep-cover-letter-text')" class="text-slate-400 hover:text-white flex items-center space-x-1 text-[11px]">
+            <button onclick="copyText('prep-cover-letter-text')" class="text-[#92929D] hover:text-white flex items-center space-x-1 text-[11px]">
               <i data-lucide="copy" class="w-3 h-3"></i>
               <span>Copy</span>
             </button>
           </div>
-          <div id="prep-cover-letter-text" class="p-3.5 rounded-xl bg-[#0B0E14] border border-white/5 text-slate-300 leading-relaxed font-normal whitespace-pre-line text-xs max-h-44 overflow-y-auto">
+          <div id="prep-cover-letter-text" class="p-3.5 rounded-2xl bg-[#111116] border border-white/5 text-slate-300 leading-relaxed font-normal whitespace-pre-line text-xs max-h-44 overflow-y-auto">
             Generating tailored draft...
           </div>
         </div>
 
-        <!-- STAR Talking Point -->
         <div class="space-y-1.5">
           <h4 class="font-bold text-white flex items-center space-x-1.5">
-            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#FFB84D]"></i>
             <span>Interview Talking Point (STAR Format)</span>
           </h4>
-          <div id="prep-star-point-text" class="p-3.5 rounded-xl bg-[#0B0E14] border border-white/5 text-slate-300 leading-relaxed font-normal whitespace-pre-line text-xs">
+          <div id="prep-star-point-text" class="p-3.5 rounded-2xl bg-[#111116] border border-white/5 text-slate-300 leading-relaxed font-normal whitespace-pre-line text-xs">
             Selecting relevant project experience...
           </div>
         </div>
 
       </div>
 
-      <!-- Modal Footer -->
       <div class="p-4 border-t border-white/5 flex items-center justify-between">
-        <a id="prep-modal-source-link" href="#" target="_blank" rel="noopener noreferrer" class="text-xs text-indigo-400 hover:underline font-semibold flex items-center space-x-1">
+        <a id="prep-modal-source-link" href="#" target="_blank" rel="noopener noreferrer" class="text-xs text-[#7C5CFF] hover:underline font-bold flex items-center space-x-1">
           <span>Open Original Job Posting</span>
           <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
         </a>
-        <button onclick="closePrepModal()" class="px-4 py-2 rounded-xl btn-subtle text-xs font-semibold">
+        <button onclick="closePrepModal()" class="px-4 py-2 rounded-xl btn-neutral text-xs font-bold">
           Close
         </button>
       </div>
@@ -824,19 +1098,19 @@
   <!-- MODAL: INSTANT JOB DESCRIPTION ANALYZER                  -->
   <!-- ======================================================== -->
   <div id="jd-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
-    <div id="jd-modal-card" class="app-panel bg-[#12151F] w-full max-w-2xl border border-white/10 shadow-2xl flex flex-col max-h-[90vh]">
+    <div id="jd-modal-card" class="bento-box bg-[#17171B] w-full max-w-2xl border border-white/10 shadow-2xl flex flex-col max-h-[90vh]">
       
       <div class="p-5 border-b border-white/5 flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <div class="w-9 h-9 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+          <div class="w-9 h-9 rounded-2xl bg-[#7C5CFF]/20 text-[#7C5CFF] flex items-center justify-center">
             <i data-lucide="scan-search" class="w-5 h-5"></i>
           </div>
           <div>
             <h3 class="text-sm font-bold text-white">Job Description Compatibility Evaluator</h3>
-            <p class="text-xs text-slate-400">Checks semantic match, matching strengths, and missing skills</p>
+            <p class="text-xs text-[#92929D]">Checks semantic match, matching strengths, and missing skills</p>
           </div>
         </div>
-        <button onclick="closeJDAnalyzeModal()" class="w-8 h-8 rounded-lg hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white">
+        <button onclick="closeJDAnalyzeModal()" class="w-8 h-8 rounded-lg hover:bg-white/10 flex items-center justify-center text-[#92929D] hover:text-white">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
@@ -848,31 +1122,31 @@
                     class="w-full p-3 app-input text-xs resize-none"></textarea>
         </div>
 
-        <button onclick="analyzePastedJD()" id="btn-run-jd-analysis" class="w-full py-2.5 rounded-xl btn-brand-primary text-xs font-bold flex items-center justify-center space-x-2">
+        <button onclick="analyzePastedJD()" id="btn-run-jd-analysis" class="w-full py-2.5 rounded-xl btn-violet text-xs font-bold flex items-center justify-center space-x-2">
           <i data-lucide="sparkles" class="w-4 h-4"></i>
           <span>Evaluate Match & Gaps</span>
         </button>
 
         <div id="jd-result-section" class="hidden space-y-3 pt-3 border-t border-white/5">
-          <div class="flex items-center justify-between p-3.5 rounded-xl bg-[#0B0E14] border border-white/5">
+          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-[#111116] border border-white/5">
             <div>
-              <span class="text-slate-400 font-medium">Estimated Match Alignment:</span>
+              <span class="text-[#92929D] font-medium">Estimated Match Alignment:</span>
               <div id="jd-match-verdict" class="text-xs text-slate-200 mt-0.5">High Competency Alignment</div>
             </div>
-            <div id="jd-match-score" class="text-3xl font-black text-emerald-400">88%</div>
+            <div id="jd-match-score" class="text-3xl font-black text-[#35D6A0]">88%</div>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
-            <div class="p-3 rounded-xl bg-[#0B0E14] border border-white/5 space-y-1.5">
-              <span class="text-[11px] font-semibold text-emerald-400 flex items-center space-x-1">
+            <div class="p-3 rounded-2xl bg-[#111116] border border-white/5 space-y-1.5">
+              <span class="text-[11px] font-bold text-[#35D6A0] flex items-center space-x-1">
                 <i data-lucide="check" class="w-3.5 h-3.5"></i>
                 <span>Matching Strengths:</span>
               </span>
               <div id="jd-matching-skills" class="flex flex-wrap gap-1 text-[11px]"></div>
             </div>
 
-            <div class="p-3 rounded-xl bg-[#0B0E14] border border-white/5 space-y-1.5">
-              <span class="text-[11px] font-semibold text-amber-400 flex items-center space-x-1">
+            <div class="p-3 rounded-2xl bg-[#111116] border border-white/5 space-y-1.5">
+              <span class="text-[11px] font-bold text-[#FFB84D] flex items-center space-x-1">
                 <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
                 <span>Missing / Gaps:</span>
               </span>
@@ -883,7 +1157,7 @@
       </div>
 
       <div class="p-4 border-t border-white/5 flex justify-end">
-        <button onclick="closeJDAnalyzeModal()" class="px-4 py-2 rounded-xl btn-subtle text-xs font-semibold">
+        <button onclick="closeJDAnalyzeModal()" class="px-4 py-2 rounded-xl btn-neutral text-xs font-bold">
           Close
         </button>
       </div>
@@ -896,43 +1170,43 @@
   <!-- MODAL: PERSONA & PROFILE SWITCHER                        -->
   <!-- ======================================================== -->
   <div id="auth-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
-    <div id="auth-modal-card" class="app-panel bg-[#12151F] w-full max-w-md border border-white/10 shadow-2xl flex flex-col">
+    <div id="auth-modal-card" class="bento-box bg-[#17171B] w-full max-w-md border border-white/10 shadow-2xl flex flex-col">
       
       <div class="p-5 border-b border-white/5 flex items-center justify-between">
         <h3 class="text-sm font-bold text-white">Switch Profile Persona</h3>
-        <button onclick="closeAuthModal()" class="w-8 h-8 rounded-lg hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white">
+        <button onclick="closeAuthModal()" class="w-8 h-8 rounded-lg hover:bg-white/10 flex items-center justify-center text-[#92929D] hover:text-white">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
       <div class="p-5 space-y-2.5">
-        <button onclick="quickLoginPreset('candidate')" class="w-full text-left p-3.5 rounded-xl app-card hover:border-indigo-500/50 flex items-center justify-between">
+        <button onclick="quickLoginPreset('candidate')" class="w-full text-left p-3.5 rounded-2xl bento-box bg-[#111116] hover:border-[#7C5CFF]/50 flex items-center justify-between">
           <div>
             <div class="font-bold text-xs text-white">Candidate Profile (Default)</div>
-            <div class="text-[11px] text-slate-400">BTech in CS & AI &bull; Bengaluru</div>
+            <div class="text-[11px] text-[#92929D]">BTech in CS & AI &bull; Bengaluru</div>
           </div>
-          <span class="text-xs text-indigo-400 font-semibold">&rarr;</span>
+          <span class="text-xs text-[#7C5CFF] font-bold">&rarr;</span>
         </button>
 
-        <button onclick="quickLoginPreset('alex')" class="w-full text-left p-3.5 rounded-xl app-card hover:border-indigo-500/50 flex items-center justify-between">
+        <button onclick="quickLoginPreset('alex')" class="w-full text-left p-3.5 rounded-2xl bento-box bg-[#111116] hover:border-[#7C5CFF]/50 flex items-center justify-between">
           <div>
             <div class="font-bold text-xs text-white">Alex Sharma</div>
-            <div class="text-[11px] text-slate-400">Full-Stack AI Developer &bull; Bengaluru</div>
+            <div class="text-[11px] text-[#92929D]">Full-Stack AI Developer &bull; Bengaluru</div>
           </div>
-          <span class="text-xs text-indigo-400 font-semibold">&rarr;</span>
+          <span class="text-xs text-[#7C5CFF] font-bold">&rarr;</span>
         </button>
 
-        <button onclick="quickLoginPreset('guest')" class="w-full text-left p-3.5 rounded-xl app-card hover:border-indigo-500/50 flex items-center justify-between">
+        <button onclick="quickLoginPreset('guest')" class="w-full text-left p-3.5 rounded-2xl bento-box bg-[#111116] hover:border-[#7C5CFF]/50 flex items-center justify-between">
           <div>
             <div class="font-bold text-xs text-white">Guest Candidate</div>
-            <div class="text-[11px] text-slate-400">Blank slate for custom information</div>
+            <div class="text-[11px] text-[#92929D]">Blank slate for custom information</div>
           </div>
-          <span class="text-xs text-indigo-400 font-semibold">&rarr;</span>
+          <span class="text-xs text-[#7C5CFF] font-bold">&rarr;</span>
         </button>
       </div>
 
       <div class="p-4 border-t border-white/5 flex justify-end">
-        <button onclick="closeAuthModal()" class="px-4 py-2 rounded-xl btn-subtle text-xs font-semibold">
+        <button onclick="closeAuthModal()" class="px-4 py-2 rounded-xl btn-neutral text-xs font-bold">
           Done
         </button>
       </div>
@@ -942,7 +1216,7 @@
 
 
   <!-- Floating Toast Notification -->
-  <div id="toast" class="hidden fixed bottom-6 right-6 z-50 px-4 py-3 rounded-2xl border text-xs font-semibold flex items-center space-x-2.5 shadow-2xl transition-all">
+  <div id="toast" class="hidden fixed bottom-6 right-6 z-50 px-4 py-3 rounded-2xl border text-xs font-bold flex items-center space-x-2.5 shadow-2xl transition-all">
     <i id="toast-icon" data-lucide="info" class="w-4 h-4"></i>
     <span id="toast-msg">Notification</span>
   </div>

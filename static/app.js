@@ -1,6 +1,6 @@
 /**
- * ApplyBot — Premium AI Job Automation Platform
- * Frontend Architecture & State Controller
+ * ApplyBot — Premium Bento Grid Architecture & Controller
+ * Integrated Three.js 3D Hero + GSAP Stagger Animations
  * Inspires by Linear, Raycast, Stripe & Framer
  */
 
@@ -12,7 +12,6 @@ let displayedJobs = [];
 let trackerRecords = [];
 let activePrepJob = null;
 let currentWorkModeFilter = "all";
-let isLandingViewActive = false;
 
 // ============================================================================
 // 1. INITIALIZATION & LIFECYCLE
@@ -22,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (window.lucide) lucide.createIcons();
   
   // Initialize Core Systems
+  initHeroThreeJS();
   loadProfileData();
   loadDashboardData();
   executeJobSearch();
@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Dynamic Time-based Greeting
 function updateTimeGreeting() {
-  const greetingEl = document.getElementById("dashboard-greeting");
+  const greetingEl = document.getElementById("dash-greeting-time");
   if (!greetingEl) return;
   const hour = new Date().getHours();
   if (hour < 12) greetingEl.textContent = "Good morning";
@@ -42,79 +42,238 @@ function updateTimeGreeting() {
 }
 
 // ============================================================================
-// 2. SIMPLIFIED NAVIGATION (4 Primary Core Sections + Landing Mode)
+// 2. THREE.JS 3D HERO VISUAL (Flowbase-Style 3D Floating Slate & Glowing Screen)
 // ============================================================================
 
-function switchNav(sectionKey) {
-  // If landing page was open, hide it
-  if (isLandingViewActive) {
-    toggleLandingView(false);
+function initHeroThreeJS() {
+  const canvas = document.getElementById("hero-three-canvas");
+  if (!canvas || !window.THREE) return;
+
+  // Check WebGL availability
+  try {
+    const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+    if (!gl) return;
+  } catch (e) {
+    return;
   }
 
-  const sections = ["dashboard", "jobs", "career", "applications"];
-  
+  const container = canvas.parentElement;
+  const rect = container.getBoundingClientRect();
+  const width = rect.width || 320;
+  const height = rect.height || 360;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+  camera.position.z = 18;
+
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "low-power" });
+  renderer.setSize(width, height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+
+  // Device chassis: Rounded rectangle extruded slate
+  const shape = new THREE.Shape();
+  const w = 5.2, h = 9.4, r = 1.1;
+  shape.moveTo(-w / 2 + r, -h / 2);
+  shape.lineTo(w / 2 - r, -h / 2);
+  shape.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + r);
+  shape.lineTo(w / 2, h / 2 - r);
+  shape.quadraticCurveTo(w / 2, h / 2, w / 2 - r, h / 2);
+  shape.lineTo(-w / 2 + r, h / 2);
+  shape.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - r);
+  shape.lineTo(-w / 2, -h / 2 + r);
+  shape.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + r, -h / 2);
+
+  const extrudeSettings = {
+    depth: 0.55,
+    bevelEnabled: true,
+    bevelSegments: 5,
+    steps: 1,
+    bevelSize: 0.18,
+    bevelThickness: 0.18
+  };
+  const bodyGeom = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+  bodyGeom.center();
+  const bodyMat = new THREE.MeshStandardMaterial({
+    color: 0x16161E,
+    metalness: 0.88,
+    roughness: 0.22
+  });
+  const deviceMesh = new THREE.Mesh(bodyGeom, bodyMat);
+  scene.add(deviceMesh);
+
+  // Glowing Screen Texture (Rich purple to cyan gradient matching Bento Guide)
+  const screenCanvas = document.createElement("canvas");
+  screenCanvas.width = 256;
+  screenCanvas.height = 460;
+  const ctx = screenCanvas.getContext("2d");
+  const grad = ctx.createLinearGradient(0, 0, 256, 460);
+  grad.addColorStop(0, "#7C5CFF");
+  grad.addColorStop(0.5, "#45B8FF");
+  grad.addColorStop(1, "#30DC97");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 256, 460);
+
+  // Subtle glass highlight reflection
+  const gradGlass = ctx.createLinearGradient(0, 0, 256, 0);
+  gradGlass.addColorStop(0, "rgba(255, 255, 255, 0.28)");
+  gradGlass.addColorStop(0.25, "rgba(255, 255, 255, 0.08)");
+  gradGlass.addColorStop(0.5, "rgba(255, 255, 255, 0.0)");
+  ctx.fillStyle = gradGlass;
+  ctx.fillRect(0, 0, 256, 460);
+
+  const screenTex = new THREE.CanvasTexture(screenCanvas);
+  const screenGeom = new THREE.PlaneGeometry(4.9, 8.8);
+  const screenMat = new THREE.MeshBasicMaterial({
+    map: screenTex,
+    transparent: true,
+    opacity: 0.98
+  });
+  const screenMesh = new THREE.Mesh(screenGeom, screenMat);
+  screenMesh.position.z = 0.52;
+  deviceMesh.add(screenMesh);
+
+  // Floating ambient starlight particles
+  const particleCount = 38;
+  const pGeom = new THREE.BufferGeometry();
+  const pCoords = new Float32Array(particleCount * 3);
+  for (let i = 0; i < particleCount * 3; i++) {
+    pCoords[i] = (Math.random() - 0.5) * 32;
+  }
+  pGeom.setAttribute("position", new THREE.BufferAttribute(pCoords, 3));
+  const pMat = new THREE.PointsMaterial({
+    color: 0x30DC97,
+    size: 0.25,
+    transparent: true,
+    opacity: 0.55
+  });
+  const particleField = new THREE.Points(pGeom, pMat);
+  scene.add(particleField);
+
+  // Dual Accent Point Lighting
+  const light1 = new THREE.PointLight(0x7C5CFF, 3.8, 50);
+  light1.position.set(8, 8, 12);
+  scene.add(light1);
+
+  const light2 = new THREE.PointLight(0x30DC97, 2.5, 50);
+  light2.position.set(-8, -8, 10);
+  scene.add(light2);
+
+  const ambientLight = new THREE.AmbientLight(0x222230, 2.5);
+  scene.add(ambientLight);
+
+  // Initial tilt matching the reference mockup
+  deviceMesh.rotation.y = -0.34;
+  deviceMesh.rotation.x = 0.16;
+  deviceMesh.rotation.z = -0.04;
+  deviceMesh.position.x = 0.8;
+
+  // Smooth Parallax on Pointer Move
+  let mouseX = 0;
+  let mouseY = 0;
+  let targetX = 0;
+  let targetY = 0;
+
+  window.addEventListener("mousemove", (e) => {
+    mouseX = (e.clientX - window.innerWidth / 2) * 0.0015;
+    mouseY = (e.clientY - window.innerHeight / 2) * 0.0015;
+  }, { passive: true });
+
+  // Handle Resize
+  window.addEventListener("resize", () => {
+    const newRect = container.getBoundingClientRect();
+    if (!newRect.width) return;
+    camera.aspect = newRect.width / newRect.height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(newRect.width, newRect.height);
+  });
+
+  // Animation Loop with Visibility Control
+  let isRunning = true;
+  document.addEventListener("visibilitychange", () => {
+    isRunning = !document.hidden;
+  });
+
+  const clock = new THREE.Clock();
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if (!isRunning) return;
+
+    const time = clock.getElapsedTime();
+    targetX += (mouseX - targetX) * 0.05;
+    targetY += (mouseY - targetY) * 0.05;
+
+    // Gentle floating bobbing
+    deviceMesh.position.y = Math.sin(time * 1.5) * 0.3 - targetY * 4;
+    deviceMesh.position.x = 0.8 + targetX * 5;
+
+    // Dynamic tilt reacting to cursor and idle breathing
+    deviceMesh.rotation.y = -0.34 + targetX * 0.6 + Math.sin(time * 0.8) * 0.04;
+    deviceMesh.rotation.x = 0.16 - targetY * 0.5 + Math.cos(time * 0.7) * 0.03;
+
+    particleField.rotation.y += 0.0012;
+
+    renderer.render(scene, camera);
+  }
+
+  animate();
+}
+
+// ============================================================================
+// 3. SIDEBAR NAVIGATION CONTROLLER
+// ============================================================================
+
+function switchNav(navKey) {
+  const sections = ["dashboard", "jobs", "applications", "resume", "interview", "settings"];
+
   sections.forEach(key => {
     const secEl = document.getElementById(`sec-${key}`);
     const navBtn = document.getElementById(`nav-btn-${key}`);
 
-    if (key === sectionKey) {
+    if (key === navKey) {
       if (secEl) {
         secEl.classList.remove("hidden");
         if (window.gsap) {
           gsap.fromTo(secEl, 
-            { opacity: 0, y: 12 }, 
+            { opacity: 0, y: 14 }, 
             { opacity: 1, y: 0, duration: 0.22, ease: "power2.out" }
           );
         }
       }
       if (navBtn) {
-        navBtn.className = "flex items-center space-x-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all nav-tab-active";
+        navBtn.className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all sidebar-item-active";
       }
     } else {
       if (secEl) secEl.classList.add("hidden");
       if (navBtn) {
-        navBtn.className = "flex items-center space-x-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all text-slate-400 hover:text-white";
+        navBtn.className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all text-[#92929D] hover:text-white hover:bg-white/5";
       }
     }
   });
 
-  if (sectionKey === "applications") loadTrackerData();
-  if (sectionKey === "career") loadTailoredPackages();
+  if (navKey === "applications") loadTrackerData();
+  if (navKey === "resume") loadTailoredPackages();
 
   window.scrollTo({ top: 0, behavior: "smooth" });
   if (window.lucide) lucide.createIcons();
 }
 
-function toggleLandingView(forceState) {
-  const landingSec = document.getElementById("view-landing");
-  const mainSec = document.querySelector("main");
-  const toggleText = document.getElementById("landing-toggle-text");
+function toggleMobileNav() {
+  const drawer = document.getElementById("mobile-nav");
+  if (drawer) drawer.classList.toggle("hidden");
+}
 
-  if (typeof forceState === "boolean") {
-    isLandingViewActive = forceState;
-  } else {
-    isLandingViewActive = !isLandingViewActive;
-  }
-
-  if (isLandingViewActive) {
-    landingSec?.classList.remove("hidden");
-    mainSec?.classList.add("hidden");
-    if (toggleText) toggleText.textContent = "Open Cockpit";
-    if (window.gsap && landingSec) {
-      gsap.fromTo(landingSec, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.25 });
-    }
-  } else {
-    landingSec?.classList.add("hidden");
-    mainSec?.classList.remove("hidden");
-    if (toggleText) toggleText.textContent = "Product Overview";
-    switchNav("dashboard");
-  }
-
-  if (window.lucide) lucide.createIcons();
+function executeTopSearch() {
+  const q = document.getElementById("top-search-query")?.value.trim();
+  if (!q) return;
+  const jobsInput = document.getElementById("search-query");
+  if (jobsInput) jobsInput.value = q;
+  switchNav("jobs");
+  executeJobSearch();
 }
 
 // ============================================================================
-// 3. DASHBOARD EXPERIENCE
+// 4. DASHBOARD EXPERIENCE
 // ============================================================================
 
 async function loadDashboardData() {
@@ -122,15 +281,30 @@ async function loadDashboardData() {
     const res = await fetch("/api/dashboard-stats");
     if (res.ok) {
       const data = await res.json();
-      const atsScore = data.ats_score || 94;
+      const atsScore = data.ats_score || 94.8;
       
-      const atsBadge = document.getElementById("dash-stat-ats");
+      const bentoMatchFit = document.getElementById("bento-match-fit-stat");
+      const atsScoreText = document.getElementById("dash-match-score-text");
+      const atsCounter = document.getElementById("stat-counter-ats");
       const atsCareerBadge = document.getElementById("ats-score-badge");
       const atsBar = document.getElementById("ats-progress-bar");
 
-      if (atsBadge) atsBadge.textContent = `${atsScore}%`;
+      if (bentoMatchFit) bentoMatchFit.textContent = `${atsScore}%`;
+      if (atsScoreText) atsScoreText.textContent = `${atsScore}%`;
+      if (atsCounter) atsCounter.textContent = `${atsScore}%`;
       if (atsCareerBadge) atsCareerBadge.textContent = `${atsScore}%`;
       if (atsBar) atsBar.style.width = `${atsScore}%`;
+    }
+
+    // Animate Bento Vertical Output Bars with GSAP
+    if (window.gsap) {
+      gsap.from(".bento-bar", {
+        scaleY: 0,
+        transformOrigin: "bottom",
+        duration: 0.85,
+        stagger: 0.06,
+        ease: "power3.out"
+      });
     }
   } catch (err) {
     console.error("Dashboard stats error:", err);
@@ -139,68 +313,67 @@ async function loadDashboardData() {
 
 function updateDashboardGreeting(profile) {
   const name = profile.name || "Candidate";
-  const nameEl = document.getElementById("dash-user-name");
-  if (nameEl) nameEl.textContent = name;
+  const nameEl = document.getElementById("dash-greeting-name");
+  const sidebarName = document.getElementById("sidebar-user-name");
+  const sidebarInit = document.getElementById("sidebar-user-initial");
 
-  // Prominent Recommended Next Action
-  const nextActionEl = document.getElementById("dashboard-next-action-text");
-  if (nextActionEl) {
-    const skillsCount = (profile.skills || []).length;
-    if (skillsCount < 5) {
-      nextActionEl.textContent = "Your profile is missing technical stacks. Add your core languages and frameworks in 'My Career' to unlock high-accuracy job matches.";
-    } else {
-      nextActionEl.textContent = `You have 16 high-compatibility vacancies matching your verified ${profile.degree || "technical"} background. Prepare your tailored application to maximize recruiter response.`;
-    }
-  }
+  if (nameEl) nameEl.textContent = name;
+  if (sidebarName) sidebarName.textContent = name;
+  if (sidebarInit) sidebarInit.textContent = name.charAt(0).toUpperCase();
 }
 
 function renderDashboardCuratedJobs(jobs) {
   const container = document.getElementById("dash-curated-container");
   if (!container) return;
 
-  const topJobs = (jobs || []).slice(0, 4);
+  const topJobs = (jobs || []).slice(0, 3);
   if (topJobs.length === 0) {
     container.innerHTML = `
-      <div class="col-span-2 p-8 text-center app-card space-y-2">
-        <p class="text-xs text-slate-400">Loading your personalized opportunities...</p>
+      <div class="col-span-3 p-8 text-center bento-box space-y-2">
+        <i data-lucide="compass" class="w-6 h-6 text-[#7C5CFF] mx-auto animate-spin"></i>
+        <p class="text-xs text-[#9A9AA5]">Scanning and ranking high-affinity vacancies...</p>
       </div>
     `;
+    if (window.lucide) lucide.createIcons();
     return;
   }
 
   container.innerHTML = topJobs.map((job, idx) => {
-    const score = job.fit_score || job.jd_match_score || 92;
+    const score = job.fit_score || job.jd_match_score || 94;
+    const portal = (job.portal || "ATS").toUpperCase();
     return `
-      <div class="app-card p-5 flex flex-col justify-between space-y-3.5">
-        <div class="flex items-start justify-between gap-3">
-          <div class="min-w-0 flex-1">
-            <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400">
-              ${escapeHtml(job.portal || "DIRECT ATS")}
+      <div class="bento-box p-5 flex flex-col justify-between hover:border-[#7C5CFF]/40 transition group">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#7C5CFF]/15 border border-[#7C5CFF]/30 text-[#7C5CFF]">
+              ${escapeHtml(portal)}
             </span>
-            <h3 class="text-sm font-bold text-white mt-1 truncate" title="${escapeHtml(job.title)}">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold ${score >= 90 ? 'text-[#30DC97] bg-[#30DC97]/15 border border-[#30DC97]/30' : 'text-[#7C5CFF] bg-[#7C5CFF]/15 border border-[#7C5CFF]/30'}">
+              ${score}% Match
+            </span>
+          </div>
+
+          <div>
+            <h4 class="text-xs font-bold text-white group-hover:text-[#7C5CFF] transition truncate" title="${escapeHtml(job.title)}">
               ${escapeHtml(job.title)}
-            </h3>
-            <p class="text-xs text-slate-400 font-medium truncate">
+            </h4>
+            <p class="text-[11px] text-[#9A9AA5] truncate mt-0.5">
               ${escapeHtml(job.company)} &bull; ${escapeHtml(job.location || "Remote")}
             </p>
           </div>
-          <span class="px-2.5 py-1 rounded-lg text-xs font-bold shrink-0 ${score >= 88 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-indigo-500/10 text-indigo-300 border border-indigo-500/20'}">
-            ${score}% Match
-          </span>
+
+          <!-- Tags -->
+          <div class="flex flex-wrap gap-1">
+            <span class="px-1.5 py-0.5 rounded bg-white/5 text-[9px] text-[#9A9AA5] font-mono">Verified ATS</span>
+            <span class="px-1.5 py-0.5 rounded bg-white/5 text-[9px] text-[#30DC97] font-mono">Direct Apply</span>
+          </div>
         </div>
 
-        <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed font-normal">
-          ${escapeHtml(job.description || "Verified industrial opportunity seeking candidate with strong analytical and programming proficiency.")}
-        </p>
-
-        <div class="flex items-center space-x-2 pt-2 border-t border-white/5">
-          <button onclick="openPrepModal(${idx})" class="flex-1 py-2 rounded-xl btn-brand-primary text-xs font-semibold flex items-center justify-center space-x-1.5">
-            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-            <span>Prepare Application</span>
-          </button>
-          <button onclick="tailorResumeForJob('${escapeJs(job.company)}', '${escapeJs(job.title)}', '${escapeJs(job.location || '')}')" 
-                  class="px-3.5 py-2 rounded-xl btn-subtle text-xs font-semibold text-slate-300 hover:text-white" title="Compile LuaLaTeX CV">
-            <i data-lucide="file-check" class="w-3.5 h-3.5"></i>
+        <div class="pt-4 mt-3 border-t border-white/5 flex items-center justify-between">
+          <span class="text-[10px] text-[#9A9AA5] font-mono">Active Posting</span>
+          <button onclick="openPrepModal(${idx})" class="px-3 py-1.5 btn-violet text-[11px] font-bold flex items-center space-x-1.5">
+            <span>Prepare</span>
+            <i data-lucide="arrow-right" class="w-3 h-3"></i>
           </button>
         </div>
       </div>
@@ -210,8 +383,74 @@ function renderDashboardCuratedJobs(jobs) {
   if (window.lucide) lucide.createIcons();
 }
 
+function filterByIntegration(portalName) {
+  if (portalName === "resume") {
+    switchNav("resume");
+    return;
+  }
+  if (portalName === "interview") {
+    switchNav("interview");
+    return;
+  }
+
+  const portalSelect = document.getElementById("search-portal");
+  if (portalSelect) {
+    if (portalName === "jobnet") {
+      portalSelect.value = "all";
+      const qInput = document.getElementById("search-query");
+      if (qInput) qInput.value = "STAR";
+    } else {
+      portalSelect.value = portalName;
+    }
+  }
+  switchNav("jobs");
+  executeJobSearch();
+}
+
+function renderDashboardActivity(records) {
+  const container = document.getElementById("dash-recent-activity-list");
+  if (!container) return;
+
+  if (!records || records.length === 0) {
+    container.innerHTML = `<p class="text-xs text-[#92929D] py-2">No applications logged yet.</p>`;
+    return;
+  }
+
+  container.innerHTML = records.slice(-4).reverse().map(r => `
+    <div class="p-2.5 rounded-xl bg-[#111116] border border-white/5 flex items-center justify-between text-[11px]">
+      <div class="truncate mr-2">
+        <span class="font-bold text-white">${escapeHtml(r.Company || "-")}</span>
+        <span class="text-[#92929D] block text-[10px] truncate">${escapeHtml(r.Role || "-")}</span>
+      </div>
+      <span class="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase bg-[#7C5CFF]/15 text-[#7C5CFF] shrink-0">
+        ${escapeHtml(r.Status || "Applied")}
+      </span>
+    </div>
+  `).join("");
+}
+
+function triggerQuickDashboardSearch() {
+  const role = document.getElementById("dash-quick-role")?.value.trim() || "";
+  const loc = document.getElementById("dash-quick-loc")?.value.trim() || "";
+  const queryInput = document.getElementById("search-query");
+  const locInput = document.getElementById("search-location");
+
+  if (queryInput) queryInput.value = role;
+  if (locInput) locInput.value = loc;
+
+  switchNav("jobs");
+  executeJobSearch();
+}
+
+function filterByPortal(portalName) {
+  const select = document.getElementById("search-portal");
+  if (select) select.value = portalName;
+  switchNav("jobs");
+  executeJobSearch();
+}
+
 // ============================================================================
-// 4. FIND JOBS & DISCOVERY EXPERIENCE
+// 5. FIND JOBS & DISCOVERY EXPERIENCE
 // ============================================================================
 
 async function executeJobSearch() {
@@ -225,7 +464,7 @@ async function executeJobSearch() {
     btn.disabled = true;
     btn.innerHTML = `<span class="animate-spin inline-block mr-1">&#9696;</span> Searching...`;
   }
-  if (countBadge) countBadge.textContent = "Scanning active portals...";
+  if (countBadge) countBadge.textContent = "Scanning portals...";
 
   try {
     const res = await fetch("/api/search-jobs", {
@@ -264,11 +503,11 @@ function setWorkModeFilter(mode) {
   const btnRemote = document.getElementById("filter-wm-remote");
 
   if (mode === "remote") {
-    btnRemote?.classList.add("bg-indigo-600", "text-white");
-    btnAll?.classList.remove("bg-indigo-600", "text-white");
+    btnRemote?.classList.add("bg-[#7C5CFF]", "text-white");
+    btnAll?.classList.remove("bg-[#7C5CFF]", "text-white");
   } else {
-    btnAll?.classList.add("bg-indigo-600", "text-white");
-    btnRemote?.classList.remove("bg-indigo-600", "text-white");
+    btnAll?.classList.add("bg-[#7C5CFF]", "text-white");
+    btnRemote?.classList.remove("bg-[#7C5CFF]", "text-white");
   }
 
   applyWorkModeFilter(mode);
@@ -305,12 +544,12 @@ function renderJobCards(jobs) {
 
   if (!jobs || jobs.length === 0) {
     container.innerHTML = `
-      <div class="col-span-1 md:col-span-2 p-12 text-center app-panel space-y-3">
-        <div class="w-10 h-10 rounded-full bg-slate-800 text-slate-400 mx-auto flex items-center justify-center">
+      <div class="col-span-1 md:col-span-2 p-12 text-center bento-box space-y-3">
+        <div class="w-10 h-10 rounded-full bg-slate-800 text-[#92929D] mx-auto flex items-center justify-center">
           <i data-lucide="search-x" class="w-5 h-5"></i>
         </div>
         <h4 class="text-sm font-bold text-white">No active postings matching criteria</h4>
-        <p class="text-xs text-slate-400">Try adjusting your keywords, clearing filters, or choosing 'All Portals'.</p>
+        <p class="text-xs text-[#92929D]">Try adjusting your search keywords or switching portals.</p>
       </div>
     `;
     if (window.lucide) lucide.createIcons();
@@ -319,7 +558,7 @@ function renderJobCards(jobs) {
 
   jobs.forEach((job, index) => {
     const card = document.createElement("div");
-    card.className = "job-card app-card p-6 flex flex-col justify-between space-y-4";
+    card.className = "job-card bento-box p-6 flex flex-col justify-between space-y-4";
 
     const matchScore = job.fit_score || job.jd_match_score || 88;
     const portalName = (job.portal || "ATS").toUpperCase();
@@ -330,10 +569,10 @@ function renderJobCards(jobs) {
         <div class="flex items-start justify-between gap-3">
           <div class="flex-1 min-w-0">
             <div class="flex items-center space-x-2">
-              <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+              <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#7C5CFF]/15 text-[#7C5CFF] border border-[#7C5CFF]/30">
                 ${escapeHtml(portalName)}
               </span>
-              <span class="text-[10px] font-semibold text-slate-400">
+              <span class="text-[10px] font-semibold text-[#92929D]">
                 ${escapeHtml(job.location || "Remote")}
               </span>
             </div>
@@ -342,13 +581,13 @@ function renderJobCards(jobs) {
               ${escapeHtml(job.title)}
             </h3>
             
-            <p class="text-xs text-slate-400 font-medium truncate">
+            <p class="text-xs text-[#92929D] font-medium truncate">
               ${escapeHtml(job.company)}
             </p>
           </div>
 
           <div class="flex flex-col items-end shrink-0">
-            <span class="px-2.5 py-1 rounded-lg text-xs font-bold ${matchScore >= 88 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-indigo-500/10 text-indigo-300 border border-indigo-500/20'}">
+            <span class="px-2.5 py-1 rounded-lg text-xs font-bold ${matchScore >= 88 ? 'bg-[#35D6A0]/10 text-[#35D6A0] border border-[#35D6A0]/20' : 'bg-[#7C5CFF]/10 text-[#7C5CFF] border border-[#7C5CFF]/20'}">
               ${matchScore}% Match
             </span>
           </div>
@@ -359,20 +598,20 @@ function renderJobCards(jobs) {
         </p>
 
         <div class="flex flex-wrap gap-1.5 pt-1">
-          ${skills.map(s => `<span class="text-[11px] font-medium px-2 py-0.5 rounded-lg bg-slate-800/80 text-slate-300 border border-white/5">${escapeHtml(s)}</span>`).join("")}
+          ${skills.map(s => `<span class="text-[11px] font-medium px-2 py-0.5 rounded-lg bg-[#111116] text-[#F5F5F7] border border-white/5">${escapeHtml(s)}</span>`).join("")}
         </div>
       </div>
 
       <div class="pt-3.5 border-t border-white/5 flex items-center justify-between gap-2.5">
         <button onclick="openPrepModal(${index})" 
-                class="flex-1 flex items-center justify-center space-x-2 py-2.5 rounded-xl btn-brand-primary text-xs font-semibold text-white">
+                class="flex-1 flex items-center justify-center space-x-2 py-2.5 rounded-xl btn-violet text-xs font-bold text-white">
           <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
           <span>Prepare Application</span>
         </button>
 
         <button onclick="tailorResumeForJob('${escapeJs(job.company)}', '${escapeJs(job.title)}', '${escapeJs(job.location || '')}')" 
-                class="px-4 py-2.5 rounded-xl btn-subtle text-xs font-semibold text-slate-300 hover:text-white flex items-center space-x-1.5" title="Compile LuaLaTeX CV">
-          <i data-lucide="file-check" class="w-3.5 h-3.5 text-indigo-400"></i>
+                class="px-4 py-2.5 rounded-xl btn-neutral text-xs font-bold text-slate-200 hover:text-white flex items-center space-x-1.5" title="Compile LuaLaTeX CV">
+          <i data-lucide="file-check" class="w-3.5 h-3.5 text-[#7C5CFF]"></i>
           <span class="hidden sm:inline">Tailor CV</span>
         </button>
       </div>
@@ -396,7 +635,7 @@ function renderJobCards(jobs) {
 }
 
 // ============================================================================
-// 5. APPLICATION PREPARATION WORKFLOW (Section 7)
+// 6. APPLICATION PREPARATION WORKFLOW
 // ============================================================================
 
 function openPrepModal(jobIndex) {
@@ -492,7 +731,6 @@ async function markJobAppliedFromModal() {
       loadTrackerData();
       closePrepModal();
       
-      // If job has a live URL, open it in browser to apply
       if (activePrepJob.url) {
         window.open(activePrepJob.url, "_blank");
       }
@@ -504,7 +742,7 @@ async function markJobAppliedFromModal() {
 }
 
 // ============================================================================
-// 6. RESUME TAILORING (LuaLaTeX Pipeline)
+// 7. RESUME TAILORING & ATS COMPILATION
 // ============================================================================
 
 async function tailorResumeForJob(company, role, location) {
@@ -546,20 +784,20 @@ async function loadTailoredPackages() {
       const docs = data.documents || [];
 
       if (docs.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-400 py-3 text-center">No compiled resumes yet. Use "Tailor CV" on any vacancy.</p>`;
+        container.innerHTML = `<p class="text-xs text-[#92929D] py-3 text-center">No compiled resumes yet. Use "Tailor CV" on any vacancy.</p>`;
         return;
       }
 
       container.innerHTML = docs.map(doc => `
-        <div class="flex items-center justify-between p-3 rounded-xl bg-[#0B0E14] border border-white/5 hover:border-white/10 transition">
+        <div class="flex items-center justify-between p-3 rounded-xl bg-[#111116] border border-white/5 hover:border-white/10 transition">
           <div class="flex items-center space-x-2.5 min-w-0">
-            <i data-lucide="file-text" class="w-4 h-4 text-indigo-400 shrink-0"></i>
+            <i data-lucide="file-text" class="w-4 h-4 text-[#7C5CFF] shrink-0"></i>
             <span class="text-xs font-medium text-slate-200 truncate" title="${escapeHtml(doc.filename)}">
               ${escapeHtml(doc.filename)}
             </span>
           </div>
           <a href="${escapeHtml(doc.download_url)}" target="_blank" 
-             class="px-2.5 py-1 rounded-lg btn-subtle text-[11px] font-semibold text-slate-300 hover:text-white shrink-0 ml-2">
+             class="px-2.5 py-1 rounded-lg btn-neutral text-[11px] font-bold text-slate-300 hover:text-white shrink-0 ml-2">
             Download
           </a>
         </div>
@@ -573,7 +811,7 @@ async function loadTailoredPackages() {
 }
 
 // ============================================================================
-// 7. MY CAREER: MASTER PROFILE, ANTI-AI & STAR SOLVER
+// 8. PROFILE, SKILLS & RESUME UPLOAD
 // ============================================================================
 
 async function loadProfileData() {
@@ -582,7 +820,6 @@ async function loadProfileData() {
     if (res.ok) {
       currentProfile = await res.json();
       populateProfileForm(currentProfile);
-      updateNavUserProfile(currentProfile);
       updateDashboardGreeting(currentProfile);
     }
   } catch (err) {
@@ -609,13 +846,6 @@ function setInputValue(id, val) {
   if (el) el.value = val || "";
 }
 
-function updateNavUserProfile(p) {
-  const nameEl = document.getElementById("nav-user-name");
-  const initEl = document.getElementById("nav-user-initial");
-  if (nameEl) nameEl.textContent = p.name || "Candidate";
-  if (initEl) initEl.textContent = (p.name || "C").charAt(0).toUpperCase();
-}
-
 function renderSkills() {
   const container = document.getElementById("skills-container");
   const badge = document.getElementById("skills-count-badge");
@@ -626,7 +856,7 @@ function renderSkills() {
 
   currentSkills.forEach((skill, index) => {
     const chip = document.createElement("span");
-    chip.className = "inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 text-[11px] font-medium";
+    chip.className = "inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-[#7C5CFF]/15 text-[#7C5CFF] border border-[#7C5CFF]/30 text-[11px] font-bold";
     chip.innerHTML = `
       <span>${escapeHtml(skill)}</span>
       <button onclick="removeSkillTag(${index})" class="hover:text-red-400 ml-1">&times;</button>
@@ -674,7 +904,6 @@ async function saveProfile() {
 
     if (res.ok) {
       currentProfile = updated;
-      updateNavUserProfile(updated);
       updateDashboardGreeting(updated);
       showToast("Profile updated successfully!", "success");
       loadDashboardData();
@@ -687,7 +916,6 @@ async function saveProfile() {
   }
 }
 
-// Drag and drop resume upload
 function setupDragAndDrop() {
   const dropZone = document.getElementById("drop-zone");
   const fileInput = document.getElementById("resume-file-input");
@@ -698,16 +926,16 @@ function setupDragAndDrop() {
 
   dropZone.addEventListener("dragover", (e) => {
     e.preventDefault();
-    dropZone.classList.add("border-indigo-500");
+    dropZone.classList.add("border-[#7C5CFF]");
   });
 
   dropZone.addEventListener("dragleave", () => {
-    dropZone.classList.remove("border-indigo-500");
+    dropZone.classList.remove("border-[#7C5CFF]");
   });
 
   dropZone.addEventListener("drop", (e) => {
     e.preventDefault();
-    dropZone.classList.remove("border-indigo-500");
+    dropZone.classList.remove("border-[#7C5CFF]");
     if (e.dataTransfer.files.length > 0) {
       uploadResumeFile(e.dataTransfer.files[0]);
     }
@@ -780,7 +1008,173 @@ async function runAntiAiHumanizer() {
   }
 }
 
-// Quick STAR Answer in Career Studio
+// ============================================================================
+// 9. CENTRAL APPLICATION TRACKER & REAL-TIME UPDATES
+// ============================================================================
+
+async function loadTrackerData() {
+  const tbody = document.getElementById("tracker-table-body");
+  if (!tbody) return;
+
+  try {
+    const res = await fetch("/api/tracker");
+    if (res.ok) {
+      const data = await res.json();
+      trackerRecords = data.records || [];
+
+      // Update counters in Dashboard & Applications view
+      const total = trackerRecords.length;
+      const applied = trackerRecords.filter(r => (r.Status || "").toLowerCase() === "applied").length;
+      const interviews = trackerRecords.filter(r => (r.Status || "").toLowerCase().includes("interview")).length;
+      const offers = trackerRecords.filter(r => (r.Status || "").toLowerCase().includes("offer")).length;
+
+      // Bento Stat Tiles
+      setElementText("bento-stat-total", total);
+      setElementText("bento-stat-applied", applied);
+      setElementText("bento-stat-interviews", interviews);
+      setElementText("bento-stat-offers", offers);
+
+      // Tracker View Stats
+      setElementText("track-stat-total", total);
+      setElementText("track-stat-review", applied);
+      setElementText("track-stat-interview", interviews);
+      setElementText("track-stat-offers", offers);
+
+      renderDashboardActivity(trackerRecords);
+      filterTrackerRows();
+    }
+  } catch (err) {
+    console.error("Tracker load error:", err);
+  }
+}
+
+function filterTrackerRows() {
+  const tbody = document.getElementById("tracker-table-body");
+  if (!tbody) return;
+
+  const query = (document.getElementById("tracker-filter-query")?.value || "").toLowerCase().trim();
+  const statusFilter = (document.getElementById("tracker-filter-status")?.value || "all").toLowerCase();
+
+  const filtered = trackerRecords.filter(r => {
+    const matchesQuery = !query || 
+      (r.Company || "").toLowerCase().includes(query) || 
+      (r.Role || "").toLowerCase().includes(query);
+    
+    const matchesStatus = statusFilter === "all" || 
+      (r.Status || "").toLowerCase().includes(statusFilter);
+
+    return matchesQuery && matchesStatus;
+  });
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" class="p-8 text-center text-[#92929D]">
+          No applications matching filter. Use "Prepare Application" -> "Apply & Log to Tracker" on any vacancy.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map((r, idx) => `
+    <tr class="hover:bg-[#1C1C24] transition">
+      <td class="p-3.5 pl-6 text-[#92929D] font-mono text-[11px]">${escapeHtml(r.Date || "Recent")}</td>
+      <td class="p-3.5 font-bold text-white">${escapeHtml(r.Company || "-")}</td>
+      <td class="p-3.5 text-slate-300">${escapeHtml(r.Role || "-")}</td>
+      <td class="p-3.5 text-[#92929D]">${escapeHtml(r.Location || "Remote")}</td>
+      
+      <!-- Interactive Status Dropdown with Instant Server Sync -->
+      <td class="p-3.5">
+        <select onchange="updateRowStatus('${escapeJs(r.Company)}', '${escapeJs(r.Role)}', this.value)" 
+                class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#111116] border border-white/10 text-slate-200">
+          <option value="Applied" ${(r.Status || '').toLowerCase() === 'applied' ? 'selected' : ''}>Applied</option>
+          <option value="Assessment" ${(r.Status || '').toLowerCase() === 'assessment' ? 'selected' : ''}>Assessment</option>
+          <option value="Interview" ${(r.Status || '').toLowerCase().includes('interview') ? 'selected' : ''}>Interview</option>
+          <option value="Offer" ${(r.Status || '').toLowerCase().includes('offer') ? 'selected' : ''}>Offer</option>
+          <option value="Rejected" ${(r.Status || '').toLowerCase().includes('rejected') ? 'selected' : ''}>Rejected</option>
+        </select>
+      </td>
+
+      <td class="p-3.5 text-[#92929D] text-xs truncate max-w-[160px]">${escapeHtml(r.Notes || "Applied via ApplyBot")}</td>
+      
+      <td class="p-3.5 pr-6 text-right">
+        ${r.URL ? `<a href="${escapeHtml(r.URL)}" target="_blank" class="text-[#7C5CFF] hover:underline text-[11px] font-bold">Posting &rarr;</a>` : '<span class="text-slate-500">-</span>'}
+      </td>
+    </tr>
+  `).join("");
+}
+
+async function updateRowStatus(company, role, newStatus) {
+  try {
+    const res = await fetch("/api/tracker/update-status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ company, role, status: newStatus })
+    });
+
+    if (res.ok) {
+      showToast(`Updated status for ${company} to ${newStatus}`, "success");
+      loadTrackerData();
+    }
+  } catch (err) {
+    console.error("Update status error:", err);
+  }
+}
+
+function setElementText(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = text;
+}
+
+// ============================================================================
+// 10. INTERVIEW PREP & RECRUITER OUTREACH
+// ============================================================================
+
+async function generateStarAnswer() {
+  const input = document.getElementById("star-question-input");
+  const outputBox = document.getElementById("star-output-box");
+  const outputText = document.getElementById("star-output-text");
+  const btn = document.getElementById("btn-generate-star");
+
+  const question = input?.value.trim();
+  if (!question) {
+    showToast("Please enter an interview question first.", "warning");
+    return;
+  }
+
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="animate-spin inline-block mr-1">&#9696;</span> Generating authentic response...`;
+  }
+
+  try {
+    const res = await fetch("/api/star-solver", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (outputText) outputText.textContent = data.star_answer || "Generated STAR story.";
+      if (outputBox) {
+        outputBox.classList.remove("hidden");
+        if (window.gsap) gsap.from(outputBox, { opacity: 0, y: 10, duration: 0.2 });
+      }
+    }
+  } catch (err) {
+    console.error("STAR answer error:", err);
+    showToast("Could not generate STAR story.", "error");
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = `<i data-lucide="sparkles" class="w-4 h-4 mr-1.5"></i><span>Generate Structured STAR Answer</span>`;
+      if (window.lucide) lucide.createIcons();
+    }
+  }
+}
+
 async function generateQuickStarAnswer() {
   const q = document.getElementById("star-question-quick")?.value.trim();
   const out = document.getElementById("quick-star-output");
@@ -810,125 +1204,45 @@ async function generateQuickStarAnswer() {
   }
 }
 
-// ============================================================================
-// 8. APPLICATION TRACKING & MANAGEMENT (Section 8)
-// ============================================================================
+async function generateOutreachMessage() {
+  const company = document.getElementById("outreach-company")?.value.trim() || "";
+  const role = document.getElementById("outreach-role")?.value.trim() || "";
+  const note = document.getElementById("outreach-note")?.value.trim() || "";
+  const outputBox = document.getElementById("outreach-output-box");
+  const outputText = document.getElementById("outreach-output-text");
+  const btn = document.getElementById("btn-generate-outreach");
 
-async function loadTrackerData() {
-  const tbody = document.getElementById("tracker-table-body");
-  if (!tbody) return;
-
-  try {
-    const res = await fetch("/api/tracker");
-    if (res.ok) {
-      const data = await res.json();
-      trackerRecords = data.records || [];
-
-      // Update counters in Dashboard & Applications view
-      const total = trackerRecords.length;
-      const applied = trackerRecords.filter(r => (r.Status || "").toLowerCase() === "applied").length;
-      const interviews = trackerRecords.filter(r => (r.Status || "").toLowerCase().includes("interview")).length;
-      const offers = trackerRecords.filter(r => (r.Status || "").toLowerCase().includes("offer")).length;
-
-      // Dashboard stats
-      setElementText("dash-stat-total", total);
-      setElementText("dash-stat-applied", applied);
-      setElementText("dash-stat-interviews", interviews);
-
-      // Tracker stats
-      setElementText("track-stat-total", total);
-      setElementText("track-stat-review", applied);
-      setElementText("track-stat-interview", interviews);
-      setElementText("track-stat-offers", offers);
-
-      filterTrackerRows();
-    }
-  } catch (err) {
-    console.error("Tracker load error:", err);
-  }
-}
-
-function filterTrackerRows() {
-  const tbody = document.getElementById("tracker-table-body");
-  if (!tbody) return;
-
-  const query = (document.getElementById("tracker-filter-query")?.value || "").toLowerCase().trim();
-  const statusFilter = (document.getElementById("tracker-filter-status")?.value || "all").toLowerCase();
-
-  const filtered = trackerRecords.filter(r => {
-    const matchesQuery = !query || 
-      (r.Company || "").toLowerCase().includes(query) || 
-      (r.Role || "").toLowerCase().includes(query);
-    
-    const matchesStatus = statusFilter === "all" || 
-      (r.Status || "").toLowerCase().includes(statusFilter);
-
-    return matchesQuery && matchesStatus;
-  });
-
-  if (filtered.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="7" class="p-8 text-center text-slate-400">
-          No applications matching filter. Use "Prepare Application" -> "Apply & Log to Tracker" on any vacancy.
-        </td>
-      </tr>
-    `;
+  if (!company || !role) {
+    showToast("Please enter company and role title.", "warning");
     return;
   }
 
-  tbody.innerHTML = filtered.map((r, idx) => `
-    <tr class="hover:bg-[#151824] transition">
-      <td class="p-3.5 pl-6 text-slate-400 font-mono text-[11px]">${escapeHtml(r.Date || "Recent")}</td>
-      <td class="p-3.5 font-bold text-white">${escapeHtml(r.Company || "-")}</td>
-      <td class="p-3.5 text-slate-300">${escapeHtml(r.Role || "-")}</td>
-      <td class="p-3.5 text-slate-400">${escapeHtml(r.Location || "Remote")}</td>
-      
-      <!-- Interactive Status Dropdown -->
-      <td class="p-3.5">
-        <select onchange="updateRowStatus('${escapeJs(r.Company)}', '${escapeJs(r.Role)}', this.value)" 
-                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-[#0B0E14] border border-white/10 text-slate-200">
-          <option value="Applied" ${(r.Status || '').toLowerCase() === 'applied' ? 'selected' : ''}>Applied</option>
-          <option value="Assessment" ${(r.Status || '').toLowerCase() === 'assessment' ? 'selected' : ''}>Assessment</option>
-          <option value="Interview" ${(r.Status || '').toLowerCase().includes('interview') ? 'selected' : ''}>Interview</option>
-          <option value="Offer" ${(r.Status || '').toLowerCase().includes('offer') ? 'selected' : ''}>Offer</option>
-          <option value="Rejected" ${(r.Status || '').toLowerCase().includes('rejected') ? 'selected' : ''}>Rejected</option>
-        </select>
-      </td>
-
-      <td class="p-3.5 text-slate-400 text-xs truncate max-w-[160px]">${escapeHtml(r.Notes || "Applied via ApplyBot")}</td>
-      
-      <td class="p-3.5 pr-6 text-right">
-        ${r.URL ? `<a href="${escapeHtml(r.URL)}" target="_blank" class="text-indigo-400 hover:underline text-[11px] font-medium">Posting &rarr;</a>` : '<span class="text-slate-500">-</span>'}
-      </td>
-    </tr>
-  `).join("");
-}
-
-async function updateRowStatus(company, role, newStatus) {
-  try {
-    const res = await fetch("/api/tracker/update-status", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ company, role, status: newStatus })
-    });
-
-    if (res.ok) {
-      showToast(`Updated status for ${company} to ${newStatus}`, "success");
-      loadTrackerData();
-    }
-  } catch (err) {
-    console.error("Update status error:", err);
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="animate-spin inline-block mr-1">&#9696;</span> Drafting message...`;
   }
-}
 
-function setElementText(id, text) {
-  const el = document.getElementById(id);
-  if (el) el.textContent = text;
+  const candidateName = currentProfile.name || "Candidate";
+  const primarySkills = (currentProfile.skills || []).slice(0, 3).join(", ") || "Python & AI";
+
+  setTimeout(() => {
+    const drafted = `Hi [Recruiter / Hiring Lead],\n\nI noticed ${company} is currently looking for a ${role}. As a ${currentProfile.degree || "software developer"} experienced in ${primarySkills}, I've recently built projects around semantic alignment and high-throughput pipelines.\n\n${note ? note + "\n\n" : ""}I'd welcome the chance to briefly connect and share how my technical background aligns with your team's current initiatives.\n\nBest regards,\n${candidateName}\n${currentProfile.linkedin || ""}`;
+
+    if (outputText) outputText.textContent = drafted;
+    if (outputBox) {
+      outputBox.classList.remove("hidden");
+      if (window.gsap) gsap.from(outputBox, { opacity: 0, y: 10, duration: 0.2 });
+    }
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = `<i data-lucide="send" class="w-4 h-4 mr-1.5"></i><span>Draft Recruiter Note</span>`;
+      if (window.lucide) lucide.createIcons();
+    }
+  }, 350);
 }
 
 // ============================================================================
-// 9. INSTANT JOB DESCRIPTION ANALYZER
+// 11. INSTANT JOB DESCRIPTION ANALYZER
 // ============================================================================
 
 function openJDAnalyzeModal() {
@@ -984,12 +1298,12 @@ async function analyzePastedJD() {
 
       if (matchingContainer) {
         matchingContainer.innerHTML = matching
-          .map(s => `<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">${escapeHtml(s)}</span>`).join("");
+          .map(s => `<span class="px-2 py-0.5 rounded bg-[#35D6A0]/10 text-[#35D6A0] border border-[#35D6A0]/20">${escapeHtml(s)}</span>`).join("");
       }
       if (missingContainer) {
         missingContainer.innerHTML = missing.length > 0 && missing[0] !== "None identified in role summary"
-          ? missing.map(s => `<span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">${escapeHtml(s)}</span>`).join("")
-          : `<span class="text-slate-400 text-[11px]">No critical skill gaps identified</span>`;
+          ? missing.map(s => `<span class="px-2 py-0.5 rounded bg-[#FFB84D]/10 text-[#FFB84D] border border-[#FFB84D]/20">${escapeHtml(s)}</span>`).join("")
+          : `<span class="text-[#92929D] text-[11px]">No critical skill gaps identified</span>`;
       }
 
       if (resultSec) {
@@ -1010,7 +1324,7 @@ async function analyzePastedJD() {
 }
 
 // ============================================================================
-// 10. PERSONA & PROFILE SWITCHER
+// 12. PERSONA & PROFILE SWITCHER
 // ============================================================================
 
 function openAuthModal() {
@@ -1041,7 +1355,6 @@ async function quickLoginPreset(presetId) {
       if (data.profile) {
         currentProfile = data.profile;
         populateProfileForm(data.profile);
-        updateNavUserProfile(data.profile);
         updateDashboardGreeting(data.profile);
         showToast("Profile persona updated!", "success");
         closeAuthModal();
@@ -1056,7 +1369,7 @@ async function quickLoginPreset(presetId) {
 }
 
 // ============================================================================
-// 11. TOAST NOTIFICATIONS & UTILITIES
+// 13. TOAST NOTIFICATIONS & UTILITIES
 // ============================================================================
 
 let toastTimeout = null;
@@ -1069,9 +1382,9 @@ function showToast(msg, type = "info") {
 
   toastMsg.textContent = msg;
 
-  toast.className = "fixed bottom-6 right-6 z-50 px-4 py-3 rounded-2xl border text-xs font-semibold flex items-center space-x-2.5 shadow-2xl transition-all";
+  toast.className = "fixed bottom-6 right-6 z-50 px-4 py-3 rounded-2xl border text-xs font-bold flex items-center space-x-2.5 shadow-2xl transition-all";
   if (type === "success") {
-    toast.classList.add("bg-[#062419]", "border-emerald-500/40", "text-emerald-300");
+    toast.classList.add("bg-[#0B2519]", "border-[#35D6A0]/40", "text-[#35D6A0]");
     if (toastIcon) toastIcon.dataset.lucide = "check-circle";
   } else if (type === "error") {
     toast.classList.add("bg-[#280B12]", "border-rose-500/40", "text-rose-300");
@@ -1080,7 +1393,7 @@ function showToast(msg, type = "info") {
     toast.classList.add("bg-[#2A1805]", "border-amber-500/40", "text-amber-300");
     if (toastIcon) toastIcon.dataset.lucide = "alert-circle";
   } else {
-    toast.classList.add("bg-[#0E1322]", "border-indigo-500/40", "text-indigo-300");
+    toast.classList.add("bg-[#131122]", "border-[#7C5CFF]/40", "text-[#7C5CFF]");
     if (toastIcon) toastIcon.dataset.lucide = "info";
   }
 
