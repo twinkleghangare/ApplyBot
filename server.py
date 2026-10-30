@@ -12,7 +12,8 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import pypdf
-import pandas as pd
+import csv
+from datetime import datetime
 
 ROOT_DIR = Path(__file__).resolve().parent
 BUN_PATH = os.environ.get("BUN_PATH") or shutil.which("bun") or "bun"
@@ -31,6 +32,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok", "app": "ApplyBot"}
 
 # Pre-Configured Profiles
 PRESET_PROFILES = {
@@ -200,8 +205,8 @@ def clean_anti_ai_text(text: str):
     }
 
 class SearchRequest(BaseModel):
-    role: str
-    location: str
+    role: Optional[str] = "AI Engineer"
+    location: Optional[str] = "Remote"
     portal: Optional[str] = "all"
     limit: Optional[int] = 16
     job_description: Optional[str] = ""
@@ -212,6 +217,13 @@ class TrackRequest(BaseModel):
     role: str
     location: str
     url: str
+    status: Optional[str] = "Applied"
+    notes: Optional[str] = "Applied via ApplyBot"
+
+class UpdateStatusRequest(BaseModel):
+    company: str
+    role: str
+    status: str
 
 class TailorRequest(BaseModel):
     company: str
@@ -227,7 +239,7 @@ class StarSolverRequest(BaseModel):
     context: Optional[str] = ""
 
 class SemanticGapRequest(BaseModel):
-    role: str
+    role: Optional[str] = "AI / Tech Role"
     job_description: Optional[str] = ""
 
 class LoginRequest(BaseModel):
@@ -860,8 +872,10 @@ def get_dashboard_stats():
     tracker_count = 0
     if TRACKER_CSV.exists():
         try:
-            df = pd.read_csv(TRACKER_CSV)
-            tracker_count = len(df)
+            with open(TRACKER_CSV, mode="r", encoding="utf-8", errors="ignore") as f:
+                reader = csv.reader(f)
+                next(reader, None)
+                tracker_count = sum(1 for row in reader if row)
         except Exception:
             pass
 
@@ -969,27 +983,61 @@ def download_file(folder: str, filename: str):
 def get_tracker():
     if not TRACKER_CSV.exists():
         return {"records": []}
-    df = pd.read_csv(TRACKER_CSV)
-    return {"records": df.fillna("").to_dict(orient="records")}
+    try:
+        with open(TRACKER_CSV, mode="r", encoding="utf-8", errors="ignore") as f:
+            reader = csv.DictReader(f)
+            records = [row for row in reader]
+        return {"records": records}
+    except Exception:
+        return {"records": []}
 
 @app.post("/api/track-apply")
 def track_apply(item: TrackRequest):
-    new_row = pd.DataFrame([{
-        "Date": pd.Timestamp.now().strftime("%Y-%m-%d"),
+    new_record = {
+        "Date": datetime.now().strftime("%Y-%m-%d"),
         "Company": item.company,
         "Role": item.role,
         "Location": item.location,
-        "Status": "Applied",
+        "Status": item.status or "Applied",
         "URL": item.url,
-        "Notes": "Applied via ApplyBot 1-Click Guidance"
-    }])
-    if TRACKER_CSV.exists():
-        df = pd.read_csv(TRACKER_CSV)
-        df = pd.concat([df, new_row], ignore_index=True)
-    else:
-        df = new_row
-    df.to_csv(TRACKER_CSV, index=False)
+        "Notes": item.notes or "Applied via ApplyBot 1-Click Guidance"
+    }
+    fieldnames = ["Date", "Company", "Role", "Location", "Status", "URL", "Notes"]
+    file_exists = TRACKER_CSV.exists()
+    try:
+        with open(TRACKER_CSV, mode="a", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            if not file_exists or TRACKER_CSV.stat().st_size == 0:
+                writer.writeheader()
+            writer.writerow(new_record)
+    except Exception:
+        pass
     return {"status": "recorded"}
+
+@app.post("/api/tracker/update-status")
+def update_tracker_status(req: UpdateStatusRequest):
+    if not TRACKER_CSV.exists():
+        return {"status": "not_found"}
+    try:
+        rows = []
+        fieldnames = ["Date", "Company", "Role", "Location", "Status", "URL", "Notes"]
+        updated = False
+        with open(TRACKER_CSV, mode="r", encoding="utf-8", errors="ignore") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if row.get("Company", "").strip().lower() == req.company.strip().lower() and row.get("Role", "").strip().lower() == req.role.strip().lower():
+                    row["Status"] = req.status
+                    updated = True
+                rows.append(row)
+        if updated:
+            with open(TRACKER_CSV, mode="w", encoding="utf-8", newline="") as f:
+                writer = csv.DictWriter(f, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerows(rows)
+            return {"status": "updated"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+    return {"status": "not_found"}
 
 # Mount Static Files
 app.mount("/static", StaticFiles(directory=str(ROOT_DIR / "static")), name="static")
