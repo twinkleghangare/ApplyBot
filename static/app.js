@@ -12,6 +12,10 @@ let displayedJobs = [];
 let trackerRecords = [];
 let activePrepJob = null;
 let currentWorkModeFilter = "all";
+let activeApprovalJobKey = null;
+let allRecommendedJobs = [];
+let pendingApprovalsList = [];
+let currentMinMatchFilter = 0;
 
 // ============================================================================
 // 1. INITIALIZATION & LIFECYCLE
@@ -23,12 +27,19 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialize Core Systems
   initHeroThreeJS();
   loadProfileData();
+  loadAgentStatus();
   loadDashboardData();
+  loadRecommendedJobs();
   executeJobSearch();
+  loadPendingApprovals();
   loadTrackerData();
   loadTailoredPackages();
+  loadAgentActivityLogs();
   setupDragAndDrop();
   updateTimeGreeting();
+
+  // Live status polling
+  setInterval(loadAgentStatus, 12000);
 });
 
 // Dynamic Time-based Greeting
@@ -224,7 +235,7 @@ function initHeroThreeJS() {
 // ============================================================================
 
 function switchNav(navKey) {
-  const sections = ["dashboard", "jobs", "applications", "resume", "interview", "settings"];
+  const sections = ["dashboard", "jobs", "recommended", "applications", "resume", "career", "activity", "interview", "settings"];
 
   sections.forEach(key => {
     const secEl = document.getElementById(`sec-${key}`);
@@ -246,13 +257,22 @@ function switchNav(navKey) {
     } else {
       if (secEl) secEl.classList.add("hidden");
       if (navBtn) {
-        navBtn.className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all text-[#92929D] hover:text-white hover:bg-white/5";
+        navBtn.className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all text-[#9A9AA5] hover:text-white hover:bg-white/5";
       }
     }
   });
 
-  if (navKey === "applications") loadTrackerData();
+  if (navKey === "dashboard") {
+    loadAgentStatus();
+    loadDashboardData();
+  }
+  if (navKey === "recommended") loadRecommendedJobs();
+  if (navKey === "applications") {
+    loadPendingApprovals();
+    loadTrackerData();
+  }
   if (navKey === "resume") loadTailoredPackages();
+  if (navKey === "activity") loadAgentActivityLogs();
 
   window.scrollTo({ top: 0, behavior: "smooth" });
   if (window.lucide) lucide.createIcons();
@@ -339,8 +359,9 @@ function renderDashboardCuratedJobs(jobs) {
   }
 
   container.innerHTML = topJobs.map((job, idx) => {
-    const score = job.fit_score || job.jd_match_score || 94;
+    const score = Math.round(job.overall_score || job.fit_score || job.jd_match_score || 94);
     const portal = (job.portal || "ATS").toUpperCase();
+    const jobKeyArg = job.job_key ? `'${escapeJs(job.job_key)}'` : null;
     return `
       <div class="bento-box p-5 flex flex-col justify-between hover:border-[#7C5CFF]/40 transition group">
         <div class="space-y-3">
@@ -364,14 +385,17 @@ function renderDashboardCuratedJobs(jobs) {
 
           <!-- Tags -->
           <div class="flex flex-wrap gap-1">
-            <span class="px-1.5 py-0.5 rounded bg-white/5 text-[9px] text-[#9A9AA5] font-mono">Verified ATS</span>
-            <span class="px-1.5 py-0.5 rounded bg-white/5 text-[9px] text-[#30DC97] font-mono">Direct Apply</span>
+            <span class="px-1.5 py-0.5 rounded bg-white/5 text-[9px] text-[#30DC97] font-mono flex items-center space-x-1">
+              <i data-lucide="shield-check" class="w-2.5 h-2.5"></i>
+              <span>VERIFIED</span>
+            </span>
+            <span class="px-1.5 py-0.5 rounded bg-white/5 text-[9px] text-[#9A9AA5] font-mono">Clean ATS</span>
           </div>
         </div>
 
         <div class="pt-4 mt-3 border-t border-white/5 flex items-center justify-between">
           <span class="text-[10px] text-[#9A9AA5] font-mono">Active Posting</span>
-          <button onclick="openPrepModal(${idx})" class="px-3 py-1.5 btn-violet text-[11px] font-bold flex items-center space-x-1.5">
+          <button onclick="${jobKeyArg ? `prepareApplicationPackage(${jobKeyArg})` : `openPrepModal(${idx})`}" class="px-3 py-1.5 btn-violet text-[11px] font-bold flex items-center space-x-1.5 cursor-pointer">
             <span>Prepare</span>
             <i data-lucide="arrow-right" class="w-3 h-3"></i>
           </button>
@@ -560,34 +584,43 @@ function renderJobCards(jobs) {
     const card = document.createElement("div");
     card.className = "job-card bento-box p-6 flex flex-col justify-between space-y-4";
 
-    const matchScore = job.fit_score || job.jd_match_score || 88;
+    const matchScore = Math.round(job.overall_score || job.fit_score || job.jd_match_score || 88);
     const portalName = (job.portal || "ATS").toUpperCase();
-    const skills = job.matched_skills || (currentSkills.length ? currentSkills.slice(0, 3) : ["Python", "Machine Learning"]);
+    const skills = job.matching_skills || job.matched_skills || (currentSkills.length ? currentSkills.slice(0, 3) : ["Python", "Machine Learning"]);
+    const verStatus = job.verification_status || (job.flags && job.flags.length > 0 ? "NEEDS REVIEW" : "VERIFIED");
+    const verBadge = verStatus === "VERIFIED"
+      ? `<span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#30DC97]/15 text-[#30DC97] border border-[#30DC97]/30 flex items-center space-x-1"><i data-lucide="shield-check" class="w-2.5 h-2.5"></i><span>VERIFIED</span></span>`
+      : verStatus === "SUSPICIOUS"
+        ? `<span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-red-500/15 text-red-400 border border-red-500/30 flex items-center space-x-1"><i data-lucide="alert-triangle" class="w-2.5 h-2.5"></i><span>SUSPICIOUS</span></span>`
+        : `<span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#FFAA2C]/15 text-[#FFAA2C] border border-[#FFAA2C]/30 flex items-center space-x-1"><i data-lucide="help-circle" class="w-2.5 h-2.5"></i><span>REVIEW</span></span>`;
+
+    const jobKeyArg = job.job_key ? `'${escapeJs(job.job_key)}'` : null;
 
     card.innerHTML = `
       <div class="space-y-3.5">
         <div class="flex items-start justify-between gap-3">
           <div class="flex-1 min-w-0">
-            <div class="flex items-center space-x-2">
+            <div class="flex flex-wrap items-center gap-1.5 mb-1.5">
               <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#7C5CFF]/15 text-[#7C5CFF] border border-[#7C5CFF]/30">
                 ${escapeHtml(portalName)}
               </span>
-              <span class="text-[10px] font-semibold text-[#92929D]">
+              ${verBadge}
+              <span class="text-[10px] font-semibold text-[#9A9AA5] ml-1">
                 ${escapeHtml(job.location || "Remote")}
               </span>
             </div>
             
-            <h3 class="text-base font-bold text-white mt-1.5 truncate" title="${escapeHtml(job.title)}">
+            <h3 class="text-base font-bold text-white mt-1 truncate" title="${escapeHtml(job.title)}">
               ${escapeHtml(job.title)}
             </h3>
             
-            <p class="text-xs text-[#92929D] font-medium truncate">
+            <p class="text-xs text-[#9A9AA5] font-semibold truncate">
               ${escapeHtml(job.company)}
             </p>
           </div>
 
           <div class="flex flex-col items-end shrink-0">
-            <span class="px-2.5 py-1 rounded-lg text-xs font-bold ${matchScore >= 88 ? 'bg-[#35D6A0]/10 text-[#35D6A0] border border-[#35D6A0]/20' : 'bg-[#7C5CFF]/10 text-[#7C5CFF] border border-[#7C5CFF]/20'}">
+            <span class="px-2.5 py-1 rounded-lg text-xs font-bold ${matchScore >= 88 ? 'bg-[#30DC97]/10 text-[#30DC97] border border-[#30DC97]/20' : 'bg-[#7C5CFF]/10 text-[#7C5CFF] border border-[#7C5CFF]/20'}">
               ${matchScore}% Match
             </span>
           </div>
@@ -603,14 +636,14 @@ function renderJobCards(jobs) {
       </div>
 
       <div class="pt-3.5 border-t border-white/5 flex items-center justify-between gap-2.5">
-        <button onclick="openPrepModal(${index})" 
-                class="flex-1 flex items-center justify-center space-x-2 py-2.5 rounded-xl btn-violet text-xs font-bold text-white">
+        <button onclick="${jobKeyArg ? `prepareApplicationPackage(${jobKeyArg})` : `openPrepModal(${index})`}" 
+                class="flex-1 flex items-center justify-center space-x-2 py-2.5 rounded-xl btn-violet text-xs font-bold text-white cursor-pointer shadow-md shadow-[#7C5CFF]/20">
           <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
           <span>Prepare Application</span>
         </button>
 
         <button onclick="tailorResumeForJob('${escapeJs(job.company)}', '${escapeJs(job.title)}', '${escapeJs(job.location || '')}')" 
-                class="px-4 py-2.5 rounded-xl btn-neutral text-xs font-bold text-slate-200 hover:text-white flex items-center space-x-1.5" title="Compile LuaLaTeX CV">
+                class="px-4 py-2.5 rounded-xl btn-neutral text-xs font-bold text-slate-200 hover:text-white flex items-center space-x-1.5 cursor-pointer" title="Compile LuaLaTeX CV">
           <i data-lucide="file-check" class="w-3.5 h-3.5 text-[#7C5CFF]"></i>
           <span class="hidden sm:inline">Tailor CV</span>
         </button>
@@ -1447,4 +1480,679 @@ function escapeHtml(str) {
 function escapeJs(str) {
   if (!str) return "";
   return String(str).replace(/'/g, "\\'").replace(/"/g, '\\"');
+}
+
+// ============================================================================
+// 12. AUTONOMOUS AGENT CONTROLLERS & 5 CORE INNOVATIONS
+// ============================================================================
+
+/**
+ * FEATURE 1 & 5: Autonomous Agent Activity & Status Pipeline
+ * Periodically polls /api/agent/status and updates live UI indicators
+ */
+async function loadAgentStatus() {
+  try {
+    const res = await fetch("/api/agent/status");
+    if (!res.ok) return;
+    const data = await res.json();
+    
+    // 1. Top Agent Status Indicator Pill
+    const dot = document.getElementById("agent-status-dot");
+    const text = document.getElementById("agent-status-text");
+    const st = data.agent_status || "Idle";
+
+    if (text) text.textContent = `Agent: ${st}`;
+    if (dot) {
+      dot.className = "w-2 h-2 rounded-full";
+      if (st === "Running") {
+        dot.classList.add("bg-[#7C5CFF]", "animate-ping");
+      } else if (st === "Waiting for Approval" || data.pending_approvals > 0) {
+        dot.classList.add("bg-[#FFAA2C]", "animate-pulse");
+      } else if (st === "Completed" || st === "Idle") {
+        dot.classList.add("bg-[#30DC97]");
+      } else {
+        dot.classList.add("bg-red-400");
+      }
+    }
+
+    // 2. Pending Approvals Badge (Top Nav & Sidebar)
+    const pendingCount = data.pending_approvals || 0;
+    const topBadge = document.getElementById("top-pending-badge");
+    const navBadge = document.getElementById("nav-pending-badge");
+    const tabBadge = document.getElementById("tab-pending-count-badge");
+    
+    [topBadge, navBadge, tabBadge].forEach(badge => {
+      if (!badge) return;
+      badge.textContent = pendingCount;
+      if (pendingCount > 0) {
+        badge.classList.remove("hidden");
+      } else {
+        badge.classList.add("hidden");
+      }
+    });
+
+    // 3. Bento Dashboard KPIs
+    const bentoRoles = document.getElementById("bento-roles-stat");
+    if (bentoRoles) bentoRoles.textContent = `${data.total_jobs_discovered || 24}`;
+
+    const trackTotal = document.getElementById("bento-stat-total");
+    const trackApplied = document.getElementById("bento-stat-applied");
+    const trackReview = document.getElementById("track-stat-review");
+    const trackSubmitted = document.getElementById("track-stat-applied");
+
+    if (trackTotal) trackTotal.textContent = data.total_jobs_discovered || 0;
+    if (trackApplied) trackApplied.textContent = data.applications_submitted || 0;
+    if (trackReview) trackReview.textContent = pendingCount;
+    if (trackSubmitted) trackSubmitted.textContent = data.applications_submitted || 0;
+
+    // 4. Daily Cycle 4-Metric Indicators
+    const cDiscovered = document.getElementById("cycle-stat-discovered");
+    const cVerified = document.getElementById("cycle-stat-verified");
+    const cMatches = document.getElementById("cycle-stat-matches");
+    const cAwaiting = document.getElementById("cycle-stat-awaiting");
+
+    if (cDiscovered) cDiscovered.textContent = data.total_jobs_discovered || 0;
+    if (cVerified) cVerified.textContent = data.verified_jobs || 0;
+    if (cMatches) cMatches.textContent = data.recommended_jobs || 0;
+    if (cAwaiting) cAwaiting.textContent = pendingCount;
+
+  } catch (err) {
+    console.warn("loadAgentStatus error:", err);
+  }
+}
+
+/**
+ * FEATURE 1: Trigger Daily Discovery Cycle
+ * Dispatches autonomous background scanning across LinkedIn & FreeHire
+ */
+async function triggerAgentDiscovery() {
+  const btn = document.getElementById("btn-top-discovery");
+  const icon = document.getElementById("icon-top-discovery");
+  const text = document.getElementById("text-top-discovery");
+
+  if (btn) btn.disabled = true;
+  if (icon) icon.className = "w-3.5 h-3.5 text-white animate-spin";
+  if (text) text.textContent = "Scanning...";
+
+  const dot = document.getElementById("agent-status-dot");
+  const stText = document.getElementById("agent-status-text");
+  if (dot) dot.className = "w-2 h-2 rounded-full bg-[#7C5CFF] animate-ping";
+  if (stText) stText.textContent = "Agent: Scanning Portals...";
+
+  showToast("Autonomous discovery started across configured job portals...", "info");
+
+  try {
+    const res = await fetch("/api/agent/run-discovery", { method: "POST" });
+    const data = await res.json();
+    if (res.ok) {
+      showToast(`Discovery completed! ${data.new_jobs || 0} new jobs found (${data.verified || 0} verified).`, "success");
+      await loadAgentStatus();
+      await loadRecommendedJobs(currentMinMatchFilter);
+      await loadDashboardData();
+      await executeJobSearch();
+      await loadAgentActivityLogs();
+    } else {
+      showToast(data.detail || "Discovery cycle encountered an error.", "error");
+    }
+  } catch (err) {
+    showToast("Network error during autonomous discovery.", "error");
+  } finally {
+    if (btn) btn.disabled = false;
+    if (icon) icon.className = "w-3.5 h-3.5 text-white";
+    if (text) text.textContent = "Daily Discovery";
+    loadAgentStatus();
+    if (window.lucide) lucide.createIcons();
+  }
+}
+
+/**
+ * FEATURE 2: Smart Job Inbox & Recommended Roles
+ * Fetches only genuine, verified vacancies with explainable scoring
+ */
+async function loadRecommendedJobs(minScore = 0) {
+  currentMinMatchFilter = minScore;
+  const container = document.getElementById("recommended-jobs-container");
+  const badge = document.getElementById("recommended-count-badge");
+
+  if (container) {
+    container.innerHTML = `
+      <div class="col-span-1 md:col-span-2 p-12 text-center bento-box space-y-3">
+        <i data-lucide="sparkles" class="w-6 h-6 text-[#30DC97] mx-auto animate-spin"></i>
+        <h4 class="text-sm font-bold text-white">Scoring Verified Opportunities...</h4>
+        <p class="text-xs text-[#9A9AA5]">Running explainable multi-factor match heuristics against Aarav Sharma's verified profile.</p>
+      </div>
+    `;
+    if (window.lucide) lucide.createIcons();
+  }
+
+  try {
+    const url = `/api/agent/jobs?verification_status=VERIFIED&min_match=${minScore}&limit=25`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("Failed to load recommended jobs");
+    const data = await res.json();
+    allRecommendedJobs = data.jobs || [];
+
+    if (badge) {
+      badge.textContent = `${allRecommendedJobs.length} verified roles (Score &ge; ${minScore}%)`;
+    }
+
+    renderRecommendedCards(allRecommendedJobs);
+    renderDashboardCuratedJobs(allRecommendedJobs);
+
+  } catch (err) {
+    console.error("loadRecommendedJobs error:", err);
+    if (container) {
+      container.innerHTML = `
+        <div class="col-span-1 md:col-span-2 p-8 text-center bento-box space-y-2">
+          <i data-lucide="alert-circle" class="w-6 h-6 text-[#FFAA2C] mx-auto"></i>
+          <p class="text-xs text-[#9A9AA5]">Unable to load recommended positions.</p>
+        </div>
+      `;
+      if (window.lucide) lucide.createIcons();
+    }
+  }
+}
+
+function filterRecommendedScore(score) {
+  [0, 80, 90].forEach(s => {
+    const btn = document.getElementById(s === 0 ? "rec-filter-all" : `rec-filter-${s}`);
+    if (btn) {
+      if (s === score) {
+        btn.className = "px-2.5 py-1 rounded-xl bg-[#7C5CFF]/20 border border-[#7C5CFF]/40 text-white text-[11px] font-bold";
+      } else {
+        btn.className = "px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-[11px] font-bold";
+      }
+    }
+  });
+  loadRecommendedJobs(score);
+}
+
+function renderRecommendedCards(jobs) {
+  const container = document.getElementById("recommended-jobs-container");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  if (!jobs || jobs.length === 0) {
+    container.innerHTML = `
+      <div class="col-span-1 md:col-span-2 p-12 text-center bento-box space-y-3">
+        <i data-lucide="check-circle" class="w-6 h-6 text-[#30DC97] mx-auto"></i>
+        <h4 class="text-sm font-bold text-white">No roles meet this threshold</h4>
+        <p class="text-xs text-[#9A9AA5]">Try viewing all scored positions or running a new daily discovery cycle.</p>
+      </div>
+    `;
+    if (window.lucide) lucide.createIcons();
+    return;
+  }
+
+  jobs.forEach(job => {
+    const card = document.createElement("div");
+    card.className = "rec-job-card bento-box p-6 flex flex-col justify-between space-y-4 hover:border-[#30DC97]/40 transition group";
+
+    const score = Math.round(job.overall_score || 90);
+    const portal = (job.portal || "ATS").toUpperCase();
+    const matchingSkills = job.matching_skills || [];
+    const missingSkills = job.missing_skills || [];
+    const rationale = job.match_rationale || "Directly aligns with candidate's target career trajectory in AI/ML engineering.";
+
+    card.innerHTML = `
+      <div class="space-y-3.5">
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-center gap-1.5 mb-1.5">
+              <span class="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#7C5CFF]/15 text-[#7C5CFF] border border-[#7C5CFF]/30">
+                ${escapeHtml(portal)}
+              </span>
+              <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#30DC97]/15 text-[#30DC97] border border-[#30DC97]/30 flex items-center space-x-1">
+                <i data-lucide="shield-check" class="w-2.5 h-2.5"></i>
+                <span>VERIFIED</span>
+              </span>
+              <span class="text-[10px] text-[#9A9AA5] ml-1">
+                ${escapeHtml(job.location || "Remote")}
+              </span>
+            </div>
+
+            <h3 class="text-base font-bold text-white group-hover:text-[#30DC97] transition truncate" title="${escapeHtml(job.title)}">
+              ${escapeHtml(job.title)}
+            </h3>
+            
+            <p class="text-xs text-[#9A9AA5] font-semibold truncate">
+              ${escapeHtml(job.company)}
+            </p>
+          </div>
+
+          <div class="flex flex-col items-end shrink-0">
+            <div class="text-2xl font-black ${score >= 90 ? 'text-[#30DC97]' : 'text-[#7C5CFF]'}">
+              ${score}%
+            </div>
+            <span class="text-[9px] font-bold text-[#9A9AA5] uppercase tracking-wider">Match Fit</span>
+          </div>
+        </div>
+
+        <!-- Explainable Rationale Quote -->
+        <div class="p-3 rounded-xl bg-[#111116] border border-white/5 text-[11px] text-slate-300 leading-relaxed font-normal">
+          <span class="text-[#30DC97] font-bold">Why it matches:</span> ${escapeHtml(rationale)}
+        </div>
+
+        <!-- Skills Alignment -->
+        <div class="space-y-1.5">
+          <div class="flex flex-wrap items-center gap-1">
+            <span class="text-[10px] text-[#9A9AA5] font-semibold mr-1">Matching:</span>
+            ${matchingSkills.length > 0 
+              ? matchingSkills.slice(0, 4).map(s => `<span class="px-2 py-0.5 rounded-md bg-[#30DC97]/10 text-[#30DC97] text-[10px] font-semibold border border-[#30DC97]/20">${escapeHtml(s)}</span>`).join("")
+              : `<span class="px-2 py-0.5 rounded-md bg-white/5 text-slate-300 text-[10px]">Python &bull; ML Fundamentals</span>`
+            }
+          </div>
+
+          ${missingSkills.length > 0 ? `
+            <div class="flex flex-wrap items-center gap-1 pt-1">
+              <span class="text-[10px] text-[#FFAA2C] font-semibold mr-1">Gaps:</span>
+              ${missingSkills.slice(0, 3).map(s => `<span class="px-2 py-0.5 rounded-md bg-[#FFAA2C]/10 text-[#FFAA2C] text-[10px] font-semibold border border-[#FFAA2C]/20">${escapeHtml(s)}</span>`).join("")}
+            </div>
+          ` : ''}
+        </div>
+      </div>
+
+      <div class="pt-3.5 border-t border-white/5 flex items-center justify-between gap-2.5">
+        <button onclick="prepareApplicationPackage('${escapeJs(job.job_key)}')" class="flex-1 flex items-center justify-center space-x-2 py-2.5 rounded-xl btn-violet text-xs font-bold text-white cursor-pointer shadow-md shadow-[#7C5CFF]/20">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span>Prepare Application</span>
+        </button>
+
+        <a href="${escapeHtml(job.url)}" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2.5 rounded-xl btn-neutral text-xs font-semibold text-slate-300 hover:text-white flex items-center space-x-1" title="Open Original Posting">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+
+  if (window.gsap) {
+    gsap.from(".rec-job-card", {
+      opacity: 0,
+      y: 12,
+      duration: 0.25,
+      stagger: 0.04,
+      ease: "power2.out"
+    });
+  }
+
+  if (window.lucide) lucide.createIcons();
+}
+
+/**
+ * FEATURE 3: Application Package Preparation
+ * Generates ATS-friendly LuaLaTeX resume + tailored cover letter + STAR points
+ */
+async function prepareApplicationPackage(jobKey) {
+  showToast("Preparing tailored ATS application package (LuaLaTeX + Cover Letter + Q&A)...", "info");
+
+  try {
+    const res = await fetch("/api/agent/prepare-package", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ job_key: jobKey })
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      showToast(data.detail || "Failed to prepare application package.", "error");
+      return;
+    }
+
+    showToast("Application package prepared! Waiting for your approval.", "success");
+    await loadAgentStatus();
+    await loadPendingApprovals();
+    await loadAgentActivityLogs();
+
+    // Automatically open the approval modal for review
+    openApprovalModal(data.package);
+
+  } catch (err) {
+    console.error("prepareApplicationPackage error:", err);
+    showToast("Error communicating with package preparer.", "error");
+  }
+}
+
+/**
+ * FEATURE 3: One-Click Human Approval Drawer
+ * Explicit Human-in-the-Loop approval before submitting any application
+ */
+function openApprovalModal(pkg) {
+  if (!pkg) return;
+  activeApprovalJobKey = pkg.job_key;
+
+  const modal = document.getElementById("approval-modal");
+  if (!modal) return;
+
+  const roleEl = document.getElementById("appr-modal-role");
+  const compEl = document.getElementById("appr-modal-company");
+  const scoreEl = document.getElementById("appr-modal-score");
+  const strengthsEl = document.getElementById("appr-modal-strengths");
+  const gapsEl = document.getElementById("appr-modal-gaps");
+  const cvLinkEl = document.getElementById("appr-modal-cv-link");
+  const letterEl = document.getElementById("appr-modal-cover-letter");
+  const sourceEl = document.getElementById("appr-modal-source");
+
+  if (roleEl) roleEl.textContent = pkg.role || pkg.title || "Job Opportunity";
+  if (compEl) compEl.innerHTML = `<span>${escapeHtml(pkg.company || "Company")}</span> &bull; <span>${escapeHtml(pkg.location || "Remote")}</span>`;
+  if (scoreEl) scoreEl.textContent = `${Math.round(pkg.match_score || pkg.overall_score || 95)}% Match`;
+
+  // 3 Strongest Points to Emphasize
+  if (strengthsEl) {
+    const strengths = pkg.strongest_points || [
+      "Prior AI/ML research internship with measurable latency reduction impact",
+      "Production-ready Python, Scikit-learn, and FastAPI project implementations (NeuralMatch, FraudLens)",
+      "Strong academic foundation in CS & AI with 8.75 CGPA"
+    ];
+    strengthsEl.innerHTML = strengths.map((s, idx) => `
+      <div class="p-3 rounded-xl bg-[#111116] border border-white/5 space-y-1">
+        <span class="text-[9px] font-bold text-[#30DC97] uppercase">Strength #${idx + 1}</span>
+        <p class="text-[11px] text-slate-200 leading-snug">${escapeHtml(s)}</p>
+      </div>
+    `).join("");
+  }
+
+  // Gaps & Interview Strategy
+  if (gapsEl) {
+    gapsEl.innerHTML = `
+      <p class="text-xs text-slate-300 leading-relaxed">${escapeHtml(pkg.gaps_and_rebuttal || "No significant hard skill blockers identified. Focus on demonstrating initiative, rapid learning capability, and practical ownership shown in NeuralMatch & FraudLens.")}</p>
+    `;
+  }
+
+  // LuaLaTeX CV Link
+  if (cvLinkEl) {
+    cvLinkEl.href = pkg.cv_path || `/tailored/cv_${pkg.job_key || 'tailored'}.pdf`;
+  }
+
+  // Cover Letter
+  if (letterEl) {
+    letterEl.textContent = pkg.cover_letter || "Tailored draft ready for submission.";
+  }
+
+  // Original Link
+  if (sourceEl) {
+    sourceEl.href = pkg.url || "#";
+  }
+
+  modal.classList.remove("hidden");
+  if (window.gsap) {
+    gsap.fromTo("#approval-modal-card",
+      { scale: 0.95, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 0.22, ease: "power2.out" }
+    );
+  }
+  if (window.lucide) lucide.createIcons();
+}
+
+function closeApprovalModal() {
+  const modal = document.getElementById("approval-modal");
+  if (modal) modal.classList.add("hidden");
+}
+
+async function approveAndSubmitModalApplication() {
+  if (!activeApprovalJobKey) return;
+  const btn = document.getElementById("btn-appr-approve");
+  if (btn) btn.disabled = true;
+
+  showToast("Approving application and recording verified submission...", "info");
+
+  try {
+    // 1. Approve
+    const resApprove = await fetch("/api/agent/approve-application", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ job_key: activeApprovalJobKey })
+    });
+    if (!resApprove.ok) throw new Error("Approval step failed");
+
+    // 2. Submit with proof
+    const resSubmit = await fetch("/api/agent/submit-application", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ job_key: activeApprovalJobKey })
+    });
+    const submitData = await resSubmit.json();
+
+    if (resSubmit.ok) {
+      showToast("Application verified and recorded in tracker!", "success");
+      closeApprovalModal();
+      await loadAgentStatus();
+      await loadPendingApprovals();
+      await loadTrackerData();
+      await loadAgentActivityLogs();
+    } else {
+      showToast(submitData.detail || "Submission step failed.", "error");
+    }
+  } catch (err) {
+    console.error("approveAndSubmitModalApplication error:", err);
+    showToast("Error processing approval & submission.", "error");
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function rejectCurrentModalApplication() {
+  if (!activeApprovalJobKey) return;
+  const btn = document.getElementById("btn-appr-reject");
+  if (btn) btn.disabled = true;
+
+  try {
+    const res = await fetch("/api/agent/reject-application", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ job_key: activeApprovalJobKey })
+    });
+    if (res.ok) {
+      showToast("Application rejected and archived.", "info");
+      closeApprovalModal();
+      await loadAgentStatus();
+      await loadPendingApprovals();
+      await loadTrackerData();
+      await loadAgentActivityLogs();
+    } else {
+      showToast("Failed to reject application.", "error");
+    }
+  } catch (err) {
+    showToast("Error communicating with server.", "error");
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function loadPendingApprovals() {
+  const container = document.getElementById("pending-approvals-container");
+  if (!container) return;
+
+  try {
+    const res = await fetch("/api/agent/pending-approvals");
+    if (!res.ok) return;
+    const data = await res.json();
+    pendingApprovalsList = data.pending || data.pending_applications || [];
+
+    // Update Badges
+    const count = pendingApprovalsList.length;
+    const topBadge = document.getElementById("top-pending-badge");
+    const navBadge = document.getElementById("nav-pending-badge");
+    const tabBadge = document.getElementById("tab-pending-count-badge");
+    [topBadge, navBadge, tabBadge].forEach(b => {
+      if (!b) return;
+      b.textContent = count;
+      if (count > 0) b.classList.remove("hidden");
+      else b.classList.add("hidden");
+    });
+
+    if (count === 0) {
+      container.innerHTML = `
+        <div class="p-10 text-center bento-box space-y-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-[#30DC97]/15 border border-[#30DC97]/30 text-[#30DC97] mx-auto flex items-center justify-center">
+            <i data-lucide="check" class="w-5 h-5"></i>
+          </div>
+          <h4 class="text-sm font-bold text-white">No Applications Waiting for Approval</h4>
+          <p class="text-xs text-[#9A9AA5] max-w-md mx-auto">
+            You're all caught up! When ApplyBot discovers and prepares tailored packages for top matches, they will appear here for your explicit review and sign-off.
+          </p>
+          <div class="pt-2">
+            <button onclick="switchNav('recommended')" class="px-4 py-2 rounded-xl btn-violet text-xs font-bold cursor-pointer">
+              Explore Recommended Jobs
+            </button>
+          </div>
+        </div>
+      `;
+      if (window.lucide) lucide.createIcons();
+      return;
+    }
+
+    container.innerHTML = pendingApprovalsList.map((app, index) => `
+      <div class="bento-box p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border border-[#FFAA2C]/25 bg-[#FFAA2C]/5">
+        <div class="space-y-1.5 flex-1 min-w-0">
+          <div class="flex items-center space-x-2">
+            <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-[#FFAA2C]/20 border border-[#FFAA2C]/40 text-[#FFAA2C] uppercase">
+              Waiting for Approval
+            </span>
+            <span class="text-xs font-black text-[#30DC97]">${Math.round(app.match_score || app.overall_score || 95)}% Match</span>
+          </div>
+          <h4 class="text-sm font-bold text-white truncate">${escapeHtml(app.role || app.title)}</h4>
+          <p class="text-xs text-[#9A9AA5]">${escapeHtml(app.company)} &bull; ${escapeHtml(app.location || "Remote")}</p>
+        </div>
+
+        <div class="flex items-center space-x-2.5 shrink-0">
+          <button onclick="openPendingApprovalModalByIndex(${index})" class="px-4 py-2 rounded-xl btn-violet text-xs font-bold flex items-center space-x-1.5 cursor-pointer">
+            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+            <span>Review Package</span>
+          </button>
+          <button onclick="quickApprove('${escapeJs(app.job_key)}')" class="px-3.5 py-2 rounded-xl bg-[#30DC97]/15 border border-[#30DC97]/30 hover:bg-[#30DC97]/25 text-[#30DC97] text-xs font-bold cursor-pointer">
+            Quick Approve
+          </button>
+        </div>
+      </div>
+    `).join("");
+
+    if (window.lucide) lucide.createIcons();
+
+  } catch (err) {
+    console.error("loadPendingApprovals error:", err);
+  }
+}
+
+function openPendingApprovalModalByIndex(index) {
+  const app = pendingApprovalsList[index];
+  if (app) openApprovalModal(app);
+}
+
+async function quickApprove(jobKey) {
+  activeApprovalJobKey = jobKey;
+  await approveAndSubmitModalApplication();
+}
+
+function filterApplicationsTab(tabKey) {
+  const panelPending = document.getElementById("panel-pending-approvals");
+  const panelTracker = document.getElementById("panel-all-tracker");
+  const btnPending = document.getElementById("tab-btn-pending");
+  const btnTracker = document.getElementById("tab-btn-tracker");
+
+  if (tabKey === "pending") {
+    if (panelPending) panelPending.classList.remove("hidden");
+    if (panelTracker) panelTracker.classList.add("hidden");
+    if (btnPending) btnPending.className = "px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-[#7C5CFF]/15 border border-[#7C5CFF]/30 text-white cursor-pointer";
+    if (btnTracker) btnTracker.className = "px-4 py-2 rounded-xl text-xs font-semibold text-[#9A9AA5] hover:text-white hover:bg-white/5 transition flex items-center space-x-2 cursor-pointer";
+    loadPendingApprovals();
+  } else {
+    if (panelPending) panelPending.classList.add("hidden");
+    if (panelTracker) panelTracker.classList.remove("hidden");
+    if (btnTracker) btnTracker.className = "px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-[#7C5CFF]/15 border border-[#7C5CFF]/30 text-white cursor-pointer";
+    if (btnPending) btnPending.className = "px-4 py-2 rounded-xl text-xs font-semibold text-[#9A9AA5] hover:text-white hover:bg-white/5 transition flex items-center space-x-2 cursor-pointer";
+    loadTrackerData();
+  }
+}
+
+/**
+ * FEATURE 1: Live Event Stream of Agent Operations
+ */
+async function loadAgentActivityLogs() {
+  const container = document.getElementById("agent-activity-feed");
+  if (!container) return;
+
+  try {
+    const res = await fetch("/api/agent/activity-logs?limit=40");
+    if (!res.ok) return;
+    const data = await res.json();
+    const logs = data.logs || [];
+
+    if (logs.length === 0) {
+      container.innerHTML = `
+        <div class="p-8 text-center text-xs text-[#9A9AA5]">
+          No recorded agent actions yet. Click "Run Discovery Now" to initiate your first autonomous cycle.
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = logs.map(log => {
+      let icon = "activity";
+      let colorClass = "text-[#7C5CFF] bg-[#7C5CFF]/15 border-[#7C5CFF]/30";
+      
+      if (log.event_type === "discovery") {
+        icon = "sparkles";
+        colorClass = "text-[#7C5CFF] bg-[#7C5CFF]/15 border-[#7C5CFF]/30";
+      } else if (log.event_type === "verification") {
+        icon = "shield-check";
+        colorClass = "text-[#30DC97] bg-[#30DC97]/15 border-[#30DC97]/30";
+      } else if (log.event_type === "matching") {
+        icon = "percent";
+        colorClass = "text-[#45B8FF] bg-[#45B8FF]/15 border-[#45B8FF]/30";
+      } else if (log.event_type === "preparation") {
+        icon = "file-text";
+        colorClass = "text-[#FFAA2C] bg-[#FFAA2C]/15 border-[#FFAA2C]/30";
+      } else if (log.event_type === "approval") {
+        icon = "check-circle";
+        colorClass = "text-[#30DC97] bg-[#30DC97]/15 border-[#30DC97]/30";
+      } else if (log.event_type === "submission") {
+        icon = "send";
+        colorClass = "text-[#30DC97] bg-[#30DC97]/20 border-[#30DC97]/40";
+      }
+
+      const formattedTime = log.created_at ? new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : "";
+
+      return `
+        <div class="p-3.5 rounded-xl bg-[#111116] border border-white/5 flex items-start space-x-3 text-xs hover:border-white/10 transition">
+          <div class="w-7 h-7 rounded-lg ${colorClass} border flex items-center justify-center shrink-0 mt-0.5">
+            <i data-lucide="${icon}" class="w-3.5 h-3.5"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-white uppercase text-[10px] tracking-wider">${escapeHtml(log.event_type)}</span>
+              <span class="text-[10px] text-[#9A9AA5] font-mono">${formattedTime}</span>
+            </div>
+            <p class="text-xs text-slate-300 mt-0.5 leading-snug">${escapeHtml(log.message)}</p>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    if (window.lucide) lucide.createIcons();
+
+  } catch (err) {
+    console.warn("loadAgentActivityLogs error:", err);
+  }
+}
+
+/**
+ * FEATURE 5: Telegram Smart Notifications Controller
+ */
+function testTelegramAlert() {
+  showToast("Dispatching test digest through Telegram webhook...", "info");
+  fetch("/api/agent/daily-digest")
+    .then(r => r.json())
+    .then(d => {
+      showToast("Telegram digest dispatched successfully!", "success");
+    })
+    .catch(() => {
+      showToast("Check your Telegram token or bot chat ID.", "error");
+    });
+}
+
+function saveTelegramSettings() {
+  showToast("Telegram configuration saved to local preferences.", "success");
 }

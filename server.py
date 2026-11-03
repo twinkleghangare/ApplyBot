@@ -14,6 +14,13 @@ from pydantic import BaseModel
 import pypdf
 import csv
 from datetime import datetime
+import applybot_db
+import authenticity_engine
+import discovery_worker
+import matching_engine
+import application_preparer
+import notifier
+from tools.job_key import make_key
 
 ROOT_DIR = Path(__file__).resolve().parent
 BUN_PATH = os.environ.get("BUN_PATH") or shutil.which("bun") or "bun"
@@ -544,14 +551,35 @@ def search_jobs(req: SearchRequest):
         desc_lower = job.get("description", "").lower()
         combined_text = title_lower + " " + desc_lower
         
-        # Candidate Skills Match
-        matched_candidate_skills = []
-        for skill in candidate_skills:
-            if skill in combined_text or skill in ["python", "machine learning", "data science"]:
-                matched_candidate_skills.append(skill.title())
-        matched_candidate_skills = list(dict.fromkeys(matched_candidate_skills))[:5]
+        # Canonical Key & Database Integration
+        key = make_key(job["company"], job["title"], job["url"])
+        job["job_key"] = key
         
-        cand_score = min(98, 72 + len(matched_candidate_skills) * 5)
+        # Verification & Matching Engines
+        verif = authenticity_engine.verify_job(job)
+        verif["job_key"] = key
+        match_res = matching_engine.score_job(job)
+        
+        try:
+            applybot_db.upsert_job({
+                "job_key": key,
+                "title": job["title"],
+                "company": job["company"],
+                "location": job["location"],
+                "url": job["url"],
+                "portal": job["portal"],
+                "date_posted": job.get("date"),
+                "deadline": None,
+                "description": job.get("description", ""),
+                "first_seen": datetime.now().isoformat(),
+                "status": "discovered"
+            })
+            applybot_db.upsert_verification(verif)
+        except Exception:
+            pass
+
+        cand_score = match_res["overall_score"]
+        matched_candidate_skills = match_res["matching_skills"]
         
         # JD Matcher Alignment (if user provided JD)
         jd_match_pct = 85
@@ -576,6 +604,7 @@ def search_jobs(req: SearchRequest):
                 
         processed_jobs.append({
             "id": job["id"],
+            "job_key": key,
             "title": job["title"],
             "company": job["company"],
             "location": job["location"],
@@ -583,6 +612,8 @@ def search_jobs(req: SearchRequest):
             "url": job["url"],
             "portal": job["portal"],
             "fit_score": cand_score,
+            "verification": verif,
+            "match_breakdown": match_res,
             "jd_match_score": jd_match_pct,
             "matched_skills": matched_candidate_skills if matched_candidate_skills else ["Python", "Data Science"],
             "matched_jd_skills": matched_jd_keywords[:4],
@@ -879,11 +910,14 @@ def get_dashboard_stats():
         except Exception:
             pass
 
+    db_stats = applybot_db.get_pipeline_stats()
+
     return {
         "ats_score": score,
         "candidate_name": profile.get("name", "Candidate Profile"),
         "candidate_degree": profile.get("degree", "BTech in Computer Science & AI"),
         "readiness_status": "ApplyBot Level: Optimal" if score >= 90 else "Ready",
+        "agent_stats": db_stats,
         "breakdown": {
             "contact_integrity": 100,
             "skills_density": min(100, len(skills) * 7),
@@ -1038,6 +1072,84 @@ def update_tracker_status(req: UpdateStatusRequest):
     except Exception as e:
         return {"status": "error", "message": str(e)}
     return {"status": "not_found"}
+
+# ============================================================================
+# AUTONOMOUS AI AGENT & HUMAN-IN-THE-LOOP ENDPOINTS
+# ============================================================================
+
+class ActionJobRequest(BaseModel):
+    job_key: str
+    notes: Optional[str] = None
+
+class SubmitJobRequest(BaseModel):
+    job_key: str
+    submission_evidence: str
+
+class DiscoveryRequest(BaseModel):
+    roles: Optional[List[str]] = None
+    locations: Optional[List[str]] = None
+    limit: Optional[int] = 4
+
+@app.get("/api/agent/status")
+def get_agent_status():
+    return applybot_db.get_pipeline_stats()
+
+@app.post("/api/agent/run-discovery")
+def run_agent_discovery(req: Optional[DiscoveryRequest] = None):
+    roles = req.roles if req else None
+    locs = req.locations if req else None
+    limit = req.limit if req else 4
+    summary = discovery_worker.run_discovery_cycle(roles=roles, locations=locs, limit_per_query=limit)
+    # Also score discovered jobs with matching engine
+    for job in summary.get("jobs", []):
+        matching_engine.score_job(job)
+    return summary
+
+@app.get("/api/agent/jobs")
+def get_agent_jobs(status: Optional[str] = None, verification_status: Optional[str] = None, limit: int = 50):
+    return {"jobs": applybot_db.list_jobs(status=status, verification_status=verification_status, limit=limit)}
+
+@app.get("/api/agent/pending-approvals")
+def get_pending_approvals():
+    return {"pending": applybot_db.get_pending_approvals()}
+
+@app.post("/api/agent/prepare-package")
+def prepare_package_endpoint(req: ActionJobRequest):
+    try:
+        pkg = application_preparer.prepare_application_package(req.job_key)
+        return {"status": "prepared", "package": pkg}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/agent/approve-application")
+def approve_app_endpoint(req: ActionJobRequest):
+    success = applybot_db.approve_application(req.job_key, notes=req.notes)
+    if not success:
+        raise HTTPException(status_code=404, detail="Application record not found")
+    return {"status": "approved", "job_key": req.job_key}
+
+@app.post("/api/agent/reject-application")
+def reject_app_endpoint(req: ActionJobRequest):
+    success = applybot_db.reject_application(req.job_key, reason=req.notes)
+    if not success:
+        raise HTTPException(status_code=404, detail="Application record not found")
+    return {"status": "rejected", "job_key": req.job_key}
+
+@app.post("/api/agent/submit-application")
+def submit_app_endpoint(req: SubmitJobRequest):
+    success = applybot_db.mark_submitted(req.job_key, evidence=req.submission_evidence)
+    if not success:
+        raise HTTPException(status_code=400, detail="Cannot submit without prior user approval.")
+    return {"status": "submitted", "job_key": req.job_key}
+
+@app.get("/api/agent/activity-logs")
+def get_activity_logs(limit: int = 50):
+    return {"logs": applybot_db.get_agent_logs(limit=limit)}
+
+@app.get("/api/agent/daily-digest")
+def get_daily_digest():
+    digest = notifier.generate_daily_digest()
+    return {"digest": digest, "date": datetime.now().strftime("%Y-%m-%d")}
 
 # Mount Static Files
 app.mount("/static", StaticFiles(directory=str(ROOT_DIR / "static")), name="static")

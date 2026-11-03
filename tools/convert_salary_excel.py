@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 """
 Convert salary data from Excel to JSON format.
