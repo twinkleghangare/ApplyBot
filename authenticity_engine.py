@@ -59,7 +59,11 @@ VERIFIED_ATS_DOMAINS = {
     "greenhouse.io", "lever.co", "myworkdayjobs.com", "smartrecruiters.com",
     "ashbyhq.com", "jobs.jobvite.com", "careers-page.com", "bamboohr.com",
     "icims.com", "taleo.net", "workable.com", "recruitee.com", "zohorecruit.in",
-    "zohorecruit.com", "rippling-ats.com", "applytojob.com", "linkedin.com"
+    "zohorecruit.com", "rippling-ats.com", "applytojob.com", "linkedin.com",
+    # Major Indian & Global Genuine Job Portals (User Spec)
+    "naukri.com", "wellfound.com", "angel.co", "cutshort.io", "hirist.tech",
+    "hirist.com", "internshala.com", "ncs.gov.in", "indeed.com", "glassdoor.com",
+    "foundit.in", "shine.com"
 }
 
 SUSPICIOUS_SHORTENERS = {
