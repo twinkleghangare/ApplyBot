@@ -178,6 +178,112 @@
       box-shadow: 0 0 16px -2px rgba(124, 92, 255, 0.25);
     }
 
+    /* Cyan Accent Button */
+    .btn-cyan {
+      background: linear-gradient(135deg, #00E5FF 0%, #00B4D8 100%);
+      border-radius: 12px;
+      color: #07090E;
+      font-weight: 700;
+      box-shadow: 0 4px 16px -2px rgba(0, 229, 255, 0.45);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-cyan:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px -2px rgba(0, 229, 255, 0.7);
+    }
+    .btn-cyan:active {
+      transform: translateY(1px);
+    }
+
+    /* Typewriter Cursor (Image 3) */
+    .typewriter-cursor {
+      display: inline-block;
+      font-weight: 300;
+      color: #00E5FF;
+      animation: blinkCursor 0.9s infinite;
+      margin-left: 2px;
+    }
+    @keyframes blinkCursor {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* Floating Astro Animation (Image 3) */
+    @keyframes astroFloat {
+      0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-12px) rotate(2.5deg);
+      }
+    }
+    .animate-astro-float {
+      animation: astroFloat 6s ease-in-out infinite;
+    }
+
+    @keyframes orbitSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-orbit-slow {
+      animation: orbitSlow 25s linear infinite;
+    }
+
+    /* State Machine Blueprint Canvas & Nodes (Image 2) */
+    .state-machine-canvas {
+      background-color: #080A10;
+      background-image: 
+        radial-gradient(rgba(0, 229, 255, 0.14) 1px, transparent 1px),
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 20px 20px, 100px 100px, 100px 100px;
+    }
+    .node-card {
+      background: rgba(14, 18, 26, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.85);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+    .node-card:hover {
+      border-color: rgba(0, 229, 255, 0.55);
+      box-shadow: 0 16px 36px -8px rgba(0, 229, 255, 0.28);
+      transform: translateY(-2px);
+    }
+    .node-card.active-state {
+      border-color: #00E5FF;
+      box-shadow: 0 0 28px rgba(0, 229, 255, 0.35);
+    }
+    .node-card.waiting-state {
+      border-color: #FFAA2C;
+      box-shadow: 0 0 28px rgba(255, 170, 44, 0.35);
+    }
+    .node-port {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid #00E5FF;
+      background: #080A10;
+    }
+    .node-port-amber {
+      border-color: #FFAA2C;
+    }
+    .node-port-mint {
+      border-color: #30DC97;
+    }
+
+    @keyframes pulseFlow {
+      0% { stroke-dashoffset: 40; }
+      100% { stroke-dashoffset: 0; }
+    }
+    .flowing-wire {
+      stroke-dasharray: 6 6;
+      animation: pulseFlow 1.1s linear infinite;
+    }
+
     /* Inputs */
     .app-input {
       background: #111116;
@@ -260,6 +366,12 @@
           <i data-lucide="orbit" class="w-4 h-4 text-[#FFAA2C]"></i>
           <span class="flex-1 text-left">Career Galaxy</span>
           <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-[#FFAA2C]/15 border border-[#FFAA2C]/30 text-[#FFAA2C] font-black">3D</span>
+        </button>
+
+        <button id="nav-btn-workflow" onclick="switchNav('workflow')" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all text-[#9A9AA5] hover:text-white hover:bg-white/5">
+          <i data-lucide="git-branch" class="w-4 h-4 text-[#00E5FF]"></i>
+          <span class="flex-1 text-left">Agent State Machine</span>
+          <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-[#00E5FF]/15 border border-[#00E5FF]/30 text-[#00E5FF] font-black">GRAPH</span>
         </button>
 
         <button id="nav-btn-jobs" onclick="switchNav('jobs')" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all text-[#9A9AA5] hover:text-white hover:bg-white/5">
@@ -397,6 +509,7 @@
       <div id="mobile-nav" class="hidden lg:hidden border-t border-white/5 bg-[#0C0C12] px-4 py-3 space-y-1 text-xs">
         <button onclick="switchNav('dashboard'); toggleMobileNav()" class="w-full text-left py-2 font-semibold text-white">Dashboard</button>
         <button onclick="switchNav('galaxy'); toggleMobileNav()" class="w-full text-left py-2 font-semibold text-[#FFAA2C]">Career Galaxy (3D)</button>
+        <button onclick="switchNav('workflow'); toggleMobileNav()" class="w-full text-left py-2 font-semibold text-[#00E5FF]">Agent State Machine (Graph)</button>
         <button onclick="switchNav('jobs'); toggleMobileNav()" class="w-full text-left py-2 font-semibold text-slate-400">Discover Jobs</button>
         <button onclick="switchNav('recommended'); toggleMobileNav()" class="w-full text-left py-2 font-semibold text-[#30DC97]">Recommended Jobs</button>
         <button onclick="switchNav('applications'); toggleMobileNav()" class="w-full text-left py-2 font-semibold text-slate-400">My Applications</button>
@@ -501,6 +614,282 @@
       <!-- ====================================================== -->
       <!-- VIEW 1: DASHBOARD BENTO GRID (Field Guide 03 Redesign) -->
       <!-- ====================================================== -->
+            <!-- ====================================================== -->
+      <!-- VIEW: AGENT STATE MACHINE & WORKFLOW GRAPH (Image 2)   -->
+      <!-- Dedicated Visual Node-Based Agent Pipeline Workspace   -->
+      <!-- ====================================================== -->
+      <section id="sec-workflow" class="hidden space-y-4">
+        
+        <!-- Top StateMachine Toolbar (matching Image 2 header) -->
+        <div class="bento-box p-4 flex flex-wrap items-center justify-between gap-3 bg-[#0F131D] border border-white/10 shadow-lg">
+          
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 rounded-xl bg-[#00E5FF]/15 border border-[#00E5FF]/30 flex items-center justify-center text-[#00E5FF]">
+              <i data-lucide="git-branch" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="text-xs font-mono text-[#00E5FF] font-bold">applybot &gt; core_agent &gt; StateMachine</span>
+                <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-[#30DC97]/15 border border-[#30DC97]/30 text-[#30DC97] font-bold">LIVE GRAPH</span>
+              </div>
+              <h2 class="text-sm font-extrabold text-white">Visual Autonomous State Machine</h2>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button onclick="triggerAgentDiscovery()" class="px-3.5 py-1.5 rounded-xl btn-cyan text-xs font-bold flex items-center space-x-1.5 shadow-md shadow-[#00E5FF]/20 cursor-pointer">
+              <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+              <span>Run Pipeline</span>
+            </button>
+            <button onclick="stepAgentStateMachine()" class="px-3 py-1.5 rounded-xl btn-neutral text-xs font-semibold text-slate-200 hover:text-white flex items-center space-x-1 cursor-pointer">
+              <i data-lucide="skip-forward" class="w-3.5 h-3.5 text-[#00E5FF]"></i>
+              <span>Step</span>
+            </button>
+            <button onclick="resetAgentStateMachine()" class="p-1.5 rounded-xl btn-neutral text-slate-400 hover:text-white cursor-pointer" title="Reset State">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="switchNav('dashboard')" class="px-3 py-1.5 rounded-xl btn-neutral text-xs font-semibold text-slate-300 hover:text-white cursor-pointer">
+              &larr; Dashboard
+            </button>
+          </div>
+
+        </div>
+
+        <!-- 2-Column Split: Parameters Panel (3 cols) + Canvas Workspace (9 cols) (Image 2) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          
+          <!-- LEFT COLUMN: Node Parameters & Agent Settings (3 cols) -->
+          <div class="lg:col-span-3 space-y-4">
+            
+            <div class="bento-box p-5 space-y-4">
+              <div class="border-b border-white/10 pb-3 flex items-center justify-between">
+                <span class="text-xs font-bold text-white uppercase tracking-wider">State Parameters</span>
+                <span class="text-[10px] font-mono text-[#00E5FF]">v2.4 Active</span>
+              </div>
+
+              <div class="space-y-3 text-xs">
+                <div>
+                  <label class="block text-[11px] text-[#9A9AA5] font-medium mb-1">State Machine Mode</label>
+                  <div class="p-2 rounded-xl bg-[#111420] border border-white/5 font-mono text-[11px] text-[#00E5FF] font-bold">
+                    AUTONOMOUS_HITL
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-[11px] text-[#9A9AA5] font-medium mb-1">Scraper Portals</label>
+                  <div class="p-2 rounded-xl bg-[#111420] border border-white/5 text-[11px] text-slate-200 space-y-1">
+                    <div class="flex justify-between"><span>FreeHire ATS (48)</span><span class="text-[#30DC97]">&check;</span></div>
+                    <div class="flex justify-between"><span>LinkedIn API</span><span class="text-[#30DC97]">&check;</span></div>
+                    <div class="flex justify-between"><span>Jobindex STAR</span><span class="text-[#30DC97]">&check;</span></div>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-[11px] text-[#9A9AA5] font-medium mb-1">FraudLens Authenticity</label>
+                  <div class="p-2 rounded-xl bg-[#111420] border border-white/5 font-mono text-[11px] text-[#30DC97]">
+                    0 Scam Traps Permitted
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-[11px] text-[#9A9AA5] font-medium mb-1">NeuralMatch Threshold</label>
+                  <div class="p-2 rounded-xl bg-[#111420] border border-white/5 font-mono text-[11px] text-[#7C5CFF] flex justify-between">
+                    <span>Min Score:</span>
+                    <strong>85.0%</strong>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-[11px] text-[#9A9AA5] font-medium mb-1">Approval Safety Gate</label>
+                  <div class="p-2 rounded-xl bg-[#111420] border border-white/5 font-mono text-[11px] text-[#FFAA2C]">
+                    STRICT_HUMAN_CONFIRMATION
+                  </div>
+                </div>
+              </div>
+
+              <button onclick="triggerAgentDiscovery()" class="w-full py-2 btn-violet text-xs font-bold cursor-pointer">
+                Execute State Transition
+              </button>
+            </div>
+
+            <!-- Active Node Inspector Card -->
+            <div id="inspector-card" class="bento-box p-5 space-y-3">
+              <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                <span class="text-xs font-bold text-white flex items-center space-x-1.5">
+                  <i data-lucide="info" class="w-3.5 h-3.5 text-[#00E5FF]"></i>
+                  <span>Selected Node</span>
+                </span>
+                <span id="inspect-node-type" class="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-[#00E5FF]/20 text-[#00E5FF]">GATE</span>
+              </div>
+              <div>
+                <h4 id="inspect-node-title" class="text-sm font-bold text-white">Human Approval Gate</h4>
+                <p id="inspect-node-desc" class="text-[11px] text-[#9A9AA5] mt-1 leading-relaxed">
+                  Yields execution to wait for explicit human review. Current pending payload: Sprinto AI Implementation Intern (95.8% fit).
+                </p>
+              </div>
+              <div class="p-2.5 rounded-xl bg-[#090C15] border border-white/5 font-mono text-[10px] space-y-1 text-slate-300">
+                <div class="flex justify-between"><span>Status:</span><span id="inspect-node-status" class="text-[#FFAA2C] font-bold">WAITING_FOR_USER</span></div>
+                <div class="flex justify-between"><span>Queue:</span><span id="inspect-node-queue" class="text-white font-bold">1 Application</span></div>
+                <div class="flex justify-between"><span>Latency:</span><span class="text-slate-400">0.14 ms</span></div>
+              </div>
+              <button onclick="switchNav('applications'); filterApplicationsTab('pending')" class="w-full py-2 btn-neutral text-xs font-bold text-[#FFAA2C] border-[#FFAA2C]/30 hover:bg-[#FFAA2C]/10 cursor-pointer">
+                Review Pending Item &rarr;
+              </button>
+            </div>
+
+          </div>
+
+          <!-- RIGHT COLUMN: Interactive Node Canvas & Transition Graphs (9 cols) (Image 2) -->
+          <div class="lg:col-span-9 space-y-4">
+            
+            <!-- Canvas Window -->
+            <div class="bento-box p-6 state-machine-canvas relative overflow-x-auto min-h-[480px] border border-white/10">
+              
+              <div class="relative min-w-[760px] py-2">
+                
+                <!-- SVG Wire Layer -->
+                <svg class="absolute inset-0 w-full h-full pointer-events-none" style="min-height: 420px;">
+                  <defs>
+                    <linearGradient id="wfWire1" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#00E5FF" stop-opacity="0.9" />
+                      <stop offset="100%" stop-color="#30DC97" stop-opacity="0.9" />
+                    </linearGradient>
+                    <linearGradient id="wfWire2" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#30DC97" stop-opacity="0.9" />
+                      <stop offset="100%" stop-color="#7C5CFF" stop-opacity="0.9" />
+                    </linearGradient>
+                    <linearGradient id="wfWire3" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#7C5CFF" stop-opacity="0.9" />
+                      <stop offset="100%" stop-color="#FFAA2C" stop-opacity="0.9" />
+                    </linearGradient>
+                  </defs>
+
+                  <!-- Top Nodes Connecting Splines -->
+                  <path d="M 220 70 C 260 70, 260 70, 300 70" fill="none" stroke="url(#wfWire1)" stroke-width="2.5" class="flowing-wire" />
+                  <path d="M 520 70 C 560 70, 560 70, 600 70" fill="none" stroke="url(#wfWire2)" stroke-width="2.5" class="flowing-wire" />
+                  <path d="M 410 145 C 410 210, 410 210, 410 270" fill="none" stroke="url(#wfWire3)" stroke-width="2.5" class="flowing-wire" />
+                  <path d="M 520 330 C 560 330, 560 330, 600 330" fill="none" stroke="url(#wfWire3)" stroke-width="2.5" class="flowing-wire" />
+                </svg>
+
+                <!-- TOP ROW OF NODES (Image 2 style) -->
+                <div class="grid grid-cols-3 gap-8 relative z-10 mb-12">
+                  
+                  <!-- Node: Idle / Schedule -->
+                  <div onclick="inspectStateNode('scheduler')" class="node-card p-4 space-y-2 border-[#00E5FF]/40">
+                    <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                      <span class="text-[10px] font-mono text-[#00E5FF] font-bold">Node: Idle / Scheduler</span>
+                      <span class="w-2 h-2 rounded-full bg-[#30DC97] animate-pulse"></span>
+                    </div>
+                    <div class="text-xs font-bold text-white">Daily Cron Trigger</div>
+                    <div class="p-2 rounded bg-black/40 text-[10px] font-mono text-slate-300">
+                      Cadence: 08:00 AM Daily
+                    </div>
+                    <div class="flex justify-between items-center text-[10px] font-mono pt-1 text-slate-400">
+                      <span>port: out_trigger</span>
+                      <div class="node-port"></div>
+                    </div>
+                  </div>
+
+                  <!-- Node: Scraper Engine -->
+                  <div onclick="inspectStateNode('discovery')" class="node-card p-4 space-y-2 border-[#30DC97]/40">
+                    <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                      <span class="text-[10px] font-mono text-[#30DC97] font-bold">Node: Discovery</span>
+                      <span class="text-[9px] px-1 rounded bg-[#30DC97]/20 text-[#30DC97]">50+ ATS</span>
+                    </div>
+                    <div class="text-xs font-bold text-white">Multi-Portal Scraper</div>
+                    <div class="p-2 rounded bg-black/40 text-[10px] font-mono text-slate-300">
+                      Scanned: 22 roles indexed
+                    </div>
+                    <div class="flex justify-between items-center text-[10px] font-mono pt-1 text-slate-400">
+                      <div class="node-port node-port-mint"></div>
+                      <span>port: raw_listings</span>
+                      <div class="node-port node-port-mint"></div>
+                    </div>
+                  </div>
+
+                  <!-- Node: Authenticity Guard -->
+                  <div onclick="inspectStateNode('authenticity')" class="node-card p-4 space-y-2 border-[#30DC97]/40">
+                    <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                      <span class="text-[10px] font-mono text-[#30DC97] font-bold">Node: FraudLens</span>
+                      <span class="text-[9px] px-1 rounded bg-[#30DC97]/20 text-[#30DC97]">Verified</span>
+                    </div>
+                    <div class="text-xs font-bold text-white">Domain &amp; Scam Guard</div>
+                    <div class="p-2 rounded bg-black/40 text-[10px] font-mono text-slate-300">
+                      19 Validated &bull; 0 Scams
+                    </div>
+                    <div class="flex justify-between items-center text-[10px] font-mono pt-1 text-slate-400">
+                      <div class="node-port node-port-mint"></div>
+                      <span>port: verified_listings</span>
+                      <div class="node-port node-port-mint"></div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- BOTTOM ROW OF NODES: Decision & Approval Logic (Image 2 style) -->
+                <div class="grid grid-cols-3 gap-8 relative z-10 pt-4">
+                  
+                  <div></div>
+
+                  <!-- Node: NeuralMatch Engine -->
+                  <div onclick="inspectStateNode('neuralmatch')" class="node-card p-4 space-y-2 border-[#7C5CFF]/40">
+                    <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                      <span class="text-[10px] font-mono text-[#7C5CFF] font-bold">Node: NeuralMatch</span>
+                      <span class="text-[9px] px-1 rounded bg-[#7C5CFF]/20 text-[#7C5CFF]">BERT</span>
+                    </div>
+                    <div class="text-xs font-bold text-white">Semantic Match Engine</div>
+                    <div class="p-2 rounded bg-black/40 text-[10px] font-mono text-slate-300">
+                      20 Matches &ge; 80% fit
+                    </div>
+                    <div class="flex justify-between items-center text-[10px] font-mono pt-1 text-slate-400">
+                      <div class="node-port" style="border-color:#7C5CFF"></div>
+                      <span>port: application_pkg</span>
+                      <div class="node-port" style="border-color:#7C5CFF"></div>
+                    </div>
+                  </div>
+
+                  <!-- Node: Human Approval Gate -->
+                  <div onclick="inspectStateNode('approval')" class="node-card waiting-state p-4 space-y-2 border-[#FFAA2C]">
+                    <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                      <span class="text-[10px] font-mono text-[#FFAA2C] font-black uppercase">Node: Approval Gate</span>
+                      <span class="w-2 h-2 rounded-full bg-[#FFAA2C] animate-ping"></span>
+                    </div>
+                    <div class="text-xs font-bold text-[#FFAA2C]">Human Decision Required</div>
+                    <div class="p-2 rounded bg-black/40 text-[10px] font-mono text-slate-300">
+                      1 Pending: Sprinto AI Intern
+                    </div>
+                    <div class="flex justify-between items-center text-[10px] font-mono pt-1 text-slate-400">
+                      <div class="node-port node-port-amber"></div>
+                      <span class="text-[#FFAA2C] font-bold">Action Required &rarr;</span>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- Transition Rules / Condition Ribbon (matching bottom of Image 2) -->
+            <div class="bento-box p-4 bg-[#0F131D] border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+              <div class="flex items-center space-x-2">
+                <span class="text-[#00E5FF] font-bold">Transitions:</span>
+                <span class="text-slate-300">Discovery [22] &rarr; Verified [19] &rarr; Scored [20] &rarr; Awaiting Approval [1]</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[11px] text-[#30DC97]">Parent Timeline: 24h</span>
+                <span class="px-2 py-0.5 rounded bg-[#FFAA2C]/10 border border-[#FFAA2C]/30 text-[11px] text-[#FFAA2C]">Child Timeline: Active</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
       <section id="sec-dashboard" class="space-y-4">
         
         <!-- Browser Window Mock Header (Per Reference Image) -->
@@ -521,71 +910,335 @@
           </div>
         </div>
 
-        <!-- Autonomous Agent Daily Search Cycle Summary Strip -->
-        <div class="bento-box p-5 border border-[#7C5CFF]/30 bg-gradient-to-r from-[#17171D] via-[#1A1A24] to-[#17171D]">
-          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <!-- ============================================================== -->
+        <!-- GRAND COSMIC ASTRO HERO BANNER (Image 1 + Image 3)             -->
+        <!-- 3D Ripple Animation (Three.js) + Typewriter + Floating Astro   -->
+        <!-- ============================================================== -->
+        <div class="bento-box p-6 sm:p-8 relative overflow-hidden bg-gradient-to-b from-[#0B0E17] via-[#090C15] to-[#07090E] border border-white/10 shadow-2xl">
+          
+          <!-- 3D Ripple Particle Wave Canvas (Image 1) -->
+          <canvas id="hero-ripple-canvas" class="absolute inset-0 w-full h-full pointer-events-auto opacity-75 z-0"></canvas>
+
+          <!-- Cosmic Background Radial Glows -->
+          <div class="absolute -top-24 -left-24 w-96 h-96 bg-[#00E5FF]/10 rounded-full blur-3xl pointer-events-none"></div>
+          <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-[#7C5CFF]/15 rounded-full blur-3xl pointer-events-none"></div>
+
+          <!-- Hero Content Grid -->
+          <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
-            <div class="space-y-1">
-              <div class="flex items-center space-x-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-[#30DC97] animate-pulse"></span>
-                <span class="text-xs font-black uppercase tracking-wider text-white">Daily Job Hunting Assistant &bull; Today's Cycle</span>
-                <span class="text-[10px] px-2 py-0.5 rounded-full bg-[#30DC97]/15 border border-[#30DC97]/30 text-[#30DC97] font-bold">Autonomous</span>
+            <!-- Left Column: Astro Typewriter Greeting & Value Prop (7 cols) -->
+            <div class="lg:col-span-7 space-y-4">
+              
+              <!-- Top Pill Badge (Image 3) -->
+              <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/30 text-[#00E5FF] text-[11px] font-mono tracking-wider uppercase">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#00E5FF] animate-pulse"></span>
+                <span>Personal AI Career Copilot &bull; Autonomous OS</span>
               </div>
-              <p class="text-xs text-[#9A9AA5]">
-                Your agent works daily on your behalf: <span class="text-slate-200 font-semibold">Discover &rarr; Authenticity Guard &rarr; Match Scoring &rarr; Prepare Package &rarr; Wait for Approval</span>
+
+              <!-- Big Astro Headline with Dynamic Typewriter (Image 3) -->
+              <h1 class="text-3xl sm:text-5xl font-extrabold text-[#F5F5F7] tracking-tight leading-tight">
+                Hi! I'm <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00E5FF] via-[#7C5CFF] to-[#30DC97]">ApplyBot</span><br>
+                <span id="hero-typewriter" class="text-white"></span><span class="typewriter-cursor">|</span>
+              </h1>
+
+              <!-- Reassuring, clear description -->
+              <p class="text-xs sm:text-sm text-[#9A9AA5] leading-relaxed max-w-xl">
+                You focus on building your skills and career. ApplyBot independently discovers verified vacancies across 50+ ATS platforms, checks domain authenticity with FraudLens, and prepares tailored LuaLaTeX applications for your approval.
               </p>
+
+              <!-- 4 Live Metric Indicators -->
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2 max-w-xl">
+                <div class="p-2.5 rounded-xl bg-[#111420]/80 backdrop-blur-md border border-white/5">
+                  <div id="cycle-stat-discovered" class="text-lg font-black text-white">22</div>
+                  <div class="text-[10px] text-[#9A9AA5] font-bold uppercase tracking-wider">Discovered</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-[#111420]/80 backdrop-blur-md border border-[#30DC97]/20">
+                  <div id="cycle-stat-verified" class="text-lg font-black text-[#30DC97]">19</div>
+                  <div class="text-[10px] text-[#30DC97] font-bold uppercase tracking-wider">Verified ATS</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-[#111420]/80 backdrop-blur-md border border-[#7C5CFF]/20">
+                  <div id="cycle-stat-matches" class="text-lg font-black text-[#7C5CFF]">20</div>
+                  <div class="text-[10px] text-[#7C5CFF] font-bold uppercase tracking-wider">High Fit &ge;80%</div>
+                </div>
+                <div onclick="switchNav('applications'); filterApplicationsTab('pending')" class="p-2.5 rounded-xl bg-[#111420]/80 backdrop-blur-md border border-[#FFAA2C]/30 hover:border-[#FFAA2C] transition cursor-pointer">
+                  <div id="cycle-stat-awaiting" class="text-lg font-black text-[#FFAA2C]">1</div>
+                  <div class="text-[10px] text-[#FFAA2C] font-bold uppercase tracking-wider flex items-center space-x-1">
+                    <span>Awaiting Approval</span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#FFAA2C] animate-ping"></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Action Row -->
+              <div class="flex flex-wrap items-center gap-2.5 pt-3">
+                <button onclick="triggerAgentDiscovery()" class="px-4 py-2.5 btn-violet text-xs font-bold flex items-center space-x-2 cursor-pointer shadow-lg shadow-[#7C5CFF]/30">
+                  <i data-lucide="sparkles" class="w-4 h-4"></i>
+                  <span>Run Daily Discovery</span>
+                </button>
+                <button onclick="switchNav('recommended')" class="px-4 py-2.5 btn-neutral text-xs font-semibold text-slate-200 hover:text-white flex items-center space-x-1.5 cursor-pointer">
+                  <i data-lucide="compass" class="w-4 h-4 text-[#30DC97]"></i>
+                  <span>Smart Inbox (20)</span>
+                </button>
+                <button onclick="switchNav('workflow')" class="px-4 py-2.5 btn-cyan text-xs font-bold flex items-center space-x-1.5 cursor-pointer shadow-lg shadow-[#00E5FF]/20">
+                  <i data-lucide="git-branch" class="w-4 h-4"></i>
+                  <span>Agent State Machine</span>
+                </button>
+                <button onclick="switchNav('galaxy')" class="px-3.5 py-2.5 btn-neutral text-xs font-semibold text-[#FFAA2C] hover:text-white flex items-center space-x-1.5 cursor-pointer">
+                  <i data-lucide="orbit" class="w-4 h-4 text-[#FFAA2C]"></i>
+                  <span>3D Galaxy</span>
+                </button>
+              </div>
+
             </div>
 
-            <!-- 4 Metric Bento Indicators matching user vision -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
+            <!-- Right Column: Floating Astronaut Graphic & Orbital Element (Image 3) (5 cols) -->
+            <div class="lg:col-span-5 flex flex-col items-center justify-center relative min-h-[260px]">
               
-              <!-- 1. Jobs Discovered -->
-              <div class="p-3 rounded-xl bg-[#111116] border border-white/5">
-                <div id="cycle-stat-discovered" class="text-xl font-black text-white">22</div>
-                <div class="text-[10px] text-[#9A9AA5] font-bold mt-0.5 uppercase tracking-wider">Jobs Discovered</div>
+              <!-- Orbital Rings Graphic -->
+              <div class="relative w-64 h-64 flex items-center justify-center pointer-events-none">
+                
+                <!-- Rotating Celestial Ring -->
+                <div class="absolute inset-0 rounded-full border border-dashed border-[#7C5CFF]/30 animate-orbit-slow"></div>
+                <div class="absolute inset-4 rounded-full border border-[#00E5FF]/20"></div>
+
+                <!-- Celestial Planet Orb (Image 3) -->
+                <div class="w-32 h-32 rounded-full bg-gradient-to-tr from-[#3B0764] via-[#6B21A8] to-[#9333EA] p-0.5 shadow-2xl shadow-[#9333EA]/40 flex items-center justify-center relative overflow-hidden">
+                  <div class="w-full h-full rounded-full bg-gradient-to-b from-[#581C87] to-[#1E1B4B] relative opacity-90">
+                    <div class="absolute top-4 left-2 w-20 h-4 bg-white/10 rounded-full transform -rotate-12 blur-[1px]"></div>
+                    <div class="absolute top-12 left-6 w-24 h-5 bg-white/10 rounded-full transform -rotate-12 blur-[1px]"></div>
+                    <div class="absolute bottom-6 left-4 w-16 h-3 bg-white/10 rounded-full transform -rotate-12 blur-[1px]"></div>
+                  </div>
+                </div>
+
+                <!-- Floating Astronaut Vector SVG (Image 3) -->
+                <div class="absolute -top-3 -right-2 animate-astro-float pointer-events-auto cursor-pointer" onclick="switchNav('workflow')" title="Inspect Agent State Machine">
+                  <svg width="150" height="150" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="filter drop-shadow-[0_15px_25px_rgba(0,229,255,0.35)]">
+                    <rect x="52" y="60" width="32" height="60" rx="10" fill="#1E2333" stroke="#45B8FF" stroke-width="2.5" />
+                    <circle cx="68" cy="80" r="4" fill="#00E5FF" />
+                    <circle cx="68" cy="98" r="4" fill="#30DC97" />
+                    <path d="M 54 75 Q 32 85 45 120 T 70 140" fill="none" stroke="#AAC0D6" stroke-width="3" stroke-linecap="round" />
+                    <rect x="74" y="80" width="56" height="58" rx="18" fill="#F8FAFC" stroke="#00E5FF" stroke-width="2.5" />
+                    <rect x="88" y="94" width="28" height="20" rx="5" fill="#0C0E1A" />
+                    <circle cx="96" cy="104" r="2.5" fill="#00E5FF" />
+                    <circle cx="108" cy="104" r="2.5" fill="#30DC97" />
+                    <rect x="82" y="132" width="16" height="34" rx="7" fill="#E2E8F0" stroke="#00E5FF" stroke-width="2" />
+                    <rect x="106" y="132" width="16" height="34" rx="7" fill="#E2E8F0" stroke="#00E5FF" stroke-width="2" />
+                    <ellipse cx="89" cy="166" rx="10" ry="6" fill="#7C5CFF" />
+                    <ellipse cx="115" cy="166" rx="10" ry="6" fill="#7C5CFF" />
+                    <path d="M 76 90 Q 56 110 66 128" fill="none" stroke="#F8FAFC" stroke-width="12" stroke-linecap="round" />
+                    <path d="M 128 90 Q 148 102 142 124" fill="none" stroke="#F8FAFC" stroke-width="12" stroke-linecap="round" />
+                    <circle cx="66" cy="128" r="7" fill="#7C5CFF" />
+                    <circle cx="142" cy="124" r="7" fill="#7C5CFF" />
+                    <circle cx="102" cy="56" r="32" fill="#FFFFFF" stroke="#00E5FF" stroke-width="3" />
+                    <defs>
+                      <linearGradient id="visorGrad" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#00E5FF" />
+                        <stop offset="50%" stop-color="#7C5CFF" />
+                        <stop offset="100%" stop-color="#4C1D95" />
+                      </linearGradient>
+                    </defs>
+                    <ellipse cx="102" cy="56" rx="22" ry="18" fill="url(#visorGrad)" stroke="#FFFFFF" stroke-width="1.5" />
+                    <path d="M 88 48 Q 98 44 112 48" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.85" />
+                  </svg>
+                </div>
+
+                <div class="absolute top-2 left-6 text-[#00E5FF] animate-pulse">✦</div>
+                <div class="absolute bottom-4 right-8 text-[#FFAA2C] animate-pulse text-xs">✦</div>
               </div>
 
-              <!-- 2. Verified Listings -->
-              <div class="p-3 rounded-xl bg-[#111116] border border-[#30DC97]/20">
-                <div id="cycle-stat-verified" class="text-xl font-black text-[#30DC97]">19</div>
-                <div class="text-[10px] text-[#30DC97] font-bold mt-0.5 uppercase tracking-wider">Verified Listings</div>
-              </div>
-
-              <!-- 3. Relevant Matches -->
-              <div class="p-3 rounded-xl bg-[#111116] border border-[#7C5CFF]/20">
-                <div id="cycle-stat-matches" class="text-xl font-black text-[#7C5CFF]">20</div>
-                <div class="text-[10px] text-[#7C5CFF] font-bold mt-0.5 uppercase tracking-wider">Relevant Matches</div>
-              </div>
-
-              <!-- 4. Awaiting Approval -->
-              <div onclick="switchNav('applications'); filterApplicationsTab('pending')" class="p-3 rounded-xl bg-[#111116] border border-[#FFAA2C]/30 cursor-pointer hover:border-[#FFAA2C] transition">
-                <div id="cycle-stat-awaiting" class="text-xl font-black text-[#FFAA2C]">1</div>
-                <div class="text-[10px] text-[#FFAA2C] font-bold mt-0.5 uppercase tracking-wider">Awaiting Approval</div>
+              <!-- Live Orbit Status Pill below Astro -->
+              <div class="mt-2 px-3 py-1.5 rounded-xl bg-[#090C15]/90 backdrop-blur-md border border-white/10 text-[10px] font-mono text-slate-300 flex items-center space-x-2 shadow-lg">
+                <span class="w-2 h-2 rounded-full bg-[#30DC97] animate-pulse"></span>
+                <span>AGENT ENGINE: <strong class="text-white">ONLINE</strong> &bull; VTU BENGALURU</span>
               </div>
 
             </div>
 
           </div>
+
         </div>
 
-        <!-- Feature 1: Autonomous Agent Interactive Live Pipeline Stepper -->
-        <div class="bento-box p-5 border border-white/10 bg-gradient-to-b from-[#17171D] to-[#121218]">
+        <!-- ============================================================== -->
+        <!-- FEATURE 1: VISUAL AGENT STATE MACHINE & WORKFLOW GRAPH (Image 2) -->
+        <!-- ============================================================== -->
+        <div class="bento-box p-5 border border-white/10 bg-gradient-to-b from-[#121622] to-[#0A0D14]">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3 mb-4">
-            <div class="flex items-center space-x-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-[#7C5CFF] animate-pulse"></span>
-              <h3 class="text-xs font-black uppercase tracking-wider text-white">Autonomous Agent Active Pipeline</h3>
-              <span id="pipeline-live-status-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-[#FFAA2C]/15 border border-[#FFAA2C]/30 text-[#FFAA2C] font-bold">1 In Queue: Sprinto AI Intern</span>
+            <div class="flex items-center space-x-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#00E5FF] animate-pulse"></span>
+              <h3 class="text-xs font-black uppercase tracking-wider text-white">Autonomous Agent State Machine &bull; Execution Graph</h3>
+              <span id="pipeline-live-status-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-[#FFAA2C]/15 border border-[#FFAA2C]/30 text-[#FFAA2C] font-bold">1 In Approval Queue</span>
             </div>
+            
             <div class="flex items-center space-x-2">
-              <button onclick="triggerAgentDiscovery()" class="text-[11px] text-[#7C5CFF] hover:underline font-bold flex items-center space-x-1 cursor-pointer">
+              <!-- View Mode Switcher -->
+              <div class="flex items-center p-0.5 rounded-xl bg-[#090C15] border border-white/10 text-xs font-semibold">
+                <button id="btn-wf-graph" onclick="setWorkflowViewMode('graph')" class="px-2.5 py-1 rounded-lg bg-[#00E5FF]/20 text-[#00E5FF] font-bold flex items-center space-x-1 cursor-pointer">
+                  <i data-lucide="git-branch" class="w-3.5 h-3.5"></i>
+                  <span>Visual Graph</span>
+                </button>
+                <button id="btn-wf-steps" onclick="setWorkflowViewMode('steps')" class="px-2.5 py-1 rounded-lg text-[#9A9AA5] hover:text-white flex items-center space-x-1 cursor-pointer">
+                  <i data-lucide="list-ordered" class="w-3.5 h-3.5"></i>
+                  <span>Stepper</span>
+                </button>
+              </div>
+
+              <button onclick="triggerAgentDiscovery()" class="text-[11px] text-[#00E5FF] hover:underline font-bold flex items-center space-x-1 cursor-pointer">
                 <i data-lucide="play" class="w-3 h-3 fill-current"></i>
-                <span>Trigger Full Autonomous Cycle</span>
+                <span>Run Autonomous Cycle</span>
               </button>
             </div>
           </div>
 
-          <!-- 5-Stage Stepper with connecting visual flow -->
-          <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 relative">
+          <!-- CONTAINER A: VISUAL NODE GRAPH (Image 2) -->
+          <div id="container-wf-graph" class="state-machine-canvas rounded-2xl p-5 border border-white/10 overflow-x-auto relative min-h-[380px]">
+            
+            <!-- Nodes Flex / Grid Layout with SVG Bezier Connection Layer -->
+            <div class="relative min-w-[900px] py-4">
+              
+              <!-- SVG Connecting Bezier Cables -->
+              <svg id="state-machine-svg" class="absolute inset-0 w-full h-full pointer-events-none" style="min-height: 340px;">
+                <defs>
+                  <linearGradient id="wireCyan" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#00E5FF" stop-opacity="0.8" />
+                    <stop offset="100%" stop-color="#30DC97" stop-opacity="0.8" />
+                  </linearGradient>
+                  <linearGradient id="wireMint" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#30DC97" stop-opacity="0.8" />
+                    <stop offset="100%" stop-color="#7C5CFF" stop-opacity="0.8" />
+                  </linearGradient>
+                  <linearGradient id="wireViolet" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#7C5CFF" stop-opacity="0.8" />
+                    <stop offset="100%" stop-color="#FFAA2C" stop-opacity="0.8" />
+                  </linearGradient>
+                </defs>
+
+                <!-- Connecting Wires between nodes -->
+                <path d="M 175 60 C 215 60, 215 60, 255 60" fill="none" stroke="url(#wireCyan)" stroke-width="2.5" class="flowing-wire" />
+                <path d="M 430 60 C 470 60, 470 60, 510 60" fill="none" stroke="url(#wireCyan)" stroke-width="2.5" class="flowing-wire" />
+                <path d="M 685 60 C 725 60, 725 60, 765 60" fill="none" stroke="url(#wireMint)" stroke-width="2.5" class="flowing-wire" />
+                <path d="M 940 60 C 980 60, 980 60, 1020 60" fill="none" stroke="url(#wireViolet)" stroke-width="2.5" class="flowing-wire" />
+              </svg>
+
+              <!-- TOP ROW: 5 Main State Nodes (Image 2) -->
+              <div class="grid grid-cols-5 gap-6 relative z-10">
+                
+                <!-- NODE 1: SCHEDULER -->
+                <div onclick="inspectStateNode('scheduler')" class="node-card p-4 space-y-2.5">
+                  <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                    <span class="text-[10px] font-mono text-[#00E5FF] font-black uppercase tracking-wider">State: Schedule</span>
+                    <span class="w-2 h-2 rounded-full bg-[#30DC97] animate-pulse"></span>
+                  </div>
+                  <div class="text-xs font-bold text-white flex items-center justify-between">
+                    <span>Daily Cron</span>
+                    <i data-lucide="clock" class="w-3.5 h-3.5 text-[#00E5FF]"></i>
+                  </div>
+                  <p class="text-[10px] text-[#9A9AA5] leading-tight">Cadence: 24h cycle &bull; 08:00 AM auto-trigger</p>
+                  <div class="pt-1 flex items-center justify-between text-[10px] font-mono">
+                    <span class="text-slate-400">Out: Trigger</span>
+                    <div class="node-port"></div>
+                  </div>
+                </div>
+
+                <!-- NODE 2: DISCOVERY -->
+                <div onclick="inspectStateNode('discovery')" class="node-card p-4 space-y-2.5">
+                  <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                    <span class="text-[10px] font-mono text-[#00E5FF] font-black uppercase tracking-wider">State: Discovery</span>
+                    <span class="px-1.5 py-0.2 rounded bg-[#00E5FF]/20 text-[#00E5FF] text-[9px] font-bold">50+ ATS</span>
+                  </div>
+                  <div class="text-xs font-bold text-white flex items-center justify-between">
+                    <span>Portal Aggregator</span>
+                    <i data-lucide="compass" class="w-3.5 h-3.5 text-[#00E5FF]"></i>
+                  </div>
+                  <p class="text-[10px] text-[#9A9AA5] leading-tight">FreeHire, LinkedIn, Jobindex &bull; 22 roles indexed</p>
+                  <div class="pt-1 flex items-center justify-between text-[10px] font-mono">
+                    <div class="node-port"></div>
+                    <span class="text-slate-400">Out: Raw Listings</span>
+                    <div class="node-port"></div>
+                  </div>
+                </div>
+
+                <!-- NODE 3: AUTHENTICITY GUARD -->
+                <div onclick="inspectStateNode('authenticity')" class="node-card p-4 space-y-2.5">
+                  <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                    <span class="text-[10px] font-mono text-[#30DC97] font-black uppercase tracking-wider">State: FraudLens</span>
+                    <span class="px-1.5 py-0.2 rounded bg-[#30DC97]/20 text-[#30DC97] text-[9px] font-bold">0 Traps</span>
+                  </div>
+                  <div class="text-xs font-bold text-white flex items-center justify-between">
+                    <span>Authenticity Guard</span>
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#30DC97]"></i>
+                  </div>
+                  <p class="text-[10px] text-[#9A9AA5] leading-tight">19 genuine ATS domains &bull; 0 fee or phishing flags</p>
+                  <div class="pt-1 flex items-center justify-between text-[10px] font-mono">
+                    <div class="node-port node-port-mint"></div>
+                    <span class="text-[#30DC97]">Out: Verified</span>
+                    <div class="node-port node-port-mint"></div>
+                  </div>
+                </div>
+
+                <!-- NODE 4: NEURALMATCH ENGINE -->
+                <div onclick="inspectStateNode('neuralmatch')" class="node-card p-4 space-y-2.5">
+                  <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                    <span class="text-[10px] font-mono text-[#7C5CFF] font-black uppercase tracking-wider">State: Scoring</span>
+                    <span class="px-1.5 py-0.2 rounded bg-[#7C5CFF]/20 text-[#7C5CFF] text-[9px] font-bold">BERT</span>
+                  </div>
+                  <div class="text-xs font-bold text-white flex items-center justify-between">
+                    <span>NeuralMatch Engine</span>
+                    <i data-lucide="cpu" class="w-3.5 h-3.5 text-[#7C5CFF]"></i>
+                  </div>
+                  <p class="text-[10px] text-[#9A9AA5] leading-tight">20 high-fit (&ge;80%) &bull; 0% hallucination grounding</p>
+                  <div class="pt-1 flex items-center justify-between text-[10px] font-mono">
+                    <div class="node-port" style="border-color:#7C5CFF"></div>
+                    <span class="text-[#7C5CFF]">Out: Packages</span>
+                    <div class="node-port" style="border-color:#7C5CFF"></div>
+                  </div>
+                </div>
+
+                <!-- NODE 5: APPROVAL GATE -->
+                <div onclick="inspectStateNode('approval')" class="node-card waiting-state p-4 space-y-2.5">
+                  <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                    <span class="text-[10px] font-mono text-[#FFAA2C] font-black uppercase tracking-wider">State: Approval</span>
+                    <span class="w-2 h-2 rounded-full bg-[#FFAA2C] animate-ping"></span>
+                  </div>
+                  <div class="text-xs font-bold text-[#FFAA2C] flex items-center justify-between">
+                    <span>Human Approval Gate</span>
+                    <i data-lucide="user-check" class="w-3.5 h-3.5 text-[#FFAA2C]"></i>
+                  </div>
+                  <p class="text-[10px] text-[#FFAA2C] font-semibold leading-tight">1 awaiting review &bull; Sprinto AI Intern (95.8%)</p>
+                  <div class="pt-1 flex items-center justify-between text-[10px] font-mono">
+                    <div class="node-port node-port-amber"></div>
+                    <span class="text-[#FFAA2C]">Click to Review</span>
+                    <i data-lucide="arrow-right" class="w-3 h-3 text-[#FFAA2C]"></i>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- BOTTOM ROW: Condition & Transition Evaluation Logic (Image 2 style) -->
+              <div class="mt-8 pt-4 border-t border-white/5 flex flex-wrap items-center justify-center gap-4 text-xs font-mono">
+                <div class="p-2.5 rounded-xl bg-[#0F1424] border border-white/10 flex items-center space-x-2">
+                  <span class="text-[#00E5FF] font-bold">CONDITION:</span>
+                  <span class="text-slate-200">Domain ATS Whitelisted</span>
+                  <span class="text-[#30DC97]">&check; TRUE</span>
+                </div>
+                <div class="text-slate-500">&rarr;</div>
+                <div class="p-2.5 rounded-xl bg-[#0F1424] border border-white/10 flex items-center space-x-2">
+                  <span class="text-[#7C5CFF] font-bold">CONDITION:</span>
+                  <span class="text-slate-200">Semantic Fit &ge; 85.0%</span>
+                  <span class="text-[#30DC97]">&check; 95.8%</span>
+                </div>
+                <div class="text-slate-500">&rarr;</div>
+                <div class="p-2.5 rounded-xl bg-[#FFAA2C]/10 border border-[#FFAA2C]/30 flex items-center space-x-2">
+                  <span class="text-[#FFAA2C] font-bold">TRANSITION:</span>
+                  <span class="text-[#FFAA2C]">Yield Execution &rarr; Wait for Human Approval</span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- CONTAINER B: COMPACT STEPPER (Toggleable) -->
+          <div id="container-wf-steps" class="hidden grid grid-cols-1 sm:grid-cols-5 gap-3 relative">
             <!-- Step 1: Discovery -->
             <div class="pipeline-step completed p-3 rounded-2xl border border-[#30DC97]/30 bg-[#111116] space-y-1">
               <div class="flex items-center justify-between">
@@ -638,7 +1291,7 @@
           </div>
         </div>
 
-        <!-- 4-Column Bento Grid: Mixed Spans (1 Hero 2x2, 2 Tiles 2x1, 3 Tiles 1x1 + 1 Stat 1x1) -->
+                <!-- 4-Column Bento Grid: Mixed Spans (1 Hero 2x2, 2 Tiles 2x1, 3 Tiles 1x1 + 1 Stat 1x1) -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           
           <!-- TILE 1: 2x2 Hero Tile (Introducing ApplyBot. Your career, beautifully boxed.) -->

@@ -28,6 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initCosmicBackground();
   initCmdPalette();
   initHeroThreeJS();
+  initHeroTypewriter();
+  init3DRippleWave();
   loadProfileData();
   loadAgentStatus();
   loadDashboardData();
@@ -237,7 +239,7 @@ function initHeroThreeJS() {
 // ============================================================================
 
 function switchNav(navKey) {
-  const sections = ["dashboard", "galaxy", "jobs", "recommended", "applications", "resume", "career", "activity", "interview", "settings", "job-details"];
+  const sections = ["dashboard", "galaxy", "workflow", "jobs", "recommended", "applications", "resume", "career", "activity", "interview", "settings", "job-details"];
 
   sections.forEach(key => {
     const secEl = document.getElementById(`sec-${key}`);
