@@ -134,3 +134,31 @@ def test_notifier_digest():
     assert "ApplyBot Daily Job Digest" in digest_text
     assert "Top Verified Matching Opportunities" in digest_text
 
+
+
+import applybot_db
+
+import applybot_db
+from hr_outreach import find_recruiter_contacts, generate_personalized_cold_email
+
+def test_hr_outreach_discovery_and_drafting():
+    recruiter = find_recruiter_contacts(company="Razorpay", role="Machine Learning Engineer")
+    assert "recruiter_email" in recruiter
+    assert "@" in recruiter["recruiter_email"]
+
+    draft = generate_personalized_cold_email(
+        company="Razorpay",
+        role="Machine Learning Engineer",
+        description="Building fraud detection systems in Python and PyTorch"
+    )
+    assert draft["recruiter_email"] == recruiter["recruiter_email"]
+    assert "Aarav Sharma" in draft["body"]
+    assert "VTU" in draft["body"]
+    assert ("FraudLens" in draft["body"] or "NeuralMatch" in draft["body"])
+
+def test_daily_briefing(temp_db):
+    briefing = applybot_db.get_daily_briefing(db_path=temp_db)
+    assert "day_header" in briefing
+    assert "metrics" in briefing
+    assert "daily_target" in briefing
+    assert briefing["daily_target"] >= 25

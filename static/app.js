@@ -57,14 +57,17 @@ function updateTimeGreeting() {
 }
 
 // ============================================================================
-// 2. THREE.JS 3D HERO VISUAL (Flowbase-Style 3D Floating Slate & Glowing Screen)
+// 2. THREE.JS 3D QUANTUM PORTAL & ELECTRIC LIGHTNING (Nodal AI Reference)
 // ============================================================================
 
-function initHeroThreeJS() {
-  const canvas = document.getElementById("hero-three-canvas");
+let quantumScene, quantumCamera, quantumRenderer, quantumDiamond, quantumArcsGroup;
+let quantumMouse = { x: 0, y: 0, active: false, worldX: 0, worldY: 0 };
+let lastLightningZapTime = 0;
+
+function init3DQuantumPortal() {
+  const canvas = document.getElementById("hero-quantum-canvas");
   if (!canvas || !window.THREE) return;
 
-  // Check WebGL availability
   try {
     const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
     if (!gl) return;
@@ -73,165 +76,522 @@ function initHeroThreeJS() {
   }
 
   const container = canvas.parentElement;
-  const rect = container.getBoundingClientRect();
-  const width = rect.width || 320;
-  const height = rect.height || 360;
+  let width = container.clientWidth || 320;
+  let height = container.clientHeight || 320;
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-  camera.position.z = 18;
+  quantumScene = scene;
 
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "low-power" });
+  const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+  camera.position.set(0, 0, 10);
+  quantumCamera = camera;
+
+  const renderer = new THREE.WebGLRenderer({
+    canvas,
+    alpha: true,
+    antialias: true,
+    powerPreference: "high-performance"
+  });
   renderer.setSize(width, height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  quantumRenderer = renderer;
 
-  // Device chassis: Rounded rectangle extruded slate
-  const shape = new THREE.Shape();
-  const w = 5.2, h = 9.4, r = 1.1;
-  shape.moveTo(-w / 2 + r, -h / 2);
-  shape.lineTo(w / 2 - r, -h / 2);
-  shape.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + r);
-  shape.lineTo(w / 2, h / 2 - r);
-  shape.quadraticCurveTo(w / 2, h / 2, w / 2 - r, h / 2);
-  shape.lineTo(-w / 2 + r, h / 2);
-  shape.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - r);
-  shape.lineTo(-w / 2, -h / 2 + r);
-  shape.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + r, -h / 2);
-
-  const extrudeSettings = {
-    depth: 0.55,
-    bevelEnabled: true,
-    bevelSegments: 5,
-    steps: 1,
-    bevelSize: 0.18,
-    bevelThickness: 0.18
-  };
-  const bodyGeom = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-  bodyGeom.center();
-  const bodyMat = new THREE.MeshStandardMaterial({
-    color: 0x16161E,
-    metalness: 0.88,
-    roughness: 0.22
-  });
-  const deviceMesh = new THREE.Mesh(bodyGeom, bodyMat);
-  scene.add(deviceMesh);
-
-  // Glowing Screen Texture (Rich purple to cyan gradient matching Bento Guide)
-  const screenCanvas = document.createElement("canvas");
-  screenCanvas.width = 256;
-  screenCanvas.height = 460;
-  const ctx = screenCanvas.getContext("2d");
-  const grad = ctx.createLinearGradient(0, 0, 256, 460);
-  grad.addColorStop(0, "#7C5CFF");
-  grad.addColorStop(0.5, "#45B8FF");
-  grad.addColorStop(1, "#30DC97");
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, 256, 460);
-
-  // Subtle glass highlight reflection
-  const gradGlass = ctx.createLinearGradient(0, 0, 256, 0);
-  gradGlass.addColorStop(0, "rgba(255, 255, 255, 0.28)");
-  gradGlass.addColorStop(0.25, "rgba(255, 255, 255, 0.08)");
-  gradGlass.addColorStop(0.5, "rgba(255, 255, 255, 0.0)");
-  ctx.fillStyle = gradGlass;
-  ctx.fillRect(0, 0, 256, 460);
-
-  const screenTex = new THREE.CanvasTexture(screenCanvas);
-  const screenGeom = new THREE.PlaneGeometry(4.9, 8.8);
-  const screenMat = new THREE.MeshBasicMaterial({
-    map: screenTex,
-    transparent: true,
-    opacity: 0.98
-  });
-  const screenMesh = new THREE.Mesh(screenGeom, screenMat);
-  screenMesh.position.z = 0.52;
-  deviceMesh.add(screenMesh);
-
-  // Floating ambient starlight particles
-  const particleCount = 38;
-  const pGeom = new THREE.BufferGeometry();
-  const pCoords = new Float32Array(particleCount * 3);
-  for (let i = 0; i < particleCount * 3; i++) {
-    pCoords[i] = (Math.random() - 0.5) * 32;
-  }
-  pGeom.setAttribute("position", new THREE.BufferAttribute(pCoords, 3));
-  const pMat = new THREE.PointsMaterial({
-    color: 0x30DC97,
-    size: 0.25,
-    transparent: true,
-    opacity: 0.55
-  });
-  const particleField = new THREE.Points(pGeom, pMat);
-  scene.add(particleField);
-
-  // Dual Accent Point Lighting
-  const light1 = new THREE.PointLight(0x7C5CFF, 3.8, 50);
-  light1.position.set(8, 8, 12);
-  scene.add(light1);
-
-  const light2 = new THREE.PointLight(0x30DC97, 2.5, 50);
-  light2.position.set(-8, -8, 10);
-  scene.add(light2);
-
-  const ambientLight = new THREE.AmbientLight(0x222230, 2.5);
+  // Ambient & Point Lights
+  const ambientLight = new THREE.AmbientLight(0x0f172a, 1.8);
   scene.add(ambientLight);
 
-  // Initial tilt matching the reference mockup
-  deviceMesh.rotation.y = -0.34;
-  deviceMesh.rotation.x = 0.16;
-  deviceMesh.rotation.z = -0.04;
-  deviceMesh.position.x = 0.8;
+  const coreLight = new THREE.PointLight(0x00E5FF, 3.5, 15);
+  coreLight.position.set(0, 0, 1.5);
+  scene.add(coreLight);
 
-  // Smooth Parallax on Pointer Move
-  let mouseX = 0;
-  let mouseY = 0;
-  let targetX = 0;
-  let targetY = 0;
+  const violetLight = new THREE.PointLight(0x7C5CFF, 2.5, 12);
+  violetLight.position.set(0, 0, -2);
+  scene.add(violetLight);
 
-  window.addEventListener("mousemove", (e) => {
-    mouseX = (e.clientX - window.innerWidth / 2) * 0.0015;
-    mouseY = (e.clientY - window.innerHeight / 2) * 0.0015;
-  }, { passive: true });
+  // 1. OUTER PORTAL RING
+  const ringGroup = new THREE.Group();
+  scene.add(ringGroup);
 
-  // Handle Resize
-  window.addEventListener("resize", () => {
-    const newRect = container.getBoundingClientRect();
-    if (!newRect.width) return;
-    camera.aspect = newRect.width / newRect.height;
+  // Glowing Torus Main Ring
+  const torusGeom = new THREE.TorusGeometry(3.6, 0.045, 16, 100);
+  const torusMat = new THREE.MeshBasicMaterial({
+    color: 0x00E5FF,
+    transparent: true,
+    opacity: 0.85
+  });
+  const torusMesh = new THREE.Mesh(torusGeom, torusMat);
+  ringGroup.add(torusMesh);
+
+  // Outer Tick Ring (dashed / segmented circle)
+  const outerGeom = new THREE.RingGeometry(3.95, 4.02, 64);
+  const outerMat = new THREE.MeshBasicMaterial({
+    color: 0x7C5CFF,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.35
+  });
+  const outerMesh = new THREE.Mesh(outerGeom, outerMat);
+  ringGroup.add(outerMesh);
+
+  // Inner Subtle Halo
+  const haloGeom = new THREE.TorusGeometry(3.3, 0.02, 8, 80);
+  const haloMat = new THREE.MeshBasicMaterial({
+    color: 0x30DC97,
+    transparent: true,
+    opacity: 0.25
+  });
+  const haloMesh = new THREE.Mesh(haloGeom, haloMat);
+  ringGroup.add(haloMesh);
+
+  // Orbital Energy Particles
+  const particleCount = 200;
+  const particleGeom = new THREE.BufferGeometry();
+  const particlePos = new Float32Array(particleCount * 3);
+  for (let i = 0; i < particleCount; i++) {
+    const angle = (i / particleCount) * Math.PI * 2 + (Math.random() - 0.5) * 0.1;
+    const r = 3.6 + (Math.random() - 0.5) * 0.35;
+    particlePos[i * 3] = Math.cos(angle) * r;
+    particlePos[i * 3 + 1] = Math.sin(angle) * r;
+    particlePos[i * 3 + 2] = (Math.random() - 0.5) * 0.4;
+  }
+  particleGeom.setAttribute("position", new THREE.BufferAttribute(particlePos, 3));
+  const particleMat = new THREE.PointsMaterial({
+    color: 0x00E5FF,
+    size: 0.045,
+    transparent: true,
+    opacity: 0.75,
+    blending: THREE.AdditiveBlending
+  });
+  const particleRing = new THREE.Points(particleGeom, particleMat);
+  ringGroup.add(particleRing);
+
+  // 2. FLOATING DIAMOND CYBER-CORE (Centerpiece from frame_028)
+  const diamondGroup = new THREE.Group();
+  scene.add(diamondGroup);
+  quantumDiamond = diamondGroup;
+
+  // Solid dark crystalline faceted octahedron
+  const octGeom = new THREE.OctahedronGeometry(1.2, 0);
+  const octMat = new THREE.MeshStandardMaterial({
+    color: 0x060914,
+    roughness: 0.15,
+    metalness: 0.95,
+    transparent: true,
+    opacity: 0.88
+  });
+  const octMesh = new THREE.Mesh(octGeom, octMat);
+  diamondGroup.add(octMesh);
+
+  // Electric Cyan Wireframe cage
+  const wireGeom = new THREE.WireframeGeometry(new THREE.OctahedronGeometry(1.22, 0));
+  const wireMat = new THREE.LineBasicMaterial({
+    color: 0x00E5FF,
+    linewidth: 2,
+    transparent: true,
+    opacity: 0.95
+  });
+  const wireMesh = new THREE.LineSegments(wireGeom, wireMat);
+  diamondGroup.add(wireMesh);
+
+  // Inner Violet Nucleus (High energy pulse core)
+  const nucleusGeom = new THREE.IcosahedronGeometry(0.38, 1);
+  const nucleusMat = new THREE.MeshBasicMaterial({
+    color: 0x7C5CFF,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.9
+  });
+  const nucleusMesh = new THREE.Mesh(nucleusGeom, nucleusMat);
+  diamondGroup.add(nucleusMesh);
+
+  // 3. PROCEDURAL ELECTRIC LIGHTNING ARCS
+  const arcsGroup = new THREE.Group();
+  scene.add(arcsGroup);
+  quantumArcsGroup = arcsGroup;
+
+  const NUM_BOLTS = 5;
+  const boltObjects = [];
+
+  function generateJaggedPoints(start, end, subdivisions = 4, maxJitter = 0.45) {
+    let points = [start.clone(), end.clone()];
+    for (let s = 0; s < subdivisions; s++) {
+      const nextPoints = [];
+      const currentJitter = maxJitter / Math.pow(1.5, s);
+      for (let i = 0; i < points.length - 1; i++) {
+        const p1 = points[i];
+        const p2 = points[i + 1];
+        const mid = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5);
+
+        const dir = new THREE.Vector3().subVectors(p2, p1).normalize();
+        const randPerp = new THREE.Vector3(
+          Math.random() - 0.5,
+          Math.random() - 0.5,
+          (Math.random() - 0.5) * 0.5
+        ).cross(dir).normalize();
+
+        mid.add(randPerp.multiplyScalar((Math.random() - 0.5) * currentJitter * 2));
+        nextPoints.push(p1);
+        nextPoints.push(mid);
+      }
+      nextPoints.push(points[points.length - 1]);
+      points = nextPoints;
+    }
+    return points;
+  }
+
+  for (let b = 0; b < NUM_BOLTS; b++) {
+    const geom = new THREE.BufferGeometry();
+    const count = 33; // for 4-5 subdivisions
+    const positions = new Float32Array(count * 3);
+    geom.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+
+    const coreMat = new THREE.LineBasicMaterial({
+      color: 0xFFFFFF,
+      transparent: true,
+      opacity: 0.95,
+      blending: THREE.AdditiveBlending
+    });
+    const coreLine = new THREE.Line(geom, coreMat);
+
+    const glowMat = new THREE.LineBasicMaterial({
+      color: b % 2 === 0 ? 0x00E5FF : 0x7C5CFF,
+      transparent: true,
+      opacity: 0.65,
+      blending: THREE.AdditiveBlending
+    });
+    const glowLine = new THREE.Line(geom, glowMat);
+
+    arcsGroup.add(coreLine);
+    arcsGroup.add(glowLine);
+
+    boltObjects.push({
+      geom,
+      coreLine,
+      glowLine,
+      angle: (b / NUM_BOLTS) * Math.PI * 2,
+      targetRadius: 3.6,
+      subdivisions: 4
+    });
+  }
+
+  // Mouse & Touch Interaction
+  let isDragging = false;
+  let previousMousePos = { x: 0, y: 0 };
+  let targetRotation = { x: 0.15, y: -0.2 };
+
+  function updateMouseWorldCoords(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    const nx = ((clientX - rect.left) / rect.width) * 2 - 1;
+    const ny = -(((clientY - rect.top) / rect.height) * 2 - 1);
+    quantumMouse.x = nx;
+    quantumMouse.y = ny;
+
+    const vec = new THREE.Vector3(nx, ny, 0.5);
+    vec.unproject(camera);
+    vec.sub(camera.position).normalize();
+    const distance = -camera.position.z / vec.z;
+    const worldPos = camera.position.clone().add(vec.multiplyScalar(distance));
+    quantumMouse.worldX = worldPos.x;
+    quantumMouse.worldY = worldPos.y;
+    quantumMouse.active = true;
+
+    const now = performance.now();
+    if (now - lastLightningZapTime > 320) {
+      playSfx("lightning");
+      lastLightningZapTime = now;
+    }
+  }
+
+  container.addEventListener("pointerdown", (e) => {
+    isDragging = true;
+    previousMousePos = { x: e.clientX, y: e.clientY };
+    updateMouseWorldCoords(e.clientX, e.clientY);
+  });
+
+  window.addEventListener("pointerup", () => {
+    isDragging = false;
+  });
+
+  container.addEventListener("pointermove", (e) => {
+    updateMouseWorldCoords(e.clientX, e.clientY);
+    if (isDragging) {
+      const deltaX = e.clientX - previousMousePos.x;
+      const deltaY = e.clientY - previousMousePos.y;
+      targetRotation.y += deltaX * 0.008;
+      targetRotation.x += deltaY * 0.008;
+      previousMousePos = { x: e.clientX, y: e.clientY };
+    }
+  });
+
+  container.addEventListener("pointerleave", () => {
+    quantumMouse.active = false;
+  });
+
+  function onResize() {
+    if (!canvas || !container) return;
+    const w = container.clientWidth || 320;
+    const h = container.clientHeight || 320;
+    camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    renderer.setSize(newRect.width, newRect.height);
-  });
+    renderer.setSize(w, h);
+  }
+  window.addEventListener("resize", onResize);
 
-  // Animation Loop with Visibility Control
-  let isRunning = true;
-  document.addEventListener("visibilitychange", () => {
-    isRunning = !document.hidden;
-  });
-
+  // Animation Loop
   const clock = new THREE.Clock();
+  let frameCount = 0;
 
   function animate() {
     requestAnimationFrame(animate);
-    if (!isRunning) return;
+    frameCount++;
 
+    const delta = clock.getDelta();
     const time = clock.getElapsedTime();
-    targetX += (mouseX - targetX) * 0.05;
-    targetY += (mouseY - targetY) * 0.05;
 
-    // Gentle floating bobbing
-    deviceMesh.position.y = Math.sin(time * 1.5) * 0.3 - targetY * 4;
-    deviceMesh.position.x = 0.8 + targetX * 5;
+    // Smooth drag rotation & idle bobbing
+    diamondGroup.rotation.x += (targetRotation.x - diamondGroup.rotation.x) * 0.05 + Math.sin(time * 1.2) * 0.003;
+    diamondGroup.rotation.y += (targetRotation.y - diamondGroup.rotation.y) * 0.05 + 0.006;
+    diamondGroup.rotation.z += 0.004;
 
-    // Dynamic tilt reacting to cursor and idle breathing
-    deviceMesh.rotation.y = -0.34 + targetX * 0.6 + Math.sin(time * 0.8) * 0.04;
-    deviceMesh.rotation.x = 0.16 - targetY * 0.5 + Math.cos(time * 0.7) * 0.03;
+    const pulseScale = 1 + Math.sin(time * 3.0) * 0.04;
+    nucleusMesh.scale.set(pulseScale, pulseScale, pulseScale);
 
-    particleField.rotation.y += 0.0012;
+    torusMesh.rotation.z += 0.002;
+    outerMesh.rotation.z -= 0.001;
+    particleRing.rotation.z += 0.003;
+
+    if (quantumMouse.active) {
+      diamondGroup.rotation.y += (quantumMouse.x * 0.5 - diamondGroup.rotation.y) * 0.08;
+      diamondGroup.rotation.x += (-quantumMouse.y * 0.5 - diamondGroup.rotation.x) * 0.08;
+    }
+
+    if (frameCount % 2 === 0) {
+      boltObjects.forEach((bolt, idx) => {
+        const start = new THREE.Vector3(
+          Math.sin(time * 2 + idx) * 0.5,
+          Math.cos(time * 2 + idx) * 0.5,
+          (Math.sin(time * 3) - 0.5) * 0.3
+        );
+
+        let end;
+        if (quantumMouse.active && (idx === 0 || idx === 1)) {
+          end = new THREE.Vector3(
+            quantumMouse.worldX + (Math.random() - 0.5) * 0.35,
+            quantumMouse.worldY + (Math.random() - 0.5) * 0.35,
+            0
+          );
+        } else {
+          const currentAngle = bolt.angle + time * 0.5 + Math.sin(time + idx) * 0.3;
+          end = new THREE.Vector3(
+            Math.cos(currentAngle) * bolt.targetRadius,
+            Math.sin(currentAngle) * bolt.targetRadius,
+            (Math.random() - 0.5) * 0.3
+          );
+        }
+
+        const points = generateJaggedPoints(start, end, 4, 0.4);
+        const posAttr = bolt.geom.attributes.position;
+        const arr = posAttr.array;
+        for (let i = 0; i < points.length && i * 3 < arr.length; i++) {
+          arr[i * 3] = points[i].x;
+          arr[i * 3 + 1] = points[i].y;
+          arr[i * 3 + 2] = points[i].z;
+        }
+        posAttr.needsUpdate = true;
+
+        const flicker = 0.7 + Math.random() * 0.3;
+        bolt.coreLine.material.opacity = flicker;
+        bolt.glowLine.material.opacity = flicker * 0.75;
+      });
+    }
 
     renderer.render(scene, camera);
   }
 
   animate();
+}
+
+function initHeroThreeJS() {
+  init3DQuantumPortal();
+}
+
+// ============================================================================
+// WEB AUDIO PROCEDURAL SYNTHESIZER & HUD SOUND FX
+// ============================================================================
+
+let audioCtx = null;
+let sfxEnabled = true;
+let musicEnabled = false;
+let ambientOsc = null;
+let ambientGain = null;
+
+function getAudioContext() {
+  if (!audioCtx) {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) audioCtx = new AudioContext();
+  }
+  if (audioCtx && audioCtx.state === "suspended") {
+    audioCtx.resume();
+  }
+  return audioCtx;
+}
+
+function playSfx(type) {
+  if (!sfxEnabled) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+
+  try {
+    if (type === "click") {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(800, now);
+      osc.frequency.exponentialRampToValueAtTime(200, now + 0.04);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.04);
+    } else if (type === "lightning") {
+      const osc = ctx.createOscillator();
+      const filter = ctx.createBiquadFilter();
+      const gain = ctx.createGain();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(140 + Math.random() * 180, now);
+      osc.frequency.exponentialRampToValueAtTime(900 + Math.random() * 400, now + 0.05);
+      filter.type = "bandpass";
+      filter.frequency.setValueAtTime(1200, now);
+      filter.Q.setValueAtTime(4, now);
+      gain.gain.setValueAtTime(0.05, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.06);
+    } else if (type === "success") {
+      [523.25, 659.25, 783.99].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(freq, now + i * 0.04);
+        gain.gain.setValueAtTime(0.05, now + i * 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35 + i * 0.04);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + i * 0.04);
+        osc.stop(now + 0.4 + i * 0.04);
+      });
+    }
+  } catch (e) {
+    // Non-critical audio catch
+  }
+}
+
+function toggleSfxAudio() {
+  sfxEnabled = !sfxEnabled;
+  const badge = document.getElementById("sfx-status-text");
+  if (badge) {
+    badge.textContent = sfxEnabled ? "SFX [ON]" : "SFX [OFF]";
+    badge.className = sfxEnabled ? "text-[10px] font-mono text-[#00E5FF]" : "text-[10px] font-mono text-slate-500";
+  }
+  const portalBadge = document.getElementById("portal-sfx-text");
+  if (portalBadge) {
+    portalBadge.textContent = sfxEnabled ? "[ ⚡ SFX [ON] ]" : "[ ⚡ SFX [OFF] ]";
+    portalBadge.className = sfxEnabled
+      ? "text-[10px] font-mono text-[#00E5FF] pointer-events-auto bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-[#00E5FF]/30 transition cursor-pointer"
+      : "text-[10px] font-mono text-slate-500 pointer-events-auto bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-white/10 transition cursor-pointer";
+  }
+  if (sfxEnabled) playSfx("click");
+}
+
+function toggleMusicAudio() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  musicEnabled = !musicEnabled;
+  const musicBadge = document.getElementById("portal-music-text");
+  if (musicBadge) {
+    musicBadge.textContent = musicEnabled ? "[ 🔊 MUSIC [ON] ]" : "[ 🔊 MUSIC [OFF] ]";
+    musicBadge.className = musicEnabled
+      ? "text-[10px] font-mono text-[#00E5FF] pointer-events-auto bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-[#00E5FF]/30 transition cursor-pointer"
+      : "text-[10px] font-mono text-slate-400 hover:text-white pointer-events-auto bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-white/10 transition cursor-pointer";
+  }
+  try {
+    if (musicEnabled) {
+      if (!ambientOsc) {
+        ambientOsc = ctx.createOscillator();
+        ambientGain = ctx.createGain();
+        ambientOsc.type = "sine";
+        ambientOsc.frequency.setValueAtTime(65.41, ctx.currentTime);
+        ambientGain.gain.setValueAtTime(0.025, ctx.currentTime);
+        ambientOsc.connect(ambientGain);
+        ambientGain.connect(ctx.destination);
+        ambientOsc.start();
+      } else {
+        ambientGain.gain.setTargetAtTime(0.025, ctx.currentTime, 0.2);
+      }
+    } else {
+      if (ambientGain) {
+        ambientGain.gain.setTargetAtTime(0.0001, ctx.currentTime, 0.2);
+      }
+    }
+  } catch (e) {
+    // Non-critical ambient audio error
+  }
+}
+
+// ============================================================================
+// STATE MACHINE CONTROLLERS & STEPPERS
+// ============================================================================
+
+let currentWorkflowMode = "graph";
+let activeStateMachineStep = 4;
+
+function setWorkflowViewMode(mode) {
+  currentWorkflowMode = mode;
+  const graphContainer = document.getElementById("container-wf-graph");
+  const stepsContainer = document.getElementById("container-wf-steps");
+  const btnGraph = document.getElementById("btn-wf-graph");
+  const btnSteps = document.getElementById("btn-wf-steps");
+
+  if (mode === "graph") {
+    if (graphContainer) graphContainer.classList.remove("hidden");
+    if (stepsContainer) stepsContainer.classList.add("hidden");
+    if (btnGraph) btnGraph.className = "px-2.5 py-1 rounded-lg bg-[#00E5FF]/20 text-[#00E5FF] font-bold flex items-center space-x-1 cursor-pointer";
+    if (btnSteps) btnSteps.className = "px-2.5 py-1 rounded-lg text-[#9A9AA5] hover:text-white flex items-center space-x-1 cursor-pointer";
+  } else {
+    if (graphContainer) graphContainer.classList.add("hidden");
+    if (stepsContainer) stepsContainer.classList.remove("hidden");
+    if (btnGraph) btnGraph.className = "px-2.5 py-1 rounded-lg text-[#9A9AA5] hover:text-white flex items-center space-x-1 cursor-pointer";
+    if (btnSteps) btnSteps.className = "px-2.5 py-1 rounded-lg bg-[#00E5FF]/20 text-[#00E5FF] font-bold flex items-center space-x-1 cursor-pointer";
+  }
+  if (window.lucide) lucide.createIcons();
+}
+
+function inspectStateNode(nodeKey) {
+  const nodeInfo = {
+    scheduler: "Daily Cron Trigger: Runs at 08:00 AM daily. Dispatches push notification asking user to activate daily agent run.",
+    discovery: "Discovery Engine: Aggregates listings across 50+ ATS platforms and genuine portals (Wellfound, Cutshort, Internshala, Naukri, NCS, Indeed, LinkedIn).",
+    authenticity: "Authenticity Guard (FraudLens): 3-Level verification (Verified, Needs Review, Suspicious). Zero upfront fee / zero crypto scam policy.",
+    neuralmatch: "NeuralMatch Engine: Matches Aarav Sharma's verified credentials (VTU AI/ML, CGPA 8.75, Tech Innovations Lab, NeuralMatch, FraudLens, Med-Verify) with job criteria.",
+    approval: "Human-in-the-Loop Gate: Requires explicit 1-click review & approval before any application submission or cold outreach email dispatch."
+  };
+  const desc = nodeInfo[nodeKey] || "Autonomous Agent State Machine Stage";
+  showToast(desc, "info");
+}
+
+function stepAgentStateMachine() {
+  const steps = ["Discovery", "Authenticity Verification", "NeuralMatch Scoring", "Package Preparation", "Human Approval"];
+  activeStateMachineStep = (activeStateMachineStep + 1) % steps.length;
+  showToast(`Stepped State Machine to: ${steps[activeStateMachineStep]}`, "info");
+}
+
+function resetAgentStateMachine() {
+  activeStateMachineStep = 0;
+  showToast("Reset State Machine to Stage 01: Discovery", "info");
 }
 
 // ============================================================================

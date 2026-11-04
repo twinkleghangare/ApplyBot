@@ -796,18 +796,26 @@
             <div class="lg:col-span-6 relative flex flex-col items-center justify-center min-h-[340px]">
               
               <!-- Three.js Canvas for 3D Quantum Portal -->
-              <div class="relative w-full h-[320px] rounded-2xl overflow-hidden cursor-crosshair">
+              <div class="relative w-full h-[320px] rounded-2xl overflow-hidden cursor-crosshair border border-white/10 bg-[#04060C]">
                 <canvas id="hero-quantum-canvas" class="w-full h-full block"></canvas>
                 
                 <!-- Overlay HUD Telemetry (Nodal style) -->
                 <div class="pointer-events-none absolute top-3 left-3 text-[10px] font-mono text-[#00E5FF]/80 space-y-0.5">
                   <div>PORTAL: <span class="text-white font-bold">ONLINE</span></div>
                   <div>NEURAL LOAD: <span class="text-[#30DC97] font-bold">OPTIMAL</span></div>
+                  <div>FLUX: <span class="text-[#7C5CFF] font-bold">99.4%</span></div>
                 </div>
 
+                <!-- Top Right Audio Controls (Nodal frame_028 ref) -->
+                <div class="absolute top-3 right-3 flex items-center space-x-1.5 z-20">
+                  <button onclick="toggleMusicAudio()" id="portal-music-text" class="text-[10px] font-mono text-slate-400 hover:text-white pointer-events-auto bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-white/10 transition cursor-pointer" title="Toggle Ambient Audio">[ 🔊 MUSIC [OFF] ]</button>
+                  <button onclick="toggleSfxAudio()" id="portal-sfx-text" class="text-[10px] font-mono text-[#00E5FF] pointer-events-auto bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-[#00E5FF]/30 transition cursor-pointer" title="Toggle Sound FX">[ ⚡ SFX [ON] ]</button>
+                </div>
+
+                <!-- Bottom Center Caption (Nodal frame_028 ref) -->
                 <div class="pointer-events-none absolute bottom-3 left-0 right-0 text-center">
-                  <span class="inline-block px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-mono text-[#AAC0D6]/80 tracking-widest uppercase">
-                    Move cursor to attract neural lightning &bull; Drag to rotate
+                  <span class="inline-block px-3 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/10 text-[10px] font-mono text-[#AAC0D6]/90 tracking-wider">
+                    Move your cursor close to the portal to attract lightning &bull; Drag to rotate
                   </span>
                 </div>
               </div>
