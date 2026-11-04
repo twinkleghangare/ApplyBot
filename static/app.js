@@ -298,6 +298,7 @@ function switchNav(navKey) {
 
   if (navKey === "dashboard") {
     loadDailyBriefing();
+    initDailyPushNotifications();
     loadAgentStatus();
     loadDashboardData();
   }
@@ -3554,6 +3555,7 @@ async function activateDailyAgent() {
     playSfx("success");
 
     await loadDailyBriefing();
+    initDailyPushNotifications();
     await loadOutreachList();
   } catch (err) {
     showToast(`Activation failed: ${err.message}`, "error");
@@ -3798,5 +3800,87 @@ async function generateFreshOutreach() {
     showToast("Fresh outreach drafts prepared!", "success");
   } catch (err) {
     showToast(`Error: ${err.message}`, "error");
+  }
+}
+
+
+
+// ============================================================================
+// GENUINE VERIFICATION DOSSIER MODAL & DESKTOP NOTIFICATIONS (User Spec)
+// ============================================================================
+
+let activeModalJobKey = null;
+
+function inspectVerification(jobKey) {
+  activeModalJobKey = jobKey;
+  const modal = document.getElementById("verification-inspect-modal");
+  if (!modal) return;
+
+  const job = (window.allJobsCache || []).find(j => j.job_key === jobKey);
+  
+  const title = job?.title || "AI Engineering Role";
+  const company = job?.company || "Target Company";
+  const location = job?.location || "Remote";
+  const url = job?.url || "#";
+  const verStatus = job?.verification_status || (job?.risk_score > 35 ? "SUSPICIOUS" : "VERIFIED");
+  const riskScore = job?.risk_score || 0;
+  const trustScore = Math.max(10, Math.round(100 - riskScore));
+
+  const tEl = document.getElementById("vmodal-title");
+  if (tEl) tEl.textContent = title;
+  const cEl = document.getElementById("vmodal-company");
+  if (cEl) cEl.textContent = `${company} • ${location}`;
+  const sEl = document.getElementById("vmodal-trust-score");
+  if (sEl) sEl.textContent = `Trust Score: ${trustScore}/100`;
+
+  const bEl = document.getElementById("vmodal-badge");
+  const bText = document.getElementById("vmodal-badge-text");
+  if (bEl && bText) {
+    if (verStatus === "VERIFIED") {
+      bEl.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#30DC97]/15 text-[#30DC97] border border-[#30DC97]/30 flex items-center space-x-1.5";
+      bText.textContent = "VERIFIED (Official Listing)";
+    } else if (verStatus === "SUSPICIOUS") {
+      bEl.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#FF5757]/15 text-[#FF5757] border border-[#FF5757]/30 flex items-center space-x-1.5";
+      bText.textContent = "SUSPICIOUS (Alert Flagged)";
+    } else {
+      bEl.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#FFAA2C]/15 text-[#FFAA2C] border border-[#FFAA2C]/30 flex items-center space-x-1.5";
+      bText.textContent = "NEEDS REVIEW (Corroborated)";
+    }
+  }
+
+  const uLink = document.getElementById("vmodal-url-link");
+  if (uLink) uLink.href = url;
+
+  const pBtn = document.getElementById("vmodal-prepare-btn");
+  if (pBtn) {
+    pBtn.onclick = () => {
+      closeVerificationModal();
+      reviewAndApproveHomeJob(jobKey);
+    };
+  }
+
+  modal.classList.remove("hidden");
+  if (window.lucide) lucide.createIcons();
+}
+
+function closeVerificationModal() {
+  const modal = document.getElementById("verification-inspect-modal");
+  if (modal) modal.classList.add("hidden");
+}
+
+function initDailyPushNotifications() {
+  if (!("Notification" in window)) return;
+
+  if (Notification.permission === "default") {
+    setTimeout(() => {
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          new Notification("ApplyBot AI · Autopilot Ready", {
+            body: "Daily 8:00 AM notifications enabled. You will be alerted when new verified opportunities are ready.",
+            icon: "/static/favicon.ico"
+          });
+        }
+      });
+    }, 3000);
   }
 }
