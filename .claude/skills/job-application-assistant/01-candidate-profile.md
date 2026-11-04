@@ -50,3 +50,13 @@ Bengaluru, India
 - **Roles:** AI Engineer Intern, Machine Learning Intern, Data Science Intern, Python Developer Intern, Generative AI Intern
 - **Locations:** Remote, Bengaluru, Pune, Hyderabad
 - **Job Type:** Internship, Trainee, Entry-level
+
+
+## Publications
+*(None listed)*
+
+## Awards
+*(None listed)*
+
+## References
+*Available upon request.*

@@ -2,6 +2,10 @@
 ### Autonomous Multi-Portal Job Hunter & AI Career Copilot
 
 <p align="center">
+  <img src="assets/mascot/pip_flight_loop.gif" alt="ApplyBot Mascot" width="140" />
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/Version-2.0.0_Cyberpunk-00f2fe?style=for-the-badge&logo=rocket" alt="Version 2.0" />
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776ab?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.10+" />
   <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
@@ -96,7 +100,17 @@ flowchart TD
 
 ## ⚡ Quick Start Guide
 
-### Prerequisites
+### 1. Fork and clone
+
+```bash
+gh repo fork MadsLorentzen/ai-job-search --clone
+cd ai-job-search
+gh repo set-default <your-github-username>/ai-job-search
+```
+
+> **Before you go further: forks are public.** GitHub cannot make a fork of a public repository private, and `/setup` writes your personal data into tracked files - pushing those commits to a fork publishes them. If this copy is for your own job search rather than for contributing, prefer a private repository with this repo as upstream: see SETUP.md section 8 for the exact commands and why committing your personalization there is still the right move.
+
+### 2. Prerequisites
 - **Python 3.10+**
 - **LaTeX Distribution** with `lualatex` & `xelatex`:
   - Windows: [MiKTeX](https://miktex.org/) or [TeX Live](https://tug.org/texlive/)
