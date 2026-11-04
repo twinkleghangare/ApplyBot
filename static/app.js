@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initCmdPalette();
   initHeroThreeJS();
   initHeroTypewriter();
-  init3DRippleWave();
+  init3DQuantumPortal();
   loadProfileData();
   loadAgentStatus();
   loadDashboardData();
@@ -258,6 +258,16 @@ function switchNav(navKey) {
       if (navBtn) {
         navBtn.className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all sidebar-item-active";
       }
+    // Update Superconscious floating pill navbar
+    const pillBtn = document.getElementById(`pill-nav-${key}`);
+    if (pillBtn) {
+      if (key === navKey) {
+        pillBtn.className = "px-3.5 py-1.5 rounded-full text-white bg-white/10 font-bold transition shadow-sm";
+      } else {
+        pillBtn.className = "px-3.5 py-1.5 rounded-full text-[#9A9AA5] hover:text-white transition";
+      }
+    }
+
     } else {
       if (secEl) secEl.classList.add("hidden");
       if (navBtn) {
