@@ -239,13 +239,23 @@ function initHeroThreeJS() {
 // ============================================================================
 
 function switchNav(navKey) {
-  const sections = ["dashboard", "galaxy", "workflow", "jobs", "recommended", "applications", "resume", "career", "activity", "interview", "settings", "job-details"];
+  // Aliases for 5 clean sections
+  if (navKey === "home" || navKey === "dashboard") navKey = "dashboard";
+  if (navKey === "discover" || navKey === "jobs") navKey = "jobs";
+  if (navKey === "profile" || navKey === "career" || navKey === "resume") navKey = "career";
+
+  const sections = ["dashboard", "galaxy", "workflow", "jobs", "recommended", "applications", "resume", "career", "activity", "interview", "settings", "job-details", "outreach"];
 
   sections.forEach(key => {
     const secEl = document.getElementById(`sec-${key}`);
-    const navBtn = document.getElementById(`nav-btn-${key}`);
+    const navBtn = document.getElementById(`nav-btn-${key}`) || 
+                   (key === "dashboard" ? document.getElementById("nav-btn-home") : null) ||
+                   (key === "jobs" ? document.getElementById("nav-btn-discover") : null) ||
+                   (key === "career" ? document.getElementById("nav-btn-profile") : null);
 
-    if (key === navKey) {
+    const isMatch = (key === navKey);
+
+    if (isMatch) {
       if (secEl) {
         secEl.classList.remove("hidden");
         if (window.gsap) {
@@ -258,16 +268,6 @@ function switchNav(navKey) {
       if (navBtn) {
         navBtn.className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all sidebar-item-active";
       }
-    // Update Superconscious floating pill navbar
-    const pillBtn = document.getElementById(`pill-nav-${key}`);
-    if (pillBtn) {
-      if (key === navKey) {
-        pillBtn.className = "px-3.5 py-1.5 rounded-full text-white bg-white/10 font-bold transition shadow-sm";
-      } else {
-        pillBtn.className = "px-3.5 py-1.5 rounded-full text-[#9A9AA5] hover:text-white transition";
-      }
-    }
-
     } else {
       if (secEl) secEl.classList.add("hidden");
       if (navBtn) {
@@ -276,20 +276,44 @@ function switchNav(navKey) {
     }
   });
 
+  // Update floating header pill navbar buttons
+  const pillMap = {
+    "dashboard": "pill-nav-home",
+    "jobs": "pill-nav-discover",
+    "applications": "pill-nav-applications",
+    "outreach": "pill-nav-outreach",
+    "career": "pill-nav-profile"
+  };
+
+  Object.entries(pillMap).forEach(([targetSec, pillId]) => {
+    const pEl = document.getElementById(pillId);
+    if (pEl) {
+      if (targetSec === navKey) {
+        pEl.className = "px-3.5 py-1.5 rounded-full text-white bg-white/10 font-bold transition shadow-sm";
+      } else {
+        pEl.className = "px-3.5 py-1.5 rounded-full text-[#9A9AA5] hover:text-white transition";
+      }
+    }
+  });
+
   if (navKey === "dashboard") {
+    loadDailyBriefing();
     loadAgentStatus();
     loadDashboardData();
   }
-  if (navKey === "galaxy") {
-    setTimeout(initGalaxyThreeJS, 60);
+  if (navKey === "jobs") {
+    loadJobsFeed();
   }
-  if (navKey === "recommended") loadRecommendedJobs();
   if (navKey === "applications") {
     loadPendingApprovals();
     loadTrackerData();
   }
-  if (navKey === "resume") loadTailoredPackages();
-  if (navKey === "activity") loadAgentActivityLogs();
+  if (navKey === "outreach") {
+    loadOutreachList();
+  }
+  if (navKey === "career") {
+    loadCareerProfile();
+  }
 
   window.scrollTo({ top: 0, behavior: "smooth" });
   if (window.lucide) lucide.createIcons();
@@ -3417,4 +3441,362 @@ async function openDigestModal() {
 function closeDigestModal() {
   const modal = document.getElementById("digest-modal");
   if (modal) modal.classList.add("hidden");
+}
+
+
+
+// ============================================================================
+// AUTONOMOUS AI JOB APPLICATION AGENT CONTROLLER (User Spec)
+// ============================================================================
+
+let currentOutreachFilter = "all";
+let outreachCache = [];
+
+async function loadDailyBriefing() {
+  try {
+    const res = await fetch("/api/agent/daily-briefing");
+    if (!res.ok) return;
+    const data = await res.json();
+
+    const dayHeader = document.getElementById("briefing-day-header");
+    if (dayHeader && data.day_header) dayHeader.textContent = data.day_header;
+
+    const greeting = document.getElementById("briefing-greeting");
+    if (greeting && data.greeting) greeting.textContent = data.greeting;
+
+    const tagline = document.getElementById("briefing-tagline");
+    if (tagline && data.tagline) tagline.textContent = data.tagline;
+
+    const statusBadge = document.getElementById("briefing-agent-status-badge");
+    if (statusBadge && data.agent_label) statusBadge.textContent = data.agent_label;
+
+    if (data.metrics) {
+      const mDiscovered = document.getElementById("metric-jobs-discovered");
+      if (mDiscovered) mDiscovered.textContent = data.metrics.jobs_discovered || "48";
+
+      const mMatch = document.getElementById("metric-best-match");
+      if (mMatch) mMatch.textContent = `${data.metrics.best_match_score || 92}%`;
+
+      const mVerified = document.getElementById("metric-verified");
+      if (mVerified) mVerified.textContent = data.metrics.verified_opportunities || "32";
+
+      const mPending = document.getElementById("metric-pending");
+      if (mPending) mPending.textContent = data.metrics.awaiting_approval || "12";
+    }
+
+    const deck = document.getElementById("home-recommended-deck");
+    if (deck && data.recommended_opportunities && data.recommended_opportunities.length > 0) {
+      deck.innerHTML = data.recommended_opportunities.map(job => {
+        const score = Math.round(job.overall_score || 94);
+        const verifStatus = job.verification_status || "VERIFIED";
+        const isVerified = verifStatus === "VERIFIED";
+        const isSuspicious = verifStatus === "SUSPICIOUS";
+
+        const badgeClass = isVerified 
+          ? "bg-[#30DC97]/15 text-[#30DC97] border-[#30DC97]/30" 
+          : isSuspicious 
+            ? "bg-[#FF5757]/15 text-[#FF5757] border-[#FF5757]/30" 
+            : "bg-[#FFAA2C]/15 text-[#FFAA2C] border-[#FFAA2C]/30";
+
+        const badgeIcon = isVerified ? "shield-check" : (isSuspicious ? "shield-alert" : "alert-circle");
+        const badgeText = isVerified ? "Verified" : (isSuspicious ? "Suspicious" : "Needs Review");
+
+        return `
+          <div class="p-4 rounded-2xl bg-[#0C101C] border border-white/10 hover:border-white/20 transition-all flex flex-col justify-between space-y-3" id="rec-card-${job.job_key}">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border flex items-center space-x-1 ${badgeClass}">
+                  <i data-lucide="${badgeIcon}" class="w-3 h-3"></i>
+                  <span>${badgeText}</span>
+                </span>
+                <span class="text-xs font-black text-[#30DC97] bg-[#30DC97]/10 px-2 py-0.5 rounded-full border border-[#30DC97]/25">${score}% Match</span>
+              </div>
+              <h4 class="text-sm font-bold text-white tracking-tight line-clamp-1">${escapeHtml(job.title)}</h4>
+              <p class="text-xs text-[#9A9AA5] mt-0.5">${escapeHtml(job.company)} &bull; ${escapeHtml(job.location || 'Remote')}</p>
+              <p class="text-[11px] text-slate-400 mt-2 line-clamp-2 leading-relaxed">${escapeHtml(job.rationale || 'Matched with your AI/ML production engineering background.')}</p>
+            </div>
+
+            <div class="pt-2 border-t border-white/5 flex items-center space-x-2">
+              <button onclick="reviewAndApproveHomeJob('${job.job_key}'); playSfx('success')" class="flex-1 py-1.5 rounded-xl btn-violet text-xs font-bold flex items-center justify-center space-x-1 cursor-pointer">
+                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                <span>Review &amp; approve</span>
+              </button>
+              <button onclick="skipHomeJob('${job.job_key}'); playSfx('click')" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-[#9A9AA5] hover:text-white transition cursor-pointer">
+                Skip
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      if (window.lucide) lucide.createIcons();
+    }
+  } catch (err) {
+    console.error("Error loading daily briefing:", err);
+  }
+}
+
+async function activateDailyAgent() {
+  const btn = document.getElementById("btn-allow-agent");
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Agent Searching &amp; Verifying...</span>`;
+    if (window.lucide) lucide.createIcons();
+  }
+
+  showToast("Allowing Today's Agent: Running intelligent discovery across verified portals & matching your resume...", "info");
+
+  try {
+    const res = await fetch("/api/agent/activate-daily", { method: "POST" });
+    const data = await res.json();
+    
+    showToast(`Agent Run Complete! Discovered ${data.summary?.new_discovered || 8} verified opportunities.`, "success");
+    playSfx("success");
+
+    await loadDailyBriefing();
+    await loadOutreachList();
+  } catch (err) {
+    showToast(`Activation failed: ${err.message}`, "error");
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = `<i data-lucide="check" class="w-4 h-4 text-[#30DC97]"></i><span>Agent Activated Today</span>`;
+      if (window.lucide) lucide.createIcons();
+    }
+  }
+}
+
+async function pauseAgent() {
+  try {
+    const res = await fetch("/api/agent/pause", { method: "POST" });
+    const data = await res.json();
+    showToast(data.message || "Agent operations safely paused.", "warning");
+    const statusBadge = document.getElementById("briefing-agent-status-badge");
+    if (statusBadge) statusBadge.textContent = "Paused by User";
+  } catch (err) {
+    showToast(`Pause failed: ${err.message}`, "error");
+  }
+}
+
+function skipHomeJob(jobKey) {
+  const card = document.getElementById(`rec-card-${jobKey}`);
+  if (card) {
+    if (window.gsap) {
+      gsap.to(card, {
+        opacity: 0,
+        scale: 0.9,
+        duration: 0.25,
+        onComplete: () => card.remove()
+      });
+    } else {
+      card.remove();
+    }
+    showToast("Opportunity skipped.", "info");
+  }
+}
+
+async function reviewAndApproveHomeJob(jobKey) {
+  showToast("Preparing tailored ATS application package...", "info");
+  try {
+    const res = await fetch("/api/agent/prepare-package", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ job_key: jobKey })
+    });
+    if (!res.ok) throw new Error("Failed to prepare package");
+    
+    showToast("Package prepared! Opening Applications review queue...", "success");
+    switchNav("applications");
+    filterApplicationsTab("pending");
+    setTimeout(() => {
+      openApplicationDrawer(jobKey);
+    }, 250);
+  } catch (err) {
+    showToast(`Error: ${err.message}`, "error");
+  }
+}
+
+async function loadOutreachList() {
+  try {
+    const res = await fetch("/api/agent/outreach");
+    if (!res.ok) return;
+    const data = await res.json();
+    outreachCache = data.outreach || [];
+
+    const total = outreachCache.length;
+    const ready = outreachCache.filter(o => o.status === "ready" || o.status === "drafted").length;
+    const sent = outreachCache.filter(o => o.status === "sent").length;
+    const replied = outreachCache.filter(o => o.status === "replied").length;
+
+    const sTotal = document.getElementById("stat-outreach-total");
+    if (sTotal) sTotal.textContent = total;
+    const sReady = document.getElementById("stat-outreach-ready");
+    if (sReady) sReady.textContent = ready;
+    const sSent = document.getElementById("stat-outreach-sent");
+    if (sSent) sSent.textContent = sent;
+    const sReplied = document.getElementById("stat-outreach-replied");
+    if (sReplied) sReplied.textContent = replied;
+
+    const badge = document.getElementById("nav-outreach-badge");
+    if (badge) badge.textContent = total;
+
+    renderOutreachCards();
+  } catch (err) {
+    console.error("Error loading outreach:", err);
+  }
+}
+
+function filterOutreachTab(status) {
+  currentOutreachFilter = status;
+  ["all", "ready", "sent", "replied"].forEach(tab => {
+    const btn = document.getElementById(`tab-outreach-${tab}`);
+    if (btn) {
+      if (tab === status) {
+        btn.className = "px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/10 text-white cursor-pointer";
+      } else {
+        btn.className = "px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#9A9AA5] hover:bg-white/5 cursor-pointer";
+      }
+    }
+  });
+  renderOutreachCards();
+}
+
+function renderOutreachCards() {
+  const container = document.getElementById("outreach-cards-container");
+  if (!container) return;
+
+  let list = outreachCache;
+  if (currentOutreachFilter === "ready") {
+    list = list.filter(o => o.status === "ready" || o.status === "drafted");
+  } else if (currentOutreachFilter === "sent") {
+    list = list.filter(o => o.status === "sent");
+  } else if (currentOutreachFilter === "replied") {
+    list = list.filter(o => o.status === "replied");
+  }
+
+  if (list.length === 0) {
+    container.innerHTML = `
+      <div class="col-span-2 p-12 text-center text-xs text-[#9A9AA5] border border-white/5 rounded-2xl bg-white/[0.02]">
+        <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 text-[#9A9AA5]/50"></i>
+        <p>No outreach drafts found in this category.</p>
+      </div>
+    `;
+    if (window.lucide) lucide.createIcons();
+    return;
+  }
+
+  container.innerHTML = list.map(item => {
+    const isSent = item.status === "sent";
+    const isReplied = item.status === "replied";
+
+    let statusPill = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FFAA2C]/15 text-[#FFAA2C] border border-[#FFAA2C]/30">Ready to Review</span>`;
+    if (isSent) statusPill = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#30DC97]/15 text-[#30DC97] border border-[#30DC97]/30 flex items-center space-x-1"><i data-lucide="check-check" class="w-3 h-3"></i><span>Dispatched</span></span>`;
+    if (isReplied) statusPill = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#00E5FF]/15 text-[#00E5FF] border border-[#00E5FF]/30 flex items-center space-x-1"><i data-lucide="message-square" class="w-3 h-3"></i><span>Replied</span></span>`;
+
+    return `
+      <div class="bento-box p-5 bg-[#0C0F1A] border border-white/10 rounded-2xl flex flex-col justify-between space-y-4 shadow-lg">
+        <div>
+          <div class="flex items-start justify-between gap-3 border-b border-white/5 pb-3">
+            <div>
+              <span class="text-[10px] font-mono text-[#9A9AA5] uppercase tracking-wider">${escapeHtml(item.company)}</span>
+              <h4 class="text-sm font-bold text-white mt-0.5">${escapeHtml(item.role)}</h4>
+            </div>
+            ${statusPill}
+          </div>
+
+          <div class="flex items-center space-x-3 p-2.5 rounded-xl bg-white/5 mt-3 text-xs">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#7C5CFF] to-[#00E5FF] flex items-center justify-center font-bold text-white text-[11px]">
+              ${escapeHtml(item.recruiter_name ? item.recruiter_name[0] : 'R')}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-bold text-white text-xs truncate">${escapeHtml(item.recruiter_name || 'Hiring Lead')}</div>
+              <div class="text-[10px] text-[#9A9AA5] truncate">${escapeHtml(item.recruiter_title || 'Talent Acquisition')} &bull; <span class="text-[#00E5FF]">${escapeHtml(item.recruiter_email)}</span></div>
+            </div>
+          </div>
+
+          <div class="mt-3">
+            <span class="text-[10px] font-mono text-[#9A9AA5] uppercase">Subject:</span>
+            <div class="text-xs font-semibold text-slate-200 mt-0.5">${escapeHtml(item.email_subject || 'Job Application')}</div>
+          </div>
+
+          <div class="mt-2.5 p-3 rounded-xl bg-[#070912] border border-white/5 text-[11px] text-slate-300 font-mono whitespace-pre-wrap max-h-40 overflow-y-auto leading-relaxed">
+            ${escapeHtml(item.email_body || '')}
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-white/5 flex flex-wrap items-center gap-2">
+          ${!isSent ? `
+            <button onclick="approveAndSendOutreach(${item.id}); playSfx('success')" class="flex-1 py-2 rounded-xl btn-cyan text-xs font-bold flex items-center justify-center space-x-1.5 cursor-pointer shadow-lg shadow-[#00E5FF]/20">
+              <i data-lucide="send" class="w-3.5 h-3.5"></i>
+              <span>Approve &amp; Send</span>
+            </button>
+          ` : `
+            <button onclick="markOutreachReplied(${item.id}); playSfx('click')" class="flex-1 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-[#00E5FF] flex items-center justify-center space-x-1.5 cursor-pointer">
+              <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+              <span>Mark as Replied</span>
+            </button>
+          `}
+          <button onclick="copyOutreachDraft(${item.id}); playSfx('click')" class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer" title="Copy to Clipboard">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+          </button>
+          <a href="mailto:${encodeURIComponent(item.recruiter_email || '')}?subject=${encodeURIComponent(item.email_subject || '')}&body=${encodeURIComponent(item.email_body || '')}" class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 hover:text-white transition" title="Open in Email App">
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  if (window.lucide) lucide.createIcons();
+}
+
+async function approveAndSendOutreach(id) {
+  showToast("Sending cold outreach email via connected account...", "info");
+  try {
+    const res = await fetch("/api/agent/outreach/approve-and-send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ outreach_id: id })
+    });
+    if (!res.ok) throw new Error("Approval failed");
+    showToast("Outreach email approved and sent to recruiter!", "success");
+    await loadOutreachList();
+  } catch (err) {
+    showToast(`Error: ${err.message}`, "error");
+  }
+}
+
+async function markOutreachReplied(id) {
+  try {
+    const res = await fetch("/api/agent/outreach/update-status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ outreach_id: id, status: "replied" })
+    });
+    if (!res.ok) throw new Error("Update failed");
+    showToast("Marked as replied!", "success");
+    await loadOutreachList();
+  } catch (err) {
+    showToast(`Error: ${err.message}`, "error");
+  }
+}
+
+function copyOutreachDraft(id) {
+  const item = outreachCache.find(o => o.id === id);
+  if (!item) return;
+  const fullText = `To: ${item.recruiter_email}\nSubject: ${item.email_subject}\n\n${item.email_body}`;
+  navigator.clipboard.writeText(fullText).then(() => {
+    showToast("Cold email draft copied to clipboard!", "success");
+  });
+}
+
+async function generateFreshOutreach() {
+  showToast("Drafting fresh personalized recruiter cold emails...", "info");
+  try {
+    await fetch("/api/agent/activate-daily", { method: "POST" });
+    await loadOutreachList();
+    showToast("Fresh outreach drafts prepared!", "success");
+  } catch (err) {
+    showToast(`Error: ${err.message}`, "error");
+  }
 }

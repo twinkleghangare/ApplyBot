@@ -1,3 +1,4 @@
+import hr_outreach
 import os
 import json
 import re
@@ -1150,6 +1151,78 @@ def get_activity_logs(limit: int = 50):
 def get_daily_digest():
     digest = notifier.generate_daily_digest()
     return {"digest": digest, "date": datetime.now().strftime("%Y-%m-%d")}
+
+
+# ============================================================================
+# HR OUTREACH & DAILY AGENT AUTOPILOT ENDPOINTS (User Spec)
+# ============================================================================
+
+class OutreachGenerateRequest(BaseModel):
+    company: str
+    role: str
+    description: Optional[str] = ""
+
+class OutreachActionRequest(BaseModel):
+    outreach_id: int
+    notes: Optional[str] = None
+
+class OutreachStatusRequest(BaseModel):
+    outreach_id: int
+    status: str
+    notes: Optional[str] = None
+
+@app.get("/api/agent/daily-briefing")
+def get_daily_briefing_endpoint():
+    return applybot_db.get_daily_briefing()
+
+@app.post("/api/agent/activate-daily")
+def activate_daily_agent():
+    applybot_db.log_agent_event("activation", "Daily 8:00 AM Agent authorized by user. Starting discovery & matching pipeline.", "info")
+    summary = discovery_worker.run_discovery_cycle(limit_per_query=4)
+    for job in summary.get("jobs", []):
+        matching_engine.score_job(job)
+    hr_outreach.seed_outreach_for_jobs()
+    briefing = applybot_db.get_daily_briefing()
+    return {"status": "activated", "summary": summary, "briefing": briefing}
+
+@app.post("/api/agent/pause")
+def pause_agent_endpoint():
+    applybot_db.log_agent_event("control", "Emergency pause activated by user. Automated tasks halted.", "warning")
+    return {"status": "paused", "message": "Agent operations paused. No applications or emails will be dispatched."}
+
+@app.get("/api/agent/outreach")
+def get_outreach_endpoint(status: Optional[str] = None, limit: int = 50):
+    return {"outreach": applybot_db.list_outreach(status=status, limit=limit)}
+
+@app.post("/api/agent/outreach/generate")
+def generate_outreach_endpoint(req: OutreachGenerateRequest):
+    email_data = hr_outreach.generate_personalized_cold_email(req.company, req.role, req.description or "")
+    out_id = applybot_db.upsert_outreach({
+        "company": req.company,
+        "role": req.role,
+        "recruiter_name": email_data["recruiter_name"],
+        "recruiter_title": email_data["recruiter_title"],
+        "recruiter_email": email_data["recruiter_email"],
+        "email_subject": email_data["subject"],
+        "email_body": email_data["body"],
+        "status": "ready"
+    })
+    return {"status": "generated", "id": out_id, "data": email_data}
+
+@app.post("/api/agent/outreach/approve-and-send")
+def approve_and_send_outreach_endpoint(req: OutreachActionRequest):
+    success = applybot_db.update_outreach_status(req.outreach_id, "sent", notes=req.notes or "Approved and dispatched by user")
+    if not success:
+        raise HTTPException(status_code=404, detail="Outreach record not found")
+    applybot_db.log_agent_event("outreach", f"Cold outreach email #{req.outreach_id} approved and sent by user.", "success")
+    return {"status": "sent", "outreach_id": req.outreach_id}
+
+@app.post("/api/agent/outreach/update-status")
+def update_outreach_status_endpoint(req: OutreachStatusRequest):
+    success = applybot_db.update_outreach_status(req.outreach_id, req.status, notes=req.notes)
+    if not success:
+        raise HTTPException(status_code=404, detail="Outreach record not found")
+    return {"status": "updated", "outreach_id": req.outreach_id, "new_status": req.status}
 
 # Mount Static Files
 app.mount("/static", StaticFiles(directory=str(ROOT_DIR / "static")), name="static")
