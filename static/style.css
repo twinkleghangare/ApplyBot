@@ -1,7 +1,7 @@
 /* ==========================================================================
    ApplyBot — Design System & Stylesheet
    Strict Tokens, Zero Glassmorphism/Glow/Blur, Thin 1px Borders, GSAP + Three.js
-   Inspired by Haris Hamza Ali (particle physics + typewriter) & Cosmic Dark SaaS
+   Images Reference: Dark Bento UI, Stitch Floating Dock, Prompt Capsule, Three.js Guides
    ========================================================================== */
 
 :root,
@@ -28,6 +28,7 @@
   --radius-btn: 6px;
   --radius-badge: 4px;
   --radius-bar: 3px;
+  --radius-pill: 9999px;
 }
 
 [data-theme="light"] {
@@ -67,6 +68,7 @@ body {
   min-height: 100vh;
   line-height: 1.5;
   overflow-x: hidden;
+  position: relative;
 }
 
 .mono {
@@ -157,6 +159,19 @@ body {
 .btn-violet:hover {
   filter: brightness(1.1);
   transform: translateY(-1px);
+}
+
+/* Electric Generating Button State (Image 2 Reference) */
+.btn-generating {
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 50%, #7C5CFF 100%) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 16px rgba(59, 130, 246, 0.6) !important;
+  animation: pulseGlow 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.02); }
 }
 
 .btn-ghost {
@@ -287,6 +302,42 @@ body {
   gap: 10px;
 }
 
+/* Mode Switch Pill [ ☼ Light | ☾ Dark ] (Image 3 Reference) */
+.mode-switch-pill {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 2px;
+  gap: 2px;
+}
+
+.mode-pill-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.mode-pill-btn:hover {
+  color: var(--text-1);
+}
+
+.mode-pill-btn.active {
+  background-color: var(--bg-hover);
+  color: var(--text-1);
+  border: 1px solid var(--border);
+}
+
 .icon-btn {
   background-color: var(--bg-card);
   border: 1px solid var(--border);
@@ -367,7 +418,7 @@ body {
   height: 100% !important;
 }
 
-/* Shooting Stars / Comets (Image 1 Space Reference) */
+/* Space Comets (Image 1 Space Reference) */
 .comet-track {
   position: absolute;
   height: 1.5px;
@@ -452,7 +503,7 @@ body {
   font-size: 18px;
   font-weight: 600;
   color: var(--mint);
-  margin-bottom: 24px;
+  margin-bottom: 18px;
   min-height: 28px;
 }
 
@@ -466,6 +517,65 @@ body {
 @keyframes blinkCursor {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
+}
+
+/* Copilot Prompt Capsule (Image 3 Stitch Reference) */
+.copilot-capsule {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 6px 8px 6px 14px;
+  gap: 8px;
+  margin-bottom: 20px;
+  transition: border-color 150ms ease;
+}
+
+.copilot-capsule:focus-within {
+  border-color: var(--violet);
+}
+
+.capsule-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-1);
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+
+.capsule-input::placeholder {
+  color: var(--text-2);
+}
+
+.capsule-model-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--violet);
+  background-color: rgba(124, 92, 255, 0.12);
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.capsule-send-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background-color: var(--violet);
+  border: none;
+  color: #FFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 120ms ease;
+}
+
+.capsule-send-btn:hover {
+  transform: scale(1.1);
 }
 
 .hero-actions-row {
@@ -539,8 +649,45 @@ body {
 }
 
 .gauge-score {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
+  color: var(--text-1);
+}
+
+/* Circular Telemetry Dial (Image 1 Bento Dial Reference) */
+.gauge-dial-wrap {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gauge-svg {
+  transform: rotate(-90deg);
+}
+
+.gauge-bg {
+  fill: none;
+  stroke: var(--bg-hover);
+  stroke-width: 8;
+}
+
+.gauge-meter {
+  fill: none;
+  stroke: var(--violet);
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 251.2;
+  stroke-dashoffset: 221;
+  transition: stroke-dashoffset 800ms ease;
+}
+
+.gauge-center-val {
+  position: absolute;
+  font-size: 11px;
+  font-weight: 800;
   color: var(--text-1);
 }
 
@@ -620,7 +767,6 @@ body {
   gap: 8px;
 }
 
-/* Glowing Planetary Horizon Arc (Image 2 Reference) */
 .horizon-arc {
   position: absolute;
   bottom: 0;
@@ -632,7 +778,47 @@ body {
 }
 
 /* ==========================================================================
-   SCREEN 2: JOBS (OpenTrain Layout)
+   FLOATING VERTICAL DOCK TOOLBAR (Image 3 Reference)
+   ========================================================================== */
+
+.floating-dock {
+  position: fixed;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 90;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.dock-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.dock-btn:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-1);
+  transform: scale(1.1);
+}
+
+/* ==========================================================================
+   SCREEN 2: JOBS (OpenTrain Layout with 11 Portals)
    ========================================================================== */
 
 .sticky-search-wrap {
@@ -1273,6 +1459,9 @@ body {
   }
   .profile-two-col {
     grid-template-columns: 1fr;
+  }
+  .floating-dock {
+    display: none;
   }
   .nav-links {
     display: none;

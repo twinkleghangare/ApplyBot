@@ -1,8 +1,9 @@
 // ============================================================================
 // ApplyBot — Autonomous AI Career Agent Controller
 // Candidate: Twinkle Ghangare (B.Tech AI & Data Science, KDK College Nagpur, CGPA 8.19)
-// Three.js (300 particles with mouse repulsion) + GSAP Smooth Motion Suite
-// Inspired by Haris Hamza Ali (particle physics + typewriter) & Cosmic Dark SaaS
+// 11 Indian Job Portals: Internshala, Saarthi, Freshersworld, Naukri, LinkedIn, Indeed,
+// foundit, Wellfound, Cutshort, NCS, WorkIndia
+// Three.js (300 particles + 3D wireframe guides) + GSAP Motion Suite
 // ============================================================================
 
 const JOBS = [
@@ -15,7 +16,7 @@ const JOBS = [
     match: 94,
     verified: "VERIFIED",
     portal: "Wellfound",
-    reason: "Matches Python, ML skills from FraudLens project + internship exp"
+    reason: "Matches Python, ML anomaly detection from FraudLens project"
   },
   {
     company: "Sarvam AI",
@@ -30,14 +31,36 @@ const JOBS = [
   },
   {
     company: "Krutrim",
-    role: "Data Science Intern",
+    role: "GenAI Data Associate Intern",
     location: "Hybrid",
     type: "Startup",
-    salary: "₹20k/mo",
-    match: 82,
+    salary: "₹25k/mo",
+    match: 85,
+    verified: "VERIFIED",
+    portal: "Saarthi",
+    reason: "Saarthi Job Fit 96: Evaluates Hindi/Indic LLM datasets; matches coursework"
+  },
+  {
+    company: "Persistent Systems",
+    role: "Associate Software Engineer (AI/ML)",
+    location: "Nagpur",
+    type: "MNC",
+    salary: "4.5 LPA",
+    match: 92,
+    verified: "VERIFIED",
+    portal: "Freshersworld",
+    reason: "Campus hiring open for Nagpur engineering graduates with > 7.5 CGPA (Twinkle: 8.19)"
+  },
+  {
+    company: "Tata Elxsi",
+    role: "AI Vision Engineer Intern",
+    location: "Pune",
+    type: "MNC",
+    salary: "₹25k/mo",
+    match: 84,
     verified: "VERIFIED",
     portal: "Naukri",
-    reason: "Data pipeline skills match; Python + SQL from coursework"
+    reason: "Computer vision & PyTorch skills align with HSI spectral land cover classification"
   },
   {
     company: "Postman",
@@ -51,51 +74,97 @@ const JOBS = [
     reason: "FastAPI experience relevant; verify official posting link"
   },
   {
+    company: "Razorpay",
+    role: "Fraud Analytics & Data Intern",
+    location: "Bengaluru",
+    type: "MNC",
+    salary: "₹40k/mo",
+    match: 91,
+    verified: "VERIFIED",
+    portal: "Indeed",
+    reason: "Direct match with UPI scam heuristic detection in FraudLens (94.2% precision)"
+  },
+  {
+    company: "InMobi",
+    role: "Data Science Intern",
+    location: "Bengaluru",
+    type: "MNC",
+    salary: "₹32k/mo",
+    match: 80,
+    verified: "VERIFIED",
+    portal: "foundit",
+    reason: "Tabular data processing and Scikit-Learn pipeline scores"
+  },
+  {
     company: "Observe.AI",
-    role: "ML Intern",
+    role: "ML Intern (NLP & Speech)",
     location: "Remote",
     type: "Startup",
     salary: "₹28k/mo",
-    match: 85,
+    match: 86,
     verified: "VERIFIED",
     portal: "Wellfound",
     reason: "NLP + classification skills directly match from FraudLens"
   },
   {
-    company: "Razorpay",
-    role: "Data Analyst Intern",
-    location: "Bengaluru",
-    type: "MNC",
-    salary: "₹40k/mo",
-    match: 72,
+    company: "Fyno",
+    role: "Python AI Microservices Intern",
+    location: "Remote",
+    type: "Startup",
+    salary: "₹26k/mo",
+    match: 89,
+    verified: "VERIFIED",
+    portal: "Cutshort",
+    reason: "Direct messaging with Engineering Manager; FastAPI + Docker"
+  },
+  {
+    company: "National Informatics Centre (NIC)",
+    role: "Data & AI Research Trainee",
+    location: "Nagpur",
+    type: "Government",
+    salary: "₹20k/mo",
+    match: 87,
     verified: "VERIFIED",
     portal: "NCS",
-    reason: "SQL + Python skills match; MedVerify data processing relevant"
+    reason: "Government technical fresher opening for AI & DS graduates"
+  },
+  {
+    company: "FinTech Express",
+    role: "Junior ML Ops Associate",
+    location: "Nagpur",
+    type: "Startup",
+    salary: "₹22k/mo",
+    match: 81,
+    verified: "VERIFIED",
+    portal: "WorkIndia",
+    reason: "Local corporate technical support; model monitoring & SQL reporting"
   }
 ];
 
 const HR_CONTACTS = [
-  { name: "Tanvi Patel", company: "Sprinto", email: "talent@sprinto.com", status: "Draft Ready" },
-  { name: "Arjun Nair", company: "Sarvam AI", email: "careers@sarvam.ai", status: "Not Sent" },
-  { name: "Nikita Sharma", company: "Krutrim", email: "hr@krutrim.com", status: "Sent" },
-  { name: "Rahul Verma", company: "Razorpay", email: "recruiting@razorpay.com", status: "Replied" }
+  { name: "Tanvi Patel", company: "Sprinto", portal: "Wellfound", email: "talent@sprinto.com", status: "Draft Ready" },
+  { name: "Arjun Nair", company: "Sarvam AI", portal: "Internshala", email: "careers@sarvam.ai", status: "Not Sent" },
+  { name: "Nikita Sharma", company: "Krutrim", portal: "Saarthi", email: "hr@krutrim.com", status: "Sent" },
+  { name: "Anand Joshi", company: "Persistent Systems", portal: "Freshersworld", email: "campus@persistent.com", status: "Draft Ready" },
+  { name: "Rahul Verma", company: "Razorpay", portal: "Indeed", email: "recruiting@razorpay.com", status: "Replied" },
+  { name: "Pooja Hegde", company: "Fyno", portal: "Cutshort", email: "em-hiring@fyno.io", status: "Draft Ready" }
 ];
 
 const APPLICATIONS = [
-  { company: "Sprinto", role: "AI/ML Engineer Intern", status: "Pending", date: "Today" },
-  { company: "Observe.AI", role: "ML Intern", status: "Pending", date: "Today" },
-  { company: "Sarvam AI", role: "ML Research Intern", status: "Applied", date: "Yesterday" },
-  { company: "Krutrim", role: "Data Science Intern", status: "Applied", date: "Nov 06" },
-  { company: "Postman", role: "AI Engineer Intern", status: "Applied", date: "Nov 05" },
-  { company: "Razorpay", role: "Data Analyst Intern", status: "Applied", date: "Nov 04" },
-  { company: "Exaful", role: "Software Engineer Intern", status: "Applied", date: "Nov 03" },
-  { company: "Zepto", role: "Backend Python Intern", status: "Applied", date: "Nov 02" },
-  { company: "Swiggy", role: "Machine Learning Intern", status: "Applied", date: "Nov 01" },
-  { company: "PhonePe", role: "Data Analyst Intern", status: "Applied", date: "Oct 30" },
-  { company: "TechCorp Labs", role: "AI Engineer Intern", status: "Interview", date: "Nov 06" },
-  { company: "FinTech India", role: "Junior Python Dev", status: "Rejected", date: "Oct 28" },
-  { company: "CloudScale", role: "MLOps Intern", status: "Rejected", date: "Oct 26" },
-  { company: "DataForge", role: "Data Intern", status: "Rejected", date: "Oct 24" }
+  { company: "Sprinto", role: "AI/ML Engineer Intern", portal: "Wellfound", status: "Pending", date: "Today" },
+  { company: "Observe.AI", role: "ML Intern (NLP)", portal: "Wellfound", status: "Pending", date: "Today" },
+  { company: "Persistent Systems", role: "Associate Software Engineer", portal: "Freshersworld", status: "Applied", date: "Today" },
+  { company: "Sarvam AI", role: "ML Research Intern", portal: "Internshala", status: "Applied", date: "Yesterday" },
+  { company: "Krutrim", role: "GenAI Data Associate", portal: "Saarthi", status: "Applied", date: "Nov 06" },
+  { company: "Razorpay", role: "Fraud Analytics Intern", portal: "Indeed", status: "Applied", date: "Nov 05" },
+  { company: "Fyno", role: "Python AI Intern", portal: "Cutshort", status: "Applied", date: "Nov 04" },
+  { company: "Postman", role: "AI Engineer Intern", portal: "LinkedIn", status: "Applied", date: "Nov 03" },
+  { company: "NIC", role: "Data Research Trainee", portal: "NCS", status: "Applied", date: "Nov 02" },
+  { company: "Tata Elxsi", role: "AI Vision Engineer", portal: "Naukri", status: "Applied", date: "Nov 01" },
+  { company: "TechCorp Labs", role: "AI Engineer Intern", portal: "LinkedIn", status: "Interview", date: "Nov 06" },
+  { company: "FinTech India", role: "Junior Python Dev", portal: "WorkIndia", status: "Rejected", date: "Oct 28" },
+  { company: "CloudScale", role: "MLOps Intern", portal: "foundit", status: "Rejected", date: "Oct 26" },
+  { company: "DataForge", role: "Data Intern", portal: "Indeed", status: "Rejected", date: "Oct 24" }
 ];
 
 let currentJobs = [...JOBS];
@@ -109,7 +178,7 @@ const dailyTargetCount = 25;
 let lastScrollY = 0;
 
 // Three.js State
-let threeScene, threeCamera, threeRenderer, starGeometry;
+let threeScene, threeCamera, threeRenderer, starGeometry, wireframeGroup;
 let starfieldAnimId = null;
 let isStarfieldActive = true;
 let particleBases = [];
@@ -133,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ============================================================================
-// 1. THREE.JS: 300-PARTICLE STAR FIELD WITH MOUSE REPULSION PHYSICS
+// 1. THREE.JS: 300 PARTICLES + PROCEDURAL WIREFRAME GUIDES (Image 4 Reference)
 // ============================================================================
 
 function initThreeInteractiveStarfield() {
@@ -199,6 +268,22 @@ function initThreeInteractiveStarfield() {
   const starPoints = new THREE.Points(starGeometry, material);
   threeScene.add(starPoints);
 
+  // Image 4 Reference: Subtle Three.js Procedural Wireframe Guide Objects
+  wireframeGroup = new THREE.Group();
+  const icoGeo = new THREE.IcosahedronGeometry(28, 1);
+  const icoMat = new THREE.MeshBasicMaterial({ wireframe: true, color: 0x7C5CFF, transparent: true, opacity: 0.22 });
+  const icosahedron = new THREE.Mesh(icoGeo, icoMat);
+
+  const ringGeo = new THREE.TorusGeometry(40, 0.8, 8, 36);
+  const ringMat = new THREE.MeshBasicMaterial({ wireframe: true, color: 0x30DC97, transparent: true, opacity: 0.18 });
+  const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+  ringMesh.rotation.x = Math.PI / 3;
+
+  wireframeGroup.add(icosahedron);
+  wireframeGroup.add(ringMesh);
+  wireframeGroup.position.set(220, 90, -40);
+  threeScene.add(wireframeGroup);
+
   // Mouse hover tracking over hero container (repels particles)
   heroWrapper.addEventListener("pointermove", (e) => {
     const rect = heroWrapper.getBoundingClientRect();
@@ -226,11 +311,9 @@ function initThreeInteractiveStarfield() {
       const base = particleBases[i];
       const cur = particleCurrents[i];
 
-      // Gentle ambient drift
       const targetX = base.x + Math.sin(clock + base.seed) * 5;
       const targetY = base.y + Math.cos(clock * 0.8 + base.seed) * 5;
 
-      // Mouse repulsion physics
       if (mouse.active) {
         const dx = cur.x - mouse.x;
         const dy = cur.y - mouse.y;
@@ -242,7 +325,6 @@ function initThreeInteractiveStarfield() {
         }
       }
 
-      // Spring return to base
       cur.x += (targetX - cur.x) * 0.06;
       cur.y += (targetY - cur.y) * 0.06;
 
@@ -252,11 +334,16 @@ function initThreeInteractiveStarfield() {
 
     posAttr.needsUpdate = true;
     starPoints.rotation.z += 0.0002;
+
+    if (wireframeGroup) {
+      wireframeGroup.rotation.y += 0.006;
+      wireframeGroup.rotation.x += 0.003;
+    }
+
     threeRenderer.render(threeScene, threeCamera);
   }
   animateStars();
 
-  // Pause when tab hidden
   document.addEventListener("visibilitychange", () => {
     isStarfieldActive = !document.hidden;
     if (isStarfieldActive) {
@@ -265,7 +352,6 @@ function initThreeInteractiveStarfield() {
     }
   });
 
-  // Resize listener
   window.addEventListener("resize", () => {
     if (window.innerWidth < 768) {
       if (threeRenderer && threeRenderer.domElement) {
@@ -287,7 +373,7 @@ function initThreeInteractiveStarfield() {
 }
 
 // ============================================================================
-// 2. GSAP TYPEWRITER TAGLINE CYCLE (Haris Hamza Ali + Space Reference)
+// 2. GSAP TYPEWRITER TAGLINE CYCLE (Haris Hamza Ali & Space Reference)
 // ============================================================================
 
 function initTypewriterTagline() {
@@ -295,10 +381,10 @@ function initTypewriterTagline() {
   if (!el || typeof gsap === "undefined") return;
 
   const taglines = [
-    "scanning 8 portals for ML intern opportunities",
+    "scanning 11 portals for verified AI/ML roles",
+    "aggregating Internshala, Saarthi, Naukri & Cutshort",
     "evaluating FraudLens scam heuristics & 94.2% precision",
-    "auto-generating tailored cover letters in real-time",
-    "24 verified tech opportunities queued for review"
+    "auto-generating tailored cover letters in real-time"
   ];
   let idx = 0;
 
@@ -310,7 +396,6 @@ function initTypewriterTagline() {
       const tracker = { n: cur.length };
 
       gsap.timeline({ onComplete: cycle })
-        // Backspace
         .to(tracker, {
           n: 0,
           duration: cur.length * 0.02,
@@ -319,7 +404,6 @@ function initTypewriterTagline() {
             el.innerText = cur.slice(0, Math.round(tracker.n)) || "\u200B";
           }
         })
-        // Type forward
         .to(tracker, {
           n: nxt.length,
           duration: nxt.length * 0.035,
@@ -340,16 +424,14 @@ function initTypewriterTagline() {
 function triggerDashboardGSAP() {
   if (typeof gsap === "undefined") return;
 
-  // 1. Hero — gsap.from title/subtitle/buttons stagger 0.2s
   gsap.from(".hero-anim-item", {
     opacity: 0,
     y: 18,
-    stagger: 0.2,
+    stagger: 0.16,
     duration: 0.55,
     ease: "power2.out"
   });
 
-  // 2. Stats — stagger 0.1s scale+fade on load
   gsap.from(".stat-card", {
     opacity: 0,
     scale: 0.95,
@@ -358,10 +440,7 @@ function triggerDashboardGSAP() {
     ease: "back.out(1.5)"
   });
 
-  // 3. Counters — gsap count-up 1.5s
   animateCountersGSAP();
-
-  // 4. Progress — gsap.to width 1.2s ease-out
   updateTargetProgressGSAP(dailyAppliedCount, dailyTargetCount);
 }
 
@@ -388,11 +467,20 @@ function updateTargetProgressGSAP(count, target) {
   const pct = Math.round((count / target) * 100);
   const scoreText = document.getElementById("gauge-score-text");
   const sub = document.getElementById("target-gauge-sub");
+  const dialPct = document.getElementById("gauge-pct-text");
+  const dialCircle = document.getElementById("gauge-circle");
+
   if (scoreText) scoreText.innerText = `${count} / ${target} applied today`;
   if (sub) sub.innerText = `${pct}% completed towards daily target`;
+  if (dialPct) dialPct.innerText = `${pct}%`;
+
+  if (dialCircle) {
+    const circumference = 251.2;
+    const offset = circumference - (circumference * pct) / 100;
+    dialCircle.style.strokeDashoffset = offset;
+  }
 
   if (typeof gsap !== "undefined") {
-    // Progress — gsap.to width 1.2s ease-out
     gsap.to("#target-progress-bar", {
       width: pct + "%",
       duration: 1.2,
@@ -404,7 +492,6 @@ function updateTargetProgressGSAP(count, target) {
   }
 }
 
-// 5. Navbar — ScrollTrigger hide/show y:-56px 0.3s
 function initGSAPNavbar() {
   window.addEventListener("scroll", () => {
     const cur = window.scrollY;
@@ -419,7 +506,6 @@ function initGSAPNavbar() {
   });
 }
 
-// 6. Jobs — ScrollTrigger fade-up stagger 0.08s
 function animateJobsGSAP() {
   if (typeof gsap === "undefined") return;
 
@@ -448,7 +534,7 @@ function animateJobsGSAP() {
 }
 
 // ============================================================================
-// 4. THEME TOGGLE (0.2s CSS transition, localStorage)
+// 4. THEME TOGGLE (Figma Stitch Pill Style)
 // ============================================================================
 
 function initTheme() {
@@ -457,24 +543,28 @@ function initTheme() {
   updateThemeIcon(savedTheme);
 }
 
+function setThemeMode(mode) {
+  document.documentElement.setAttribute("data-theme", mode);
+  localStorage.setItem("applybot_theme", mode);
+  updateThemeIcon(mode);
+  showToast(`Switched to ${mode} mode`);
+}
+
 function toggleTheme() {
   const current = document.documentElement.getAttribute("data-theme") || "dark";
   const next = current === "dark" ? "light" : "dark";
-  document.documentElement.setAttribute("data-theme", next);
-  localStorage.setItem("applybot_theme", next);
-  updateThemeIcon(next);
-  showToast(`Switched to ${next} mode`);
+  setThemeMode(next);
 }
 
 function updateThemeIcon(theme) {
-  const moon = document.getElementById("theme-icon-moon");
-  const sun = document.getElementById("theme-icon-sun");
-  if (theme === "dark") {
-    if (moon) moon.classList.remove("theme-icon-hidden");
-    if (sun) sun.classList.add("theme-icon-hidden");
+  const lightBtn = document.getElementById("mode-btn-light");
+  const darkBtn = document.getElementById("mode-btn-dark");
+  if (theme === "light") {
+    if (lightBtn) lightBtn.classList.add("active");
+    if (darkBtn) darkBtn.classList.remove("active");
   } else {
-    if (moon) moon.classList.add("theme-icon-hidden");
-    if (sun) sun.classList.remove("theme-icon-hidden");
+    if (lightBtn) lightBtn.classList.remove("active");
+    if (darkBtn) darkBtn.classList.add("active");
   }
 }
 
@@ -484,7 +574,7 @@ function toggleMobileMenu() {
 }
 
 // ============================================================================
-// 5. NAVIGATION (5 Numbered Screens)
+// 5. NAVIGATION & COPILOT PROMPT CAPSULE (Image 3 Reference)
 // ============================================================================
 
 function navigateTo(id) {
@@ -515,29 +605,61 @@ function navigateTo(id) {
   }
 }
 
+function handleCopilotKey(e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    handleCopilotSubmit();
+  }
+}
+
+function handleCopilotSubmit() {
+  const input = document.getElementById("copilot-input");
+  if (!input) return;
+  const q = input.value.trim();
+  if (!q) {
+    showToast("Please enter a query for Copilot 3.1 Pro");
+    return;
+  }
+  const searchInput = document.getElementById("jobs-search-input");
+  if (searchInput) {
+    searchInput.value = q;
+    navigateTo("jobs");
+    filterJobs();
+    showToast(`✨ Copilot 3.1 Pro: Filtered jobs for "${q}"`);
+  }
+}
+
+function triggerQuickScan() {
+  showToast("⚡ Quick Scan: Syncing 11 live job portals...");
+  fetchLiveBackendData();
+}
+
 // ============================================================================
-// 6. AGENT CONTROLS
+// 6. AGENT CONTROLS (Electric Generating State from Image 2)
 // ============================================================================
 
 function allowTodaysRun() {
   const btn = document.getElementById("btn-allow-run");
   if (!btn) return;
-  btn.innerText = "⏳ Running Agent...";
-  btn.style.opacity = "0.7";
-  showToast("Autonomous Agent running: Evaluating 24 opportunities...");
+  btn.classList.add("btn-generating");
+  btn.innerHTML = `
+    <span>✨</span>
+    <span>Generating Applications...</span>
+  `;
+  showToast("Autonomous Agent running: Evaluating 24 opportunities across 11 portals...");
 
   setTimeout(() => {
     dailyAppliedCount = Math.min(dailyTargetCount, dailyAppliedCount + 1);
     updateTargetProgressGSAP(dailyAppliedCount, dailyTargetCount);
+    btn.classList.remove("btn-generating");
     btn.innerHTML = `
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <polygon points="5 3 19 12 5 21 5 3"></polygon>
       </svg>
       <span>▶ Allow Today's Run</span>
     `;
-    btn.style.opacity = "1";
     showToast(`✓ Auto-applied to Sprinto! Daily total: ${dailyAppliedCount}/${dailyTargetCount}`);
-  }, 1000);
+  }, 1100);
 }
 
 function pauseAgent() {
@@ -582,7 +704,7 @@ function skipTopJob() {
 }
 
 // ============================================================================
-// 7. SCREEN 2: JOBS (Filter Scale Bounce & OpenTrain Grid)
+// 7. SCREEN 2: JOBS (OpenTrain Layout with 11 Portals)
 // ============================================================================
 
 function filterJobs() {
@@ -593,7 +715,8 @@ function filterJobs() {
       job.company.toLowerCase().includes(search) ||
       job.role.toLowerCase().includes(search) ||
       job.reason.toLowerCase().includes(search) ||
-      job.location.toLowerCase().includes(search);
+      job.location.toLowerCase().includes(search) ||
+      job.portal.toLowerCase().includes(search);
 
     const matchesType =
       activeTypeFilter === "all" ||
@@ -611,7 +734,6 @@ function filterJobs() {
 }
 
 function setFilter(cat, val, btn) {
-  // Filter pill — scale bounce 0.08s on click
   if (typeof gsap !== "undefined" && btn) {
     gsap.fromTo(btn, { scale: 0.92 }, { scale: 1, duration: 0.12, ease: "back.out(2)" });
   }
@@ -634,7 +756,7 @@ function renderJobsGrid() {
   if (currentJobs.length === 0) {
     grid.innerHTML = `
       <div class="card" style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-2);">
-        No matching positions found. Adjust filter pills or search terms.
+        No matching positions found. Adjust filter pills or search terms across 11 portals.
       </div>
     `;
     return;
@@ -664,7 +786,10 @@ function renderJobsGrid() {
             <div class="job-card-top">
               <div class="job-avatar-group">
                 <div class="job-avatar">${initials}</div>
-                <div class="job-company-title">${job.company}</div>
+                <div>
+                  <div class="job-company-title">${job.company}</div>
+                  <span class="mono" style="font-size: 11px; color: var(--violet);">${job.portal}</span>
+                </div>
               </div>
               <span class="badge ${badgeClass} mono">${badgeText}</span>
             </div>
@@ -675,7 +800,6 @@ function renderJobsGrid() {
               <span class="job-tag">📍 ${job.location}</span>
               <span class="job-tag">🏢 ${job.type}</span>
               <span class="job-tag">💰 ${job.salary}</span>
-              <span class="job-tag">🌐 ${job.portal}</span>
             </div>
           </div>
 
@@ -705,7 +829,6 @@ function renderJobsGrid() {
     .join("");
 }
 
-// Skip card — x:40 opacity:0 0.25s then remove
 function skipJob(company) {
   const cardId = `card-${company.replace(/\\s+/g, "")}`;
   const el = document.getElementById(cardId);
@@ -733,6 +856,7 @@ function emailHRForJob(company) {
   const contact = HR_CONTACTS.find((c) => c.company.toLowerCase() === company.toLowerCase()) || {
     name: "Hiring Lead",
     company: company,
+    portal: "Direct",
     email: `careers@${company.toLowerCase().replace(/\\s+/g, "")}.com`,
     status: "Draft Ready"
   };
@@ -763,7 +887,7 @@ function renderApplicationsTable() {
   const filtered = APPLICATIONS.filter((a) => a.status === activeAppTab);
 
   if (filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-2); padding: 32px;">No applications in "${activeAppTab}" queue.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-2); padding: 32px;">No applications in "${activeAppTab}" queue.</td></tr>`;
     return;
   }
 
@@ -773,6 +897,7 @@ function renderApplicationsTable() {
       <tr class="row-interactive" onclick="openSidePanel('${app.company}', '${app.role}')">
         <td style="font-weight: 700;">${app.company}</td>
         <td>${app.role}</td>
+        <td class="mono" style="color: var(--violet);">${app.portal || "Portal"}</td>
         <td><span class="badge ${getAppBadgeClass(app.status)} mono">${app.status}</span></td>
         <td class="mono" style="color: var(--text-2);">${app.date}</td>
         <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); openSidePanel('${app.company}', '${app.role}')">Inspect</button></td>
@@ -846,7 +971,6 @@ LinkedIn: https://www.linkedin.com/in/twinkleghangare`;
   switchPanelTab("cv");
   if (backdrop) backdrop.classList.add("open");
 
-  // Panel open — fromTo x:400->0 0.3s power3.out
   if (typeof gsap !== "undefined" && panel) {
     gsap.fromTo(panel, { x: 400 }, { x: 0, duration: 0.3, ease: "power3.out" });
   }
@@ -901,6 +1025,7 @@ function submitCurrentApplication() {
       APPLICATIONS.unshift({
         company: currentInspectingJob.company,
         role: currentInspectingJob.role,
+        portal: currentInspectingJob.portal,
         status: "Applied",
         date: "Just now"
       });
@@ -924,6 +1049,7 @@ function renderOutreachTable() {
     <tr class="row-interactive" onclick="selectOutreachContact('${c.company}')">
       <td style="font-weight: 700;">${c.name}</td>
       <td>${c.company}</td>
+      <td class="mono" style="color: var(--text-2);">${c.portal}</td>
       <td class="mono" style="color: var(--violet);">${c.email}</td>
       <td><span class="badge ${c.status === "Sent" ? "badge-verified" : "badge-review"} mono">${c.status}</span></td>
       <td>
@@ -1063,7 +1189,7 @@ function setupDropzone() {
 }
 
 function handleBellClick() {
-  showToast("Notifications: 3 verified opportunities ready for review.");
+  showToast("Notifications: 12 verified opportunities ready across 11 portals.");
 }
 
 // ============================================================================

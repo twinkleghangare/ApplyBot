@@ -25,27 +25,24 @@
       </nav>
 
       <div class="nav-actions">
-        <button class="icon-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Light/Dark Theme" aria-label="Toggle Theme">
-          <svg id="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-          </svg>
-          <svg id="theme-icon-sun" class="theme-icon-hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-          </svg>
-        </button>
+        <!-- Figma Stitch Mode Switch Pill: [ ☼ Light | ☾ Dark ] (Image 3 Reference) -->
+        <div class="mode-switch-pill">
+          <button class="mode-pill-btn" id="mode-btn-light" onclick="setThemeMode('light')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line></svg>
+            <span>Light</span>
+          </button>
+          <button class="mode-pill-btn active" id="mode-btn-dark" onclick="setThemeMode('dark')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <span>Dark</span>
+          </button>
+        </div>
 
         <button class="icon-btn bell-btn" id="bell-btn" onclick="handleBellClick()" title="Notifications" aria-label="Notifications">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
             <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
           </svg>
-          <span class="bell-badge" id="bell-count">3</span>
+          <span class="bell-badge" id="bell-count">12</span>
         </button>
 
         <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()" aria-label="Toggle navigation">
@@ -66,11 +63,11 @@
       <div class="section-label">01 — DASHBOARD</div>
       <hr class="section-divider">
 
-      <!-- Hero Section with Contained Three.js Particle Starfield + Cosmic Effects -->
+      <!-- Hero Section with Contained Three.js Particle Starfield + 3D Geometry (Image 4) -->
       <div class="hero-container" id="hero-wrapper">
         <div class="hero-canvas-wrap" id="hero-canvas-container" aria-hidden="true"></div>
 
-        <!-- Shooting Star Streaks (Image 1 Space Reference) -->
+        <!-- Space Comets (Image 1 Space Reference) -->
         <div class="comet-track comet-1" aria-hidden="true"></div>
         <div class="comet-track comet-2" aria-hidden="true"></div>
 
@@ -79,15 +76,24 @@
           <div class="hero-left-col">
             <div class="status-indicator-row hero-anim-item">
               <span class="status-dot"></span>
-              <span class="status-text mono" id="agent-status-label">Agent Online · Ready for Execution</span>
+              <span class="status-text mono" id="agent-status-label">Agent Online · 11 Portals Scanned</span>
             </div>
 
             <h1 class="hero-heading hero-anim-item">Good morning, Twinkle.</h1>
 
             <!-- Interactive Typewriter Tagline (Haris Hamza Ali & Space Reference) -->
             <p class="hero-subtitle hero-anim-item">
-              Agent is <span class="typed-text" id="hero-typed-text">scanning 8 portals for ML intern opportunities</span><span class="typed-cursor" aria-hidden="true">|</span>
+              Agent is <span class="typed-text" id="hero-typed-text">scanning 11 portals for verified AI/ML roles</span><span class="typed-cursor" aria-hidden="true">|</span>
             </p>
+
+            <!-- Figma Stitch Prompt Capsule (Image 3 Reference) -->
+            <div class="copilot-capsule hero-anim-item">
+              <input type="text" id="copilot-input" class="capsule-input" placeholder="Ask Copilot (e.g. 'Show remote Internshala & Cutshort roles', 'Filter FraudLens matches')..." onkeydown="handleCopilotKey(event)">
+              <span class="capsule-model-badge mono">✨ 3.1 Pro</span>
+              <button class="capsule-send-btn" onclick="handleCopilotSubmit()" title="Submit Query" aria-label="Submit">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+              </button>
+            </div>
 
             <div class="hero-actions-row hero-anim-item">
               <button class="btn btn-violet" id="btn-allow-run" onclick="allowTodaysRun()">
@@ -108,19 +114,19 @@
             <!-- 4 Stat Cards (2x2 Grid) -->
             <div class="stat-cards-grid">
               <div class="stat-card">
-                <span class="stat-number mono" id="stat-discovered" data-target="59">0</span>
+                <span class="stat-number mono" id="stat-discovered" data-target="64">0</span>
                 <span class="stat-name mono">Discovered</span>
               </div>
               <div class="stat-card">
-                <span class="stat-number mono" id="stat-verified" data-target="52">0</span>
+                <span class="stat-number mono" id="stat-verified" data-target="58">0</span>
                 <span class="stat-name mono">Verified</span>
               </div>
               <div class="stat-card">
-                <span class="stat-number mono" id="stat-match" data-target="94" data-suffix="%">0%</span>
+                <span class="stat-number mono" id="stat-match" data-target="96" data-suffix="%">0%</span>
                 <span class="stat-name mono">High Match</span>
               </div>
               <div class="stat-card">
-                <span class="stat-number mono" id="stat-pending" data-target="12">0</span>
+                <span class="stat-number mono" id="stat-pending" data-target="14">0</span>
                 <span class="stat-name mono">Pending</span>
               </div>
             </div>
@@ -128,11 +134,20 @@
 
           <!-- Right Column (40%) -->
           <div class="hero-right-col">
-            <!-- Daily Target Gauge Card -->
+            <!-- Daily Target Gauge Card with Telemetry Dial (Image 1 Bento Dial) -->
             <div class="card gauge-card hero-anim-item">
               <div class="gauge-head">
-                <span class="gauge-label mono">Daily Target</span>
-                <span class="gauge-score mono" id="gauge-score-text">3 / 25 applied today</span>
+                <div>
+                  <span class="gauge-label mono">Daily Target</span>
+                  <div class="gauge-score mono" id="gauge-score-text">3 / 25 applied today</div>
+                </div>
+                <div class="gauge-dial-wrap">
+                  <svg class="gauge-svg" width="56" height="56" viewBox="0 0 100 100">
+                    <circle class="gauge-bg" cx="50" cy="50" r="40" />
+                    <circle class="gauge-meter" id="gauge-circle" cx="50" cy="50" r="40" />
+                  </svg>
+                  <span class="gauge-center-val mono" id="gauge-pct-text">12%</span>
+                </div>
               </div>
               <div class="progress-bar-container">
                 <div class="progress-bar-fill" id="target-progress-bar"></div>
@@ -145,7 +160,7 @@
               <div class="top-card-header">
                 <div class="top-card-company-wrap">
                   <div class="floating-copilot" aria-hidden="true">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <circle cx="12" cy="12" r="9"></circle>
                       <circle cx="9" cy="10" r="1" fill="currentColor"></circle>
                       <circle cx="15" cy="10" r="1" fill="currentColor"></circle>
@@ -157,7 +172,7 @@
                 <span class="badge badge-verified mono">✓ VERIFIED</span>
               </div>
               <h3 class="top-role-title">AI/ML Engineer Intern</h3>
-              <div class="top-card-tags mono">📍 Remote · 🏢 Startup · 💰 ₹25k/mo · 94% Match</div>
+              <div class="top-card-tags mono">📍 Remote · 🏢 Startup · 💰 ₹25k/mo · 94% Match · Wellfound</div>
               <div class="top-card-actions">
                 <button class="btn btn-violet btn-sm" onclick="reviewJob('Sprinto')">Review &amp; Apply</button>
                 <button class="btn btn-ghost btn-sm" onclick="skipTopJob()">Skip</button>
@@ -166,18 +181,17 @@
           </div>
         </div>
 
-        <!-- Glowing Planetary Horizon Wireframe Arc (Image 2 Reference) -->
         <div class="horizon-arc" aria-hidden="true"></div>
       </div>
     </section>
 
-    <!-- SCREEN 2: JOBS (OpenTrain Layout) -->
+    <!-- SCREEN 2: JOBS (OpenTrain Layout with 11 Indian Portals) -->
     <section id="section-jobs" class="page-section">
-      <div class="section-label">02 — JOBS</div>
+      <div class="section-label">02 — JOBS (11 ACTIVE PORTALS)</div>
       <hr class="section-divider">
 
       <div class="sticky-search-wrap">
-        <input type="text" class="search-input" id="jobs-search-input" placeholder="Search by role, company, or skills..." oninput="filterJobs()">
+        <input type="text" class="search-input" id="jobs-search-input" placeholder="Search across Internshala, Saarthi, Naukri, LinkedIn, Wellfound, Cutshort, NCS..." oninput="filterJobs()">
       </div>
 
       <!-- Filter Pills: Work Mode & Entity -->
@@ -185,19 +199,28 @@
         <button class="filter-pill active" onclick="setFilter('type', 'all', this)">All Types</button>
         <button class="filter-pill" onclick="setFilter('type', 'Remote', this)">Remote</button>
         <button class="filter-pill" onclick="setFilter('type', 'Hybrid', this)">Hybrid</button>
-        <button class="filter-pill" onclick="setFilter('type', 'Onsite', this)">Onsite</button>
+        <button class="filter-pill" onclick="setFilter('type', 'Bengaluru', this)">Bengaluru</button>
+        <button class="filter-pill" onclick="setFilter('type', 'Nagpur', this)">Nagpur</button>
+        <button class="filter-pill" onclick="setFilter('type', 'Pune', this)">Pune</button>
         <button class="filter-pill" onclick="setFilter('type', 'Startup', this)">Startup</button>
         <button class="filter-pill" onclick="setFilter('type', 'MNC', this)">MNC</button>
+        <button class="filter-pill" onclick="setFilter('type', 'Government', this)">Government</button>
       </div>
 
-      <!-- Portal Pills -->
+      <!-- Portal Pills: 11 Portals from User Specification -->
       <div class="pills-row" id="portal-pills-row">
-        <button class="filter-pill active" onclick="setFilter('portal', 'all', this)">All Portals</button>
-        <button class="filter-pill" onclick="setFilter('portal', 'Wellfound', this)">Wellfound</button>
+        <button class="filter-pill active" onclick="setFilter('portal', 'all', this)">All Portals (11)</button>
         <button class="filter-pill" onclick="setFilter('portal', 'Internshala', this)">Internshala</button>
+        <button class="filter-pill" onclick="setFilter('portal', 'Saarthi', this)">Saarthi</button>
+        <button class="filter-pill" onclick="setFilter('portal', 'Freshersworld', this)">Freshersworld</button>
         <button class="filter-pill" onclick="setFilter('portal', 'Naukri', this)">Naukri</button>
         <button class="filter-pill" onclick="setFilter('portal', 'LinkedIn', this)">LinkedIn</button>
-        <button class="filter-pill" onclick="setFilter('portal', 'NCS', this)">NCS</button>
+        <button class="filter-pill" onclick="setFilter('portal', 'Indeed', this)">Indeed</button>
+        <button class="filter-pill" onclick="setFilter('portal', 'foundit', this)">foundit</button>
+        <button class="filter-pill" onclick="setFilter('portal', 'Wellfound', this)">Wellfound</button>
+        <button class="filter-pill" onclick="setFilter('portal', 'Cutshort', this)">Cutshort</button>
+        <button class="filter-pill" onclick="setFilter('portal', 'NCS', this)">NCS (Govt)</button>
+        <button class="filter-pill" onclick="setFilter('portal', 'WorkIndia', this)">WorkIndia</button>
       </div>
 
       <!-- 2-col Job Card Grid -->
@@ -224,6 +247,7 @@
             <tr>
               <th class="mono">Company</th>
               <th class="mono">Role</th>
+              <th class="mono">Portal</th>
               <th class="mono">Status</th>
               <th class="mono">Date</th>
               <th class="mono">Action</th>
@@ -245,6 +269,7 @@
             <tr>
               <th class="mono">Recruiter</th>
               <th class="mono">Company</th>
+              <th class="mono">Portal</th>
               <th class="mono">Email</th>
               <th class="mono">Status</th>
               <th class="mono">Actions</th>
@@ -359,6 +384,7 @@
               <span class="tag-chip mono">Machine Learning Intern</span>
               <span class="tag-chip mono">Data Science Intern</span>
               <span class="tag-chip mono">Python Developer Intern</span>
+              <span class="tag-chip mono">Computer Vision Intern</span>
             </div>
           </div>
 
@@ -367,7 +393,7 @@
             <div class="tags-cluster">
               <span class="tag-chip mono">Remote</span>
               <span class="tag-chip mono">Bengaluru</span>
-              <span class="tag-chip mono">Nagpur</span>
+              <span class="tag-chip mono">Nagpur (Home City)</span>
               <span class="tag-chip mono">Pune</span>
               <span class="tag-chip mono">Hybrid</span>
             </div>
@@ -377,6 +403,25 @@
     </section>
 
   </main>
+
+  <!-- Figma Stitch Floating Vertical Dock Toolbar (Image 3 Reference) -->
+  <aside class="floating-dock" aria-label="Quick Navigation">
+    <button class="dock-btn" onclick="triggerQuickScan()" title="Quick Scan (New Jobs)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+    </button>
+    <button class="dock-btn" onclick="navigateTo('jobs')" title="Inspect Jobs Grid">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3l7 18 3-7 7-3L3 3z"></path></svg>
+    </button>
+    <button class="dock-btn" onclick="navigateTo('dashboard')" title="Dashboard Overview">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"></path><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"></path><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"></path></svg>
+    </button>
+    <button class="dock-btn" onclick="toggleTheme()" title="Toggle Theme Palette">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path></svg>
+    </button>
+    <button class="dock-btn" onclick="navigateTo('applications')" title="Applications Queue">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+    </button>
+  </aside>
 
   <!-- 380px SLIDE PANEL (ON ROW CLICK) -->
   <div class="panel-backdrop" id="side-panel-backdrop" onclick="closeSidePanelOnBackdrop(event)">
