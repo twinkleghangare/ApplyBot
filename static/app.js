@@ -16,6 +16,7 @@ const JOBS = [
     match: 94,
     verified: "VERIFIED",
     portal: "Wellfound",
+    url: "https://wellfound.com/jobs",
     reason: "Matches Python, ML anomaly detection from FraudLens project"
   },
   {
@@ -27,6 +28,7 @@ const JOBS = [
     match: 88,
     verified: "VERIFIED",
     portal: "Internshala",
+    url: "https://internshala.com/internships/machine-learning-internship/",
     reason: "Aligns with NLP work and AI/DS degree from KDK College"
   },
   {
@@ -38,6 +40,7 @@ const JOBS = [
     match: 85,
     verified: "VERIFIED",
     portal: "Saarthi",
+    url: "https://joinsaarthi.com/",
     reason: "Saarthi Job Fit 96: Evaluates Hindi/Indic LLM datasets; matches coursework"
   },
   {
@@ -49,6 +52,7 @@ const JOBS = [
     match: 92,
     verified: "VERIFIED",
     portal: "Freshersworld",
+    url: "https://www.freshersworld.com/",
     reason: "Campus hiring open for Nagpur engineering graduates with > 7.5 CGPA (Twinkle: 8.19)"
   },
   {
@@ -60,6 +64,7 @@ const JOBS = [
     match: 84,
     verified: "VERIFIED",
     portal: "Naukri",
+    url: "https://www.naukri.com/campus-fresher-jobs",
     reason: "Computer vision & PyTorch skills align with HSI spectral land cover classification"
   },
   {
@@ -71,6 +76,7 @@ const JOBS = [
     match: 78,
     verified: "NEEDS REVIEW",
     portal: "LinkedIn",
+    url: "https://www.linkedin.com/jobs/",
     reason: "FastAPI experience relevant; verify official posting link"
   },
   {
@@ -82,6 +88,7 @@ const JOBS = [
     match: 91,
     verified: "VERIFIED",
     portal: "Indeed",
+    url: "https://in.indeed.com/",
     reason: "Direct match with UPI scam heuristic detection in FraudLens (94.2% precision)"
   },
   {
@@ -93,6 +100,7 @@ const JOBS = [
     match: 80,
     verified: "VERIFIED",
     portal: "foundit",
+    url: "https://www.foundit.in/",
     reason: "Tabular data processing and Scikit-Learn pipeline scores"
   },
   {
@@ -104,6 +112,7 @@ const JOBS = [
     match: 86,
     verified: "VERIFIED",
     portal: "Wellfound",
+    url: "https://wellfound.com/jobs",
     reason: "NLP + classification skills directly match from FraudLens"
   },
   {
@@ -115,6 +124,7 @@ const JOBS = [
     match: 89,
     verified: "VERIFIED",
     portal: "Cutshort",
+    url: "https://cutshort.io/",
     reason: "Direct messaging with Engineering Manager; FastAPI + Docker"
   },
   {
@@ -126,6 +136,7 @@ const JOBS = [
     match: 87,
     verified: "VERIFIED",
     portal: "NCS",
+    url: "https://www.ncs.gov.in/",
     reason: "Government technical fresher opening for AI & DS graduates"
   },
   {
@@ -137,6 +148,7 @@ const JOBS = [
     match: 81,
     verified: "VERIFIED",
     portal: "WorkIndia",
+    url: "https://www.workindia.in/",
     reason: "Local corporate technical support; model monitoring & SQL reporting"
   }
 ];
@@ -175,7 +187,28 @@ let activeDraftRecipient = HR_CONTACTS[0];
 let currentInspectingJob = JOBS[0];
 let dailyAppliedCount = 3;
 const dailyTargetCount = 25;
+let pendingJobIndex = 0;
 let lastScrollY = 0;
+
+function getPortalUrl(portalName, company = "") {
+  const map = {
+    wellfound: "https://wellfound.com/jobs",
+    internshala: "https://internshala.com/internships/machine-learning-internship/",
+    saarthi: "https://joinsaarthi.com/",
+    freshersworld: "https://www.freshersworld.com/",
+    naukri: "https://www.naukri.com/campus-fresher-jobs",
+    linkedin: "https://www.linkedin.com/jobs/",
+    indeed: "https://in.indeed.com/",
+    foundit: "https://www.foundit.in/",
+    cutshort: "https://cutshort.io/",
+    ncs: "https://www.ncs.gov.in/",
+    workindia: "https://www.workindia.in/"
+  };
+  const key = (portalName || "").toLowerCase().trim();
+  const found = JOBS.find((j) => j.company.toLowerCase() === (company || "").toLowerCase());
+  if (found && found.url) return found.url;
+  return map[key] || "https://wellfound.com/jobs";
+}
 
 // Three.js State
 let threeScene, threeCamera, threeRenderer, starGeometry, wireframeGroup;
@@ -201,9 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
   triggerDashboardGSAP();
 });
 
-// ============================================================================
 // 1. THREE.JS: 300 PARTICLES + PROCEDURAL WIREFRAME GUIDES (Image 4 Reference)
-// ============================================================================
 
 function initThreeInteractiveStarfield() {
   const container = document.getElementById("hero-canvas-container");
@@ -372,9 +403,7 @@ function initThreeInteractiveStarfield() {
   });
 }
 
-// ============================================================================
 // 2. GSAP TYPEWRITER TAGLINE CYCLE (Haris Hamza Ali & Space Reference)
-// ============================================================================
 
 function initTypewriterTagline() {
   const el = document.getElementById("hero-typed-text");
@@ -417,9 +446,7 @@ function initTypewriterTagline() {
   cycle();
 }
 
-// ============================================================================
 // 3. GSAP MOTION SUITE (Exact Specs)
-// ============================================================================
 
 function triggerDashboardGSAP() {
   if (typeof gsap === "undefined") return;
@@ -533,9 +560,7 @@ function animateJobsGSAP() {
   }
 }
 
-// ============================================================================
 // 4. THEME TOGGLE (Figma Stitch Pill Style)
-// ============================================================================
 
 function initTheme() {
   const savedTheme = localStorage.getItem("applybot_theme") || "dark";
@@ -573,9 +598,7 @@ function toggleMobileMenu() {
   if (m) m.classList.toggle("open");
 }
 
-// ============================================================================
 // 5. NAVIGATION & COPILOT PROMPT CAPSULE (Image 3 Reference)
-// ============================================================================
 
 function navigateTo(id) {
   ["dashboard", "jobs", "applications", "outreach", "profile"].forEach((s) => {
@@ -634,9 +657,7 @@ function triggerQuickScan() {
   fetchLiveBackendData();
 }
 
-// ============================================================================
 // 6. AGENT CONTROLS (Electric Generating State from Image 2)
-// ============================================================================
 
 function allowTodaysRun() {
   const btn = document.getElementById("btn-allow-run");
@@ -669,8 +690,40 @@ function pauseAgent() {
 }
 
 function skipTopJob() {
+  const verifiedJobs = JOBS.filter((j) => j.verified === "VERIFIED");
+  pendingJobIndex = (pendingJobIndex + 1) % verifiedJobs.length;
+  const nextJob = verifiedJobs[pendingJobIndex];
   const card = document.getElementById("top-pending-card");
   if (card) {
+    const updateCard = () => {
+      card.innerHTML = `
+        <div class="top-card-header">
+          <div class="top-card-company-wrap">
+            <div class="floating-copilot" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <circle cx="9" cy="10" r="1" fill="currentColor"></circle>
+                <circle cx="15" cy="10" r="1" fill="currentColor"></circle>
+                <path d="M8 15s1.5 2 4 2 4-2 4-2"></path>
+              </svg>
+            </div>
+            <span class="top-company-name">${nextJob.company}</span>
+          </div>
+          <span class="badge badge-verified mono">✓ VERIFIED</span>
+        </div>
+        <h3 class="top-role-title">${nextJob.role}</h3>
+        <div class="top-card-tags mono">📍 ${nextJob.location} · 🏢 ${nextJob.type} · 💰 ${nextJob.salary} · ${nextJob.match}% Match · ${nextJob.portal}</div>
+        <div class="top-card-actions">
+          <button class="btn btn-violet btn-sm" onclick="reviewJob('${nextJob.company}')">Review &amp; Apply</button>
+          <a href="${nextJob.url}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm btn-redirect" title="Open official job listing on ${nextJob.portal}">
+            <span>Visit Portal</span>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+          </a>
+          <button class="btn btn-ghost btn-sm" onclick="skipTopJob()">Skip</button>
+        </div>
+      `;
+    };
+
     if (typeof gsap !== "undefined") {
       gsap.to(card, {
         x: 40,
@@ -678,34 +731,18 @@ function skipTopJob() {
         duration: 0.25,
         ease: "power2.in",
         onComplete: () => {
-          card.innerHTML = `
-            <div class="top-card-header">
-              <span class="top-company-name">Queue Clear</span>
-              <span class="badge badge-verified mono">✓ COMPLETE</span>
-            </div>
-            <h3 class="top-role-title">All high-priority jobs reviewed</h3>
-            <div class="top-card-tags mono">Visit the Jobs section to discover new matches.</div>
-          `;
-          gsap.fromTo(card, { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.25 });
+          updateCard();
+          gsap.fromTo(card, { opacity: 0, x: -16 }, { opacity: 1, x: 0, duration: 0.25 });
         }
       });
     } else {
-      card.innerHTML = `
-        <div class="top-card-header">
-          <span class="top-company-name">Queue Clear</span>
-          <span class="badge badge-verified mono">✓ COMPLETE</span>
-        </div>
-        <h3 class="top-role-title">All high-priority jobs reviewed</h3>
-        <div class="top-card-tags mono">Visit the Jobs section to discover new matches.</div>
-      `;
+      updateCard();
     }
   }
-  showToast("Skipped top priority pending job.");
+  showToast(`Skipped to ${nextJob.company} on ${nextJob.portal}.`);
 }
 
-// ============================================================================
 // 7. SCREEN 2: JOBS (OpenTrain Layout with 11 Portals)
-// ============================================================================
 
 function filterJobs() {
   const search = (document.getElementById("jobs-search-input")?.value || "").toLowerCase();
@@ -755,7 +792,7 @@ function renderJobsGrid() {
 
   if (currentJobs.length === 0) {
     grid.innerHTML = `
-      <div class="card" style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-2);">
+      <div class="card empty-card-msg">
         No matching positions found. Adjust filter pills or search terms across 11 portals.
       </div>
     `;
@@ -788,13 +825,16 @@ function renderJobsGrid() {
                 <div class="job-avatar">${initials}</div>
                 <div>
                   <div class="job-company-title">${job.company}</div>
-                  <span class="mono" style="font-size: 11px; color: var(--violet);">${job.portal}</span>
+                  <a href="${job.url}" target="_blank" rel="noopener noreferrer" class="portal-badge-link mono" title="Open listing on ${job.portal}">
+                    <span>${job.portal}</span>
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                  </a>
                 </div>
               </div>
               <span class="badge ${badgeClass} mono">${badgeText}</span>
             </div>
 
-            <h3 class="job-role-heading" style="margin-top: 10px;">${job.role}</h3>
+            <h3 class="job-role-heading mt-10">${job.role}</h3>
 
             <div class="job-tags-row mono">
               <span class="job-tag">📍 ${job.location}</span>
@@ -820,6 +860,10 @@ function renderJobsGrid() {
 
           <div class="job-card-actions">
             <button class="btn btn-violet btn-sm" onclick="reviewJob('${job.company}')">Review &amp; Apply</button>
+            <a href="${job.url}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm btn-redirect" title="Open official listing on ${job.portal}">
+              <span>Visit Portal</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+            </a>
             <button class="btn btn-ghost btn-sm" onclick="skipJob('${job.company}')">Skip</button>
             <button class="btn btn-ghost btn-sm" onclick="emailHRForJob('${job.company}')">Email HR</button>
           </div>
@@ -865,9 +909,7 @@ function emailHRForJob(company) {
   showToast(`Drafted outreach email for ${company}`);
 }
 
-// ============================================================================
 // 8. SCREEN 3: APPLICATIONS & SLIDE PANEL (fromTo x:400->0 0.3s power3.out)
-// ============================================================================
 
 function switchAppTab(status) {
   activeAppTab = status;
@@ -887,7 +929,7 @@ function renderApplicationsTable() {
   const filtered = APPLICATIONS.filter((a) => a.status === activeAppTab);
 
   if (filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-2); padding: 32px;">No applications in "${activeAppTab}" queue.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" class="empty-table-msg">No applications in "${activeAppTab}" queue.</td></tr>`;
     return;
   }
 
@@ -895,12 +937,24 @@ function renderApplicationsTable() {
     .map(
       (app) => `
       <tr class="row-interactive" onclick="openSidePanel('${app.company}', '${app.role}')">
-        <td style="font-weight: 700;">${app.company}</td>
+        <td class="text-bold">${app.company}</td>
         <td>${app.role}</td>
-        <td class="mono" style="color: var(--violet);">${app.portal || "Portal"}</td>
+        <td>
+          <a href="${getPortalUrl(app.portal, app.company)}" target="_blank" rel="noopener noreferrer" class="portal-badge-link mono" onclick="event.stopPropagation()" title="Open official ${app.portal} listing">
+            <span>${app.portal || "Portal"}</span>
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+          </a>
+        </td>
         <td><span class="badge ${getAppBadgeClass(app.status)} mono">${app.status}</span></td>
-        <td class="mono" style="color: var(--text-2);">${app.date}</td>
-        <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); openSidePanel('${app.company}', '${app.role}')">Inspect</button></td>
+        <td class="mono text-secondary">${app.date}</td>
+        <td>
+          <div class="actions-flex">
+            <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); openSidePanel('${app.company}', '${app.role}')">Inspect</button>
+            <a href="${getPortalUrl(app.portal, app.company)}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm btn-redirect" onclick="event.stopPropagation()" title="Open listing on ${app.portal}">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+            </a>
+          </div>
+        </td>
       </tr>
     `
     )
@@ -924,6 +978,21 @@ function getAppBadgeClass(status) {
 function reviewJob(company) {
   const job = JOBS.find((j) => j.company.toLowerCase() === company.toLowerCase()) || JOBS[0];
   openSidePanel(job.company, job.role);
+}
+
+function getCandidateLetter(recipient, company, role = "AI/ML Engineer Intern") {
+  return `Dear ${recipient} at ${company},
+
+I am writing to express my strong interest in the ${role} position. As a final-year B.Tech student in Artificial Intelligence & Data Science at KDK College of Engineering, Nagpur (CGPA: 8.19), I engineer production machine learning pipelines and microservices.
+
+In my project FraudLens, I engineered end-to-end UPI fraud detection pipelines achieving 94.2% precision. In MedVerify, I combined CNN classification with automated OCR inspection. My core engineering toolkit includes Python, PyTorch, FastAPI, Docker, and SQL.
+
+I am eager to contribute to ${company}'s technical objectives and look forward to discussing how my background aligns with your engineering standards.
+
+Sincerely,
+Twinkle Ghangare
+twinkle.ghangare@gmail.com | +91 9876543210
+GitHub: https://github.com/twinkleghangare | LinkedIn: https://www.linkedin.com/in/twinkleghangare`;
 }
 
 function openSidePanel(company, role) {
@@ -953,23 +1022,21 @@ function openSidePanel(company, role) {
   }
 
   if (coverEl) {
-    coverEl.innerText = `Dear Hiring Team at ${company},
-
-I am writing to express my strong interest in the ${role} position. As a final-year B.Tech student in Artificial Intelligence & Data Science at KDK College of Engineering, Nagpur (CGPA: 8.19), I have hands-on experience engineering production-ready machine learning models and microservices.
-
-In my project FraudLens, I engineered end-to-end UPI fraud detection pipelines achieving 94.2% precision. Similarly, in MedVerify, I combined CNN classification with automated OCR inspection. My core engineering toolkit includes Python, PyTorch, FastAPI, Docker, and SQL.
-
-I am eager to contribute to ${company}'s high-impact initiatives and look forward to discussing how my technical background aligns with your engineering standards.
-
-Sincerely,
-Twinkle Ghangare
-twinkle.ghangare@gmail.com | +91 9876543210
-GitHub: https://github.com/twinkleghangare
-LinkedIn: https://www.linkedin.com/in/twinkleghangare`;
+    coverEl.innerText = getCandidateLetter("Hiring Team", company, role);
   }
 
   switchPanelTab("cv");
   if (backdrop) backdrop.classList.add("open");
+
+  const redirectLink = document.getElementById("panel-redirect-link");
+  const redirectText = document.getElementById("panel-redirect-text");
+  if (redirectLink) {
+    const portalName = currentInspectingJob.portal || "Portal";
+    const targetUrl = currentInspectingJob.url || getPortalUrl(portalName, company);
+    redirectLink.href = targetUrl;
+    if (redirectText) redirectText.innerText = `Visit ${portalName}`;
+    redirectLink.title = `Open official listing on ${portalName} in new tab`;
+  }
 
   if (typeof gsap !== "undefined" && panel) {
     gsap.fromTo(panel, { x: 400 }, { x: 0, duration: 0.3, ease: "power3.out" });
@@ -1036,9 +1103,7 @@ function submitCurrentApplication() {
   showToast(`✓ Applied to ${currentInspectingJob.company}! Daily total: ${dailyAppliedCount}/${dailyTargetCount}`);
 }
 
-// ============================================================================
 // 9. SCREEN 4: HR OUTREACH
-// ============================================================================
 
 function renderOutreachTable() {
   const tbody = document.getElementById("outreach-table-body");
@@ -1047,16 +1112,24 @@ function renderOutreachTable() {
   tbody.innerHTML = HR_CONTACTS.map(
     (c) => `
     <tr class="row-interactive" onclick="selectOutreachContact('${c.company}')">
-      <td style="font-weight: 700;">${c.name}</td>
+      <td class="text-bold">${c.name}</td>
       <td>${c.company}</td>
-      <td class="mono" style="color: var(--text-2);">${c.portal}</td>
-      <td class="mono" style="color: var(--violet);">${c.email}</td>
+      <td>
+        <a href="${getPortalUrl(c.portal, c.company)}" target="_blank" rel="noopener noreferrer" class="portal-badge-link mono" onclick="event.stopPropagation()" title="Open official ${c.portal} portal">
+          <span>${c.portal}</span>
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+        </a>
+      </td>
+      <td class="mono text-violet">${c.email}</td>
       <td><span class="badge ${c.status === "Sent" ? "badge-verified" : "badge-review"} mono">${c.status}</span></td>
       <td>
-        <div style="display: flex; gap: 6px;">
+        <div class="actions-flex">
           <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); copyDirectEmail('${c.company}')">Copy</button>
           <button class="btn btn-violet btn-sm" onclick="event.stopPropagation(); openDirectGmail('${c.company}')">Gmail</button>
-          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); markOutreachSent('${c.company}')">Mark Sent</button>
+          <a href="${getPortalUrl(c.portal, c.company)}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm btn-redirect" onclick="event.stopPropagation()" title="Open company website or listing">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+          </a>
+          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); markOutreachSent('${c.company}')">Sent</button>
         </div>
       </td>
     </tr>
@@ -1080,19 +1153,7 @@ function updateOutreachDraft(contact) {
   }
 
   if (body) {
-    body.innerText = `Dear ${contact.name} and the Hiring Team at ${contact.company},
-
-I am writing to express my interest in AI/ML engineering opportunities at ${contact.company}. As a final-year B.Tech student in Artificial Intelligence & Data Science at KDK College of Engineering, Nagpur (CGPA: 8.19), I have focused on production-grade machine learning pipelines and microservices.
-
-In my FraudLens project, I developed real-time transaction anomaly detection pipelines achieving 94.2% precision. In MedVerify, I implemented multi-modal CNN label classification and verification. My core toolkit includes Python, PyTorch, Scikit-Learn, FastAPI, and Docker.
-
-I would be thrilled to contribute to ${contact.company}'s engineering objectives. My resume is attached for your review.
-
-Sincerely,
-Twinkle Ghangare
-twinkle.ghangare@gmail.com | +91 9876543210
-Portfolio: https://github.com/twinkleghangare
-LinkedIn: https://www.linkedin.com/in/twinkleghangare`;
+    body.innerText = getCandidateLetter(contact.name, contact.company, "AI/ML Engineer Intern");
   }
 }
 
@@ -1137,9 +1198,7 @@ function markOutreachSent(company) {
   }
 }
 
-// ============================================================================
 // 10. SCREEN 5: PROFILE & DROPZONE
-// ============================================================================
 
 function updateSliderLabel(val) {
   const lbl = document.getElementById("slider-count-label");
@@ -1192,9 +1251,7 @@ function handleBellClick() {
   showToast("Notifications: 12 verified opportunities ready across 11 portals.");
 }
 
-// ============================================================================
 // 11. TOAST & KEYBOARD LISTENERS
-// ============================================================================
 
 function showToast(msg) {
   const shelf = document.getElementById("toast-shelf");
@@ -1217,9 +1274,7 @@ function setupKeyboardListeners() {
   });
 }
 
-// ============================================================================
 // 12. LIVE BACKEND SYNC
-// ============================================================================
 
 async function fetchLiveBackendData() {
   try {

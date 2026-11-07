@@ -7,15 +7,13 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <!-- NAVBAR (56px Sticky) -->
+  
   <header class="navbar-wrapper" id="main-navbar">
     <div class="container navbar">
       <div class="nav-brand" onclick="navigateTo('dashboard')">
         <span class="brand-title">ApplyBot</span>
         <span class="brand-badge">AI Career Agent</span>
       </div>
-
       <nav class="nav-links" id="nav-menu">
         <button class="nav-btn active" id="nav-dashboard" onclick="navigateTo('dashboard')">Dashboard</button>
         <button class="nav-btn" id="nav-jobs" onclick="navigateTo('jobs')">Jobs</button>
@@ -23,9 +21,8 @@
         <button class="nav-btn" id="nav-outreach" onclick="navigateTo('outreach')">Outreach</button>
         <button class="nav-btn" id="nav-profile" onclick="navigateTo('profile')">Profile</button>
       </nav>
-
       <div class="nav-actions">
-        <!-- Figma Stitch Mode Switch Pill: [ ☼ Light | ☾ Dark ] (Image 3 Reference) -->
+        
         <div class="mode-switch-pill">
           <button class="mode-pill-btn" id="mode-btn-light" onclick="setThemeMode('light')">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line></svg>
@@ -36,7 +33,6 @@
             <span>Dark</span>
           </button>
         </div>
-
         <button class="icon-btn bell-btn" id="bell-btn" onclick="handleBellClick()" title="Notifications" aria-label="Notifications">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -44,7 +40,6 @@
           </svg>
           <span class="bell-badge" id="bell-count">12</span>
         </button>
-
         <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()" aria-label="Toggle navigation">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -55,38 +50,30 @@
       </div>
     </div>
   </header>
-
   <main class="container">
-
-    <!-- SCREEN 1: DASHBOARD -->
+    
     <section id="section-dashboard" class="page-section active">
       <div class="section-label">01 — DASHBOARD</div>
       <hr class="section-divider">
-
-      <!-- Hero Section with Contained Three.js Particle Starfield + 3D Geometry (Image 4) -->
+      
       <div class="hero-container" id="hero-wrapper">
         <div class="hero-canvas-wrap" id="hero-canvas-container" aria-hidden="true"></div>
-
-        <!-- Space Comets (Image 1 Space Reference) -->
+        
         <div class="comet-track comet-1" aria-hidden="true"></div>
         <div class="comet-track comet-2" aria-hidden="true"></div>
-
         <div class="hero-split-grid">
-          <!-- Left Column (60%) -->
+          
           <div class="hero-left-col">
             <div class="status-indicator-row hero-anim-item">
               <span class="status-dot"></span>
               <span class="status-text mono" id="agent-status-label">Agent Online · 11 Portals Scanned</span>
             </div>
-
             <h1 class="hero-heading hero-anim-item">Good morning, Twinkle.</h1>
-
-            <!-- Interactive Typewriter Tagline (Haris Hamza Ali & Space Reference) -->
+            
             <p class="hero-subtitle hero-anim-item">
               Agent is <span class="typed-text" id="hero-typed-text">scanning 11 portals for verified AI/ML roles</span><span class="typed-cursor" aria-hidden="true">|</span>
             </p>
-
-            <!-- Figma Stitch Prompt Capsule (Image 3 Reference) -->
+            
             <div class="copilot-capsule hero-anim-item">
               <input type="text" id="copilot-input" class="capsule-input" placeholder="Ask Copilot (e.g. 'Show remote Internshala & Cutshort roles', 'Filter FraudLens matches')..." onkeydown="handleCopilotKey(event)">
               <span class="capsule-model-badge mono">✨ 3.1 Pro</span>
@@ -94,7 +81,6 @@
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
               </button>
             </div>
-
             <div class="hero-actions-row hero-anim-item">
               <button class="btn btn-violet" id="btn-allow-run" onclick="allowTodaysRun()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -110,8 +96,7 @@
                 <span>⏸ Pause</span>
               </button>
             </div>
-
-            <!-- 4 Stat Cards (2x2 Grid) -->
+            
             <div class="stat-cards-grid">
               <div class="stat-card">
                 <span class="stat-number mono" id="stat-discovered" data-target="64">0</span>
@@ -131,10 +116,9 @@
               </div>
             </div>
           </div>
-
-          <!-- Right Column (40%) -->
+          
           <div class="hero-right-col">
-            <!-- Daily Target Gauge Card with Telemetry Dial (Image 1 Bento Dial) -->
+            
             <div class="card gauge-card hero-anim-item">
               <div class="gauge-head">
                 <div>
@@ -154,8 +138,7 @@
               </div>
               <div class="gauge-sub mono" id="target-gauge-sub">12% completed towards daily target</div>
             </div>
-
-            <!-- Top Pending Job Card Compact -->
+            
             <div class="card top-pending-card hero-anim-item" id="top-pending-card">
               <div class="top-card-header">
                 <div class="top-card-company-wrap">
@@ -175,26 +158,26 @@
               <div class="top-card-tags mono">📍 Remote · 🏢 Startup · 💰 ₹25k/mo · 94% Match · Wellfound</div>
               <div class="top-card-actions">
                 <button class="btn btn-violet btn-sm" onclick="reviewJob('Sprinto')">Review &amp; Apply</button>
+                <a id="top-card-redirect" href="https://wellfound.com/jobs" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm btn-redirect" title="Open official job listing on Wellfound">
+                  <span>Visit Portal</span>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </a>
                 <button class="btn btn-ghost btn-sm" onclick="skipTopJob()">Skip</button>
               </div>
             </div>
           </div>
         </div>
-
         <div class="horizon-arc" aria-hidden="true"></div>
       </div>
     </section>
-
-    <!-- SCREEN 2: JOBS (OpenTrain Layout with 11 Indian Portals) -->
+    
     <section id="section-jobs" class="page-section">
       <div class="section-label">02 — JOBS (11 ACTIVE PORTALS)</div>
       <hr class="section-divider">
-
       <div class="sticky-search-wrap">
         <input type="text" class="search-input" id="jobs-search-input" placeholder="Search across Internshala, Saarthi, Naukri, LinkedIn, Wellfound, Cutshort, NCS..." oninput="filterJobs()">
       </div>
-
-      <!-- Filter Pills: Work Mode & Entity -->
+      
       <div class="pills-row" id="type-pills-row">
         <button class="filter-pill active" onclick="setFilter('type', 'all', this)">All Types</button>
         <button class="filter-pill" onclick="setFilter('type', 'Remote', this)">Remote</button>
@@ -206,8 +189,7 @@
         <button class="filter-pill" onclick="setFilter('type', 'MNC', this)">MNC</button>
         <button class="filter-pill" onclick="setFilter('type', 'Government', this)">Government</button>
       </div>
-
-      <!-- Portal Pills: 11 Portals from User Specification -->
+      
       <div class="pills-row" id="portal-pills-row">
         <button class="filter-pill active" onclick="setFilter('portal', 'all', this)">All Portals (11)</button>
         <button class="filter-pill" onclick="setFilter('portal', 'Internshala', this)">Internshala</button>
@@ -222,16 +204,13 @@
         <button class="filter-pill" onclick="setFilter('portal', 'NCS', this)">NCS (Govt)</button>
         <button class="filter-pill" onclick="setFilter('portal', 'WorkIndia', this)">WorkIndia</button>
       </div>
-
-      <!-- 2-col Job Card Grid -->
+      
       <div class="jobs-grid" id="jobs-grid"></div>
     </section>
-
-    <!-- SCREEN 3: APPLICATIONS (JobStream Layout) -->
+    
     <section id="section-applications" class="page-section">
       <div class="section-label">03 — APPLICATIONS</div>
       <hr class="section-divider">
-
       <div class="tabs-nav-container">
         <div class="tabs-list" id="app-tabs-list">
           <button class="tab-item active" id="tab-pending" onclick="switchAppTab('Pending')">Pending (2)</button>
@@ -240,7 +219,6 @@
           <button class="tab-item" id="tab-rejected" onclick="switchAppTab('Rejected')">Rejected (3)</button>
         </div>
       </div>
-
       <div class="table-container card">
         <table class="dense-table">
           <thead>
@@ -257,12 +235,10 @@
         </table>
       </div>
     </section>
-
-    <!-- SCREEN 4: HR OUTREACH -->
+    
     <section id="section-outreach" class="page-section">
       <div class="section-label">04 — HR OUTREACH</div>
       <hr class="section-divider">
-
       <div class="table-container card">
         <table class="dense-table">
           <thead>
@@ -278,8 +254,7 @@
           <tbody id="outreach-table-body"></tbody>
         </table>
       </div>
-
-      <!-- Expanded Email Draft Box -->
+      
       <div class="card email-draft-box" id="email-draft-box">
         <div class="draft-header-row">
           <div>
@@ -295,36 +270,30 @@
         <div class="draft-textarea-box" id="draft-body">Loading tailored outreach draft...</div>
       </div>
     </section>
-
-    <!-- SCREEN 5: MY PROFILE -->
+    
     <section id="section-profile" class="page-section">
       <div class="section-label">05 — MY PROFILE</div>
       <hr class="section-divider">
-
       <div class="profile-two-col">
-        <!-- Left Column: Form + Upload Dropzone + Slider -->
+        
         <div class="card profile-form-card">
           <div class="input-block">
             <label class="input-label mono">Full Name</label>
             <input type="text" class="text-input" id="profile-name" value="Twinkle Ghangare">
           </div>
-
           <div class="input-block">
             <label class="input-label mono">Email Address</label>
             <input type="email" class="text-input" id="profile-email" value="twinkle.ghangare@gmail.com">
           </div>
-
           <div class="input-block">
             <label class="input-label mono">Education &amp; Institution</label>
             <input type="text" class="text-input" id="profile-education" value="B.Tech AI &amp; Data Science — KDK College of Engineering, Nagpur (CGPA: 8.19)">
           </div>
-
           <div class="input-block">
             <label class="input-label mono">LinkedIn Profile</label>
             <input type="text" class="text-input" id="profile-linkedin" value="https://www.linkedin.com/in/twinkleghangare">
           </div>
-
-          <!-- Resume Upload Dropzone -->
+          
           <div class="input-block">
             <label class="input-label mono">Resume Attachment</label>
             <div class="dropzone" id="resume-dropzone" onclick="document.getElementById('profile-resume-input').click()">
@@ -338,8 +307,7 @@
               <span class="dropzone-sub mono">Supported: PDF, DOCX up to 5MB</span>
             </div>
           </div>
-
-          <!-- Daily Limit Slider -->
+          
           <div class="input-block">
             <div class="slider-head">
               <label class="input-label mono">Daily Application Limit</label>
@@ -347,11 +315,9 @@
             </div>
             <input type="range" class="range-slider" id="daily-slider" min="5" max="50" value="25" oninput="updateSliderLabel(this.value)">
           </div>
-
           <button class="btn btn-violet" onclick="saveProfile()">Save Changes</button>
         </div>
-
-        <!-- Right Column: Skills + Projects + Targets + Locations -->
+        
         <div class="card profile-tags-card">
           <div class="tag-group">
             <label class="input-label mono">Core Skills</label>
@@ -367,7 +333,6 @@
               <span class="tag-chip mono">NLP</span>
             </div>
           </div>
-
           <div class="tag-group">
             <label class="input-label mono">Verified Projects</label>
             <div class="tags-cluster">
@@ -376,7 +341,6 @@
               <span class="tag-chip mono">HSI Classification (Spectral Land Cover)</span>
             </div>
           </div>
-
           <div class="tag-group">
             <label class="input-label mono">Target Roles</label>
             <div class="tags-cluster">
@@ -387,7 +351,6 @@
               <span class="tag-chip mono">Computer Vision Intern</span>
             </div>
           </div>
-
           <div class="tag-group">
             <label class="input-label mono">Location Preferences</label>
             <div class="tags-cluster">
@@ -401,10 +364,8 @@
         </div>
       </div>
     </section>
-
   </main>
-
-  <!-- Figma Stitch Floating Vertical Dock Toolbar (Image 3 Reference) -->
+  
   <aside class="floating-dock" aria-label="Quick Navigation">
     <button class="dock-btn" onclick="triggerQuickScan()" title="Quick Scan (New Jobs)">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -422,8 +383,7 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
     </button>
   </aside>
-
-  <!-- 380px SLIDE PANEL (ON ROW CLICK) -->
+  
   <div class="panel-backdrop" id="side-panel-backdrop" onclick="closeSidePanelOnBackdrop(event)">
     <aside class="slide-panel" id="slide-panel" onclick="event.stopPropagation()">
       <div class="panel-header">
@@ -433,28 +393,24 @@
         </div>
         <button class="panel-close-btn" onclick="closeSidePanel()" title="Close panel" aria-label="Close">×</button>
       </div>
-
-      <!-- Panel Navigation Tabs -->
+      
       <div class="panel-tabs-bar">
         <button class="panel-tab-btn active" id="ptab-cv" onclick="switchPanelTab('cv')">CV Bullets</button>
         <button class="panel-tab-btn" id="ptab-letter" onclick="switchPanelTab('letter')">Cover Letter</button>
         <button class="panel-tab-btn" id="ptab-qa" onclick="switchPanelTab('qa')">Screening Q&amp;A</button>
       </div>
-
       <div class="panel-content-body">
-        <!-- Tab 1: CV Bullets -->
+        
         <div class="panel-tab-pane active" id="pane-cv">
           <span class="panel-section-label mono">Tailored CV Bullets</span>
           <ul class="bullet-list" id="panel-cv-bullets"></ul>
         </div>
-
-        <!-- Tab 2: Cover Letter Preview -->
+        
         <div class="panel-tab-pane" id="pane-letter">
           <span class="panel-section-label mono">Cover Letter Preview</span>
           <div class="panel-letter-box" id="panel-cover-letter"></div>
         </div>
-
-        <!-- Tab 3: Screening Q&A -->
+        
         <div class="panel-tab-pane" id="pane-qa">
           <span class="panel-section-label mono">Screening Q&amp;A</span>
           <div class="qa-item">
@@ -467,22 +423,22 @@
           </div>
         </div>
       </div>
-
       <div class="panel-footer">
         <button class="btn btn-violet btn-sm" onclick="submitCurrentApplication()">Approve &amp; Submit</button>
+        <a id="panel-redirect-link" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm btn-redirect" title="Open listing on official portal">
+          <span id="panel-redirect-text">Visit Portal</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+        </a>
         <button class="btn btn-ghost btn-sm" onclick="closeSidePanel()">Close</button>
       </div>
     </aside>
   </div>
-
   <div class="toast-shelf" id="toast-shelf"></div>
-
-  <!-- CDN: Three.js and GSAP with ScrollTrigger -->
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-
-  <!-- App Controller -->
+  
   <script src="app.js"></script>
 </body>
 </html>
