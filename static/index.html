@@ -158,6 +158,9 @@
 <div class="section-label">01 — DASHBOARD</div>
 <hr class="section-divider">
 <div class="hero-container" id="hero-wrapper">
+<div class="spotlight-beam" aria-hidden="true"></div>
+<div class="ambient-metaball mb-1" aria-hidden="true"></div>
+<div class="ambient-metaball mb-2" aria-hidden="true"></div>
 <div class="hero-canvas-wrap" id="hero-canvas-container" aria-hidden="true"></div>
 <div class="comet-track comet-1" aria-hidden="true"></div>
 <div class="comet-track comet-2" aria-hidden="true"></div>
@@ -261,6 +264,29 @@ Agent is <span class="typed-text" id="hero-typed-text">scanning 11 portals for v
 </div>
 </div>
 <div class="horizon-arc" aria-hidden="true"></div>
+</div>
+<div class="meta-planet-grid hero-anim-item">
+<div class="card planet-card" onclick="setFilter('portal', 'Wellfound', document.querySelector('#portal-pills-row button:nth-child(9)')); navigateTo('jobs')" title="View FraudLens matched opportunities">
+<div class="planet-head">
+<div class="planet-sphere planet-amber"><div class="planet-ring"></div></div>
+<div><div class="planet-name">ETHERON · FRAUDLENS</div><span class="mono planet-tag">UPI ANOMALY CORE</span></div>
+</div>
+<div class="planet-meta mono"><span>Latency: 42ms</span><span>Precision: 94.2%</span><span>MIHAN Nagpur</span></div>
+</div>
+<div class="card planet-card" onclick="setFilter('portal', 'Internshala', document.querySelector('#portal-pills-row button:nth-child(2)')); navigateTo('jobs')" title="View MedVerify vision roles">
+<div class="planet-head">
+<div class="planet-sphere planet-mint"><div class="planet-ring"></div></div>
+<div><div class="planet-name">LUMENARA · MEDVERIFY</div><span class="mono planet-tag">CNN + OCR AUTH</span></div>
+</div>
+<div class="planet-meta mono"><span>Architecture: PyTorch</span><span>Accuracy: 98.1%</span><span>HSI Spectral</span></div>
+</div>
+<div class="card planet-card" onclick="navigateTo('jobs')" title="Explore 11 portals queue">
+<div class="planet-head">
+<div class="planet-sphere planet-blue"><div class="planet-ring"></div></div>
+<div><div class="planet-name">ORIONIS · 11 PORTALS</div><span class="mono planet-tag">DISPATCH ECOSYSTEM</span></div>
+</div>
+<div class="planet-meta mono"><span>11 Active Portals</span><span>64 Discovered</span><span>Optimal Queue</span></div>
+</div>
 </div>
 </section>
 <section id="section-jobs" class="page-section">

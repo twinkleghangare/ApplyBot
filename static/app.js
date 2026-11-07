@@ -362,14 +362,16 @@ opacity: 0.65
 const starPoints = new THREE.Points(starGeometry, material);
 threeScene.add(starPoints);
 wireframeGroup = new THREE.Group();
-const icoGeo = new THREE.IcosahedronGeometry(28, 1);
-const icoMat = new THREE.MeshBasicMaterial({ wireframe: true, color: 0x7C5CFF, transparent: true, opacity: 0.22 });
-const icosahedron = new THREE.Mesh(icoGeo, icoMat);
-const ringGeo = new THREE.TorusGeometry(40, 0.8, 8, 36);
-const ringMat = new THREE.MeshBasicMaterial({ wireframe: true, color: 0x30DC97, transparent: true, opacity: 0.18 });
-const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+const cubeGeo = new THREE.BoxGeometry(28, 28, 28);
+const cubeEdges = new THREE.EdgesGeometry(cubeGeo);
+const cubeLine = new THREE.LineSegments(cubeEdges, new THREE.LineBasicMaterial({ color: 0x7C5CFF, transparent: true, opacity: 0.42 }));
+const knotGeo = new THREE.TorusKnotGeometry(15, 3.2, 48, 8);
+const knotMesh = new THREE.Mesh(knotGeo, new THREE.MeshBasicMaterial({ wireframe: true, color: 0x30DC97, transparent: true, opacity: 0.24 }));
+const ringGeo = new THREE.TorusGeometry(38, 0.8, 8, 36);
+const ringMesh = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ wireframe: true, color: 0x60A5FA, transparent: true, opacity: 0.2 }));
 ringMesh.rotation.x = Math.PI / 3;
-wireframeGroup.add(icosahedron);
+wireframeGroup.add(cubeLine);
+wireframeGroup.add(knotMesh);
 wireframeGroup.add(ringMesh);
 wireframeGroup.position.set(220, 90, -40);
 threeScene.add(wireframeGroup);
@@ -414,8 +416,13 @@ arr[i * 3 + 1] = cur.y;
 posAttr.needsUpdate = true;
 starPoints.rotation.z += 0.0002;
 if (wireframeGroup) {
-wireframeGroup.rotation.y += 0.006;
-wireframeGroup.rotation.x += 0.003;
+  wireframeGroup.rotation.y += 0.007;
+  wireframeGroup.rotation.x += 0.004;
+  wireframeGroup.position.y = 90 + Math.sin(clock * 1.8) * 8;
+  if (mouse.active) {
+    wireframeGroup.rotation.y += mouse.x * 0.00008;
+    wireframeGroup.rotation.x -= mouse.y * 0.00008;
+  }
 }
 threeRenderer.render(threeScene, threeCamera);
 }
