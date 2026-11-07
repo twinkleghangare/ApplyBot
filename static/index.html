@@ -707,50 +707,118 @@
       <section id="sec-dashboard" class="space-y-4">
 
         <!-- ============================================================== -->
-        <!-- 1. DAILY AGENT ACTIVATION HERO (User Spec)                      -->
+        <!-- 1. NODAL CINEMATIC HERO & 3D ELECTRIC LIGHTNING PORTAL (frame_018) -->
         <!-- ============================================================== -->
-        <div class="bento-box p-6 sm:p-7 relative overflow-hidden bg-gradient-to-r from-[#0D1224] via-[#090C16] to-[#04060A] border border-white/10 shadow-2xl rounded-3xl">
-          <div class="absolute -top-24 -right-24 w-80 h-80 bg-[#00E5FF]/10 rounded-full blur-[80px] pointer-events-none"></div>
+        <div class="bento-box p-6 sm:p-8 relative overflow-hidden bg-gradient-to-b from-[#090C16] via-[#05070E] to-[#020306] border border-white/10 shadow-2xl rounded-3xl mb-4">
           
-          <div class="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-            <!-- Left Info -->
-            <div class="space-y-2 max-w-xl">
+          <!-- Cosmic Glow Atmosphere -->
+          <div class="absolute -top-32 -left-32 w-[420px] h-[420px] bg-[#00E5FF]/10 rounded-full blur-[110px] pointer-events-none"></div>
+          <div class="absolute -bottom-32 -right-32 w-[420px] h-[420px] bg-[#7C5CFF]/12 rounded-full blur-[110px] pointer-events-none"></div>
+
+          <!-- Hero Grid (Asymmetric Split: 5 Cols Telemetry & Controls / 7 Cols 3D Portal) -->
+          <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            
+            <!-- LEFT COLUMN: High-Impact Typography & Autopilot Controls (5 cols) -->
+            <div class="lg:col-span-5 space-y-4">
+              
+              <!-- Brand Badge & Agent Status -->
               <div class="flex items-center space-x-2.5">
                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-widest bg-[#30DC97]/15 text-[#30DC97] border border-[#30DC97]/30 flex items-center space-x-1.5">
                   <span class="w-1.5 h-1.5 rounded-full bg-[#30DC97] animate-pulse"></span>
                   <span>Agent Online</span>
                 </span>
-                <span id="briefing-day-header" class="text-[11px] font-mono tracking-widest text-[#00E5FF] uppercase">TUESDAY · DAILY BRIEFING</span>
+                <span id="briefing-day-header" class="text-[11px] font-mono tracking-widest text-[#00E5FF] uppercase">08:00 AM &bull; DAILY AUTOPILOT</span>
               </div>
-              <h1 id="briefing-greeting" class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">Good morning!</h1>
-              <p id="briefing-tagline" class="text-xs sm:text-sm text-[#9A9AA5] leading-relaxed">
-                Your AI agent found new opportunities for your career.
-              </p>
-              <div class="flex items-center space-x-2 pt-1">
-                <span class="text-xs text-[#9A9AA5]">Today's agent:</span>
-                <span id="briefing-agent-status-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#00E5FF]/15 text-[#00E5FF] border border-[#00E5FF]/30">Ready</span>
-                <span class="text-xs text-[#9A9AA5]">&bull;</span>
-                <span class="text-xs text-white font-semibold"><strong class="text-[#00E5FF] font-black text-sm"># 25+</strong> Daily application target &bull; subject to eligible openings</span>
-              </div>
-            </div>
 
-            <!-- Right Action Box -->
-            <div class="flex flex-col sm:flex-row lg:flex-col items-start lg:items-end gap-3 w-full lg:w-auto">
-              <div class="flex items-center space-x-2.5 w-full sm:w-auto">
-                <button onclick="activateDailyAgent(); playSfx('success')" id="btn-allow-agent" class="flex-1 sm:flex-initial px-6 py-3 rounded-2xl btn-cyan text-xs font-bold flex items-center justify-center space-x-2 shadow-xl shadow-[#00E5FF]/25 cursor-pointer">
-                  <i data-lucide="play" class="w-4 h-4"></i>
+              <!-- Main Headline (Nodal frame_018 inspired) -->
+              <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
+                Your career.<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00E5FF] via-[#7C5CFF] to-[#30DC97]">On autopilot.</span>
+              </h1>
+
+              <p class="text-xs sm:text-sm text-[#9A9AA5] leading-relaxed max-w-md">
+                One profile. Daily discovery. Human-approved applications. Searches verified career platforms, validates domain authenticity, and drafts personalized outreach.
+              </p>
+
+              <!-- Nodal Pipeline HUD Box (Inspired by frame_008 & frame_018 QUEUE) -->
+              <div class="p-3.5 rounded-2xl bg-black/60 border border-white/10 space-y-1.5 font-mono text-[11px]">
+                <div class="text-[#9A9AA5] text-[10px] uppercase tracking-widest flex items-center justify-between">
+                  <span>PIPELINE :</span>
+                  <span class="text-[#00E5FF]">v2.4 ACTIVE</span>
+                </div>
+                <div class="text-[#30DC97] flex items-center space-x-2 font-bold">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#30DC97] animate-pulse"></span>
+                  <span>● 08:00 AM DISCOVERY CYCLE</span>
+                </div>
+                <div class="text-[#00E5FF] flex items-center space-x-2">
+                  <span>● FRAUDLENS VERIFY (52 GENUINE)</span>
+                </div>
+                <div class="text-[#7C5CFF] flex items-center space-x-2">
+                  <span>● NEURALMATCH (95.8% TOP FIT)</span>
+                </div>
+                <div class="text-[#FFAA2C] flex items-center justify-between pt-1 border-t border-white/5 text-[10px]">
+                  <span>[ 25+ DAILY TARGET : ACTIVE ]</span>
+                  <span class="text-white font-bold">1/25 APPLIED</span>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="flex flex-wrap items-center gap-2.5 pt-1">
+                <button onclick="activateDailyAgent(); playSfx('success')" id="btn-allow-agent" class="px-5 py-2.5 rounded-2xl btn-cyan text-xs font-bold flex items-center space-x-2 shadow-xl shadow-[#00E5FF]/25 cursor-pointer">
+                  <i data-lucide="play" class="w-4 h-4 fill-current"></i>
                   <span>Allow today's agent</span>
                 </button>
-                <button onclick="pauseAgent(); playSfx('click')" class="px-3.5 py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer" title="Emergency Pause">
+                <button onclick="pauseAgent(); playSfx('click')" class="px-3.5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer" title="Emergency Pause">
                   <i data-lucide="pause" class="w-4 h-4"></i>
                 </button>
+                <button onclick="switchNav('applications'); filterApplicationsTab('pending'); playSfx('click')" class="px-3.5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-[#FFAA2C] hover:text-white transition cursor-pointer flex items-center space-x-1">
+                  <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
+                  <span>Review Queue (1)</span>
+                </button>
               </div>
-              <p class="text-[11px] text-[#9A9AA5] flex items-center space-x-1.5">
-                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#30DC97]"></i>
-                <span>You retain control over applications and emails.</span>
-              </p>
+
             </div>
+
+            <!-- RIGHT COLUMN: Nodal 3D Quantum Portal with Real-Time Lightning Arcs (7 cols) -->
+            <div class="lg:col-span-7 relative flex flex-col items-center justify-center min-h-[380px] sm:min-h-[440px]">
+              
+              <!-- Three.js Canvas Container -->
+              <div class="relative w-full h-[380px] sm:h-[440px] rounded-3xl overflow-hidden cursor-crosshair border border-white/10 bg-[#03050A]">
+                <canvas id="hero-quantum-canvas" class="w-full h-full block"></canvas>
+                
+                <!-- Overlay HUD Telemetry (Top Left - Nodal frame_018) -->
+                <div class="pointer-events-none absolute top-4 left-4 text-[10px] font-mono text-[#00E5FF]/90 space-y-0.5">
+                  <div class="flex items-center space-x-1.5">
+                    <span class="w-2 h-2 rounded-full bg-[#00E5FF] animate-pulse"></span>
+                    <span>PORTAL: <strong class="text-white">ONLINE</strong></span>
+                  </div>
+                  <div>NEURAL LOAD: <strong class="text-[#30DC97]">OPTIMAL</strong></div>
+                  <div>FLUX: <strong class="text-[#7C5CFF]">99.4%</strong></div>
+                </div>
+
+                <!-- Top Right Audio Controls (Nodal frame_018) -->
+                <div class="absolute top-4 right-4 flex items-center space-x-1.5 z-20">
+                  <button onclick="toggleMusicAudio()" id="portal-music-text" class="text-[10px] font-mono text-slate-400 hover:text-white pointer-events-auto bg-black/70 backdrop-blur-md px-2.5 py-1.5 rounded-lg border border-white/10 transition cursor-pointer" title="Toggle Ambient Audio">[ 🔊 MUSIC [OFF] ]</button>
+                  <button onclick="toggleSfxAudio()" id="portal-sfx-text" class="text-[10px] font-mono text-[#00E5FF] pointer-events-auto bg-black/70 backdrop-blur-md px-2.5 py-1.5 rounded-lg border border-[#00E5FF]/30 transition cursor-pointer" title="Toggle Sound FX">[ ⚡ SFX [ON] ]</button>
+                </div>
+
+                <!-- Bottom Center Caption (Nodal frame_018) -->
+                <div class="pointer-events-none absolute bottom-4 left-0 right-0 text-center px-4">
+                  <span class="inline-block px-4 py-1.5 rounded-full bg-black/80 backdrop-blur-md border border-white/10 text-[10px] font-mono text-[#AAC0D6]/90 tracking-wider">
+                    Move your cursor close to the portal to attract lightning &bull; Drag to rotate
+                  </span>
+                </div>
+
+                <!-- Bottom Right Badge (Nodal frame_018) -->
+                <div class="pointer-events-none absolute bottom-4 right-4 hidden sm:block text-[9px] font-mono text-slate-500 uppercase tracking-widest">
+                  POWER AT SCALE
+                </div>
+              </div>
+
+            </div>
+
           </div>
+
         </div>
 
         <!-- ============================================================== -->
@@ -840,120 +908,6 @@
               Clean &amp; Structured &bull; 03 / 28
             </span>
           </div>
-        </div>
-
-        <!-- ============================================================== -->
-        <!-- NODAL 3D QUANTUM CORE HERO (Image 1 Ref: Nodal AI)              -->
-        <!-- Interactive 3D Cyber-Cube with Real-Time Lightning Arcs         -->
-        <!-- ============================================================== -->
-        <div class="bento-box p-6 sm:p-8 relative overflow-hidden bg-gradient-to-b from-[#090C16] via-[#060810] to-[#04060A] border border-white/10 shadow-2xl">
-          
-          <!-- Cosmic Glow Illumination -->
-          <div class="absolute -top-32 -left-32 w-[420px] h-[420px] bg-[#00E5FF]/10 rounded-full blur-[100px] pointer-events-none"></div>
-          <div class="absolute -bottom-32 -right-32 w-[420px] h-[420px] bg-[#7C5CFF]/12 rounded-full blur-[100px] pointer-events-none"></div>
-
-          <!-- Hero Grid -->
-          <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            
-            <!-- Left Column: High-Impact Typography & Controls (6 cols) -->
-            <div class="lg:col-span-6 space-y-4">
-              
-              <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/30 text-[#00E5FF] text-[11px] font-mono tracking-wider uppercase">
-                <span class="w-1.5 h-1.5 rounded-full bg-[#00E5FF] animate-pulse"></span>
-                <span>Autonomous Career Agent OS &bull; Nodal Core</span>
-              </div>
-
-              <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-                Your Dream Career.<br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00E5FF] via-[#7C5CFF] to-[#30DC97]">Infinite Reach. Zero Effort.</span>
-              </h1>
-
-              <div class="text-xs sm:text-sm font-mono text-[#00E5FF] flex items-center">
-                <span class="text-slate-400 mr-2">&gt;</span>
-                <span id="hero-typewriter">Your Personal AI Career Agent</span><span class="typewriter-cursor">|</span>
-              </div>
-
-              <p class="text-xs sm:text-sm text-[#9A9AA5] leading-relaxed max-w-lg">
-                ApplyBot runs daily in the background: discovering verified vacancies across 50+ ATS platforms, validating domain authenticity with FraudLens, and preparing human-grounded applications for your 1-click approval.
-              </p>
-
-              <!-- 4 Live Metric Pills -->
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2 max-w-lg">
-                <div class="p-2.5 rounded-xl bg-[#0D111E]/80 backdrop-blur-md border border-white/5">
-                  <div id="cycle-stat-discovered" class="text-lg font-black text-white">22</div>
-                  <div class="text-[10px] text-[#9A9AA5] font-bold uppercase tracking-wider">Discovered</div>
-                </div>
-                <div class="p-2.5 rounded-xl bg-[#0D111E]/80 backdrop-blur-md border border-[#30DC97]/20">
-                  <div id="cycle-stat-verified" class="text-lg font-black text-[#30DC97]">19</div>
-                  <div class="text-[10px] text-[#30DC97] font-bold uppercase tracking-wider">Verified ATS</div>
-                </div>
-                <div class="p-2.5 rounded-xl bg-[#0D111E]/80 backdrop-blur-md border border-[#7C5CFF]/20">
-                  <div id="cycle-stat-matches" class="text-lg font-black text-[#7C5CFF]">20</div>
-                  <div class="text-[10px] text-[#7C5CFF] font-bold uppercase tracking-wider">High Fit &ge;80%</div>
-                </div>
-                <div onclick="switchNav('applications'); filterApplicationsTab('pending'); playSfx('click')" class="p-2.5 rounded-xl bg-[#0D111E]/80 backdrop-blur-md border border-[#FFAA2C]/30 hover:border-[#FFAA2C] transition cursor-pointer">
-                  <div id="cycle-stat-awaiting" class="text-lg font-black text-[#FFAA2C]">1</div>
-                  <div class="text-[10px] text-[#FFAA2C] font-bold uppercase tracking-wider flex items-center space-x-1">
-                    <span>Awaiting Review</span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#FFAA2C] animate-ping"></span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Quick Action Row -->
-              <div class="flex flex-wrap items-center gap-2.5 pt-3">
-                <button onclick="triggerAgentDiscovery(); playSfx('success')" class="px-4 py-2.5 btn-violet text-xs font-bold flex items-center space-x-2 cursor-pointer shadow-lg shadow-[#7C5CFF]/30">
-                  <i data-lucide="sparkles" class="w-4 h-4"></i>
-                  <span>Run Daily Discovery</span>
-                </button>
-                <button onclick="switchNav('recommended'); playSfx('click')" class="px-4 py-2.5 btn-neutral text-xs font-semibold text-slate-200 hover:text-white flex items-center space-x-1.5 cursor-pointer">
-                  <i data-lucide="compass" class="w-4 h-4 text-[#30DC97]"></i>
-                  <span>Smart Inbox (20)</span>
-                </button>
-                <button onclick="switchNav('workflow'); playSfx('click')" class="px-4 py-2.5 btn-cyan text-xs font-bold flex items-center space-x-1.5 cursor-pointer shadow-lg shadow-[#00E5FF]/20">
-                  <i data-lucide="git-branch" class="w-4 h-4"></i>
-                  <span>State Machine</span>
-                </button>
-                <button onclick="switchNav('galaxy'); playSfx('click')" class="px-3.5 py-2.5 btn-neutral text-xs font-semibold text-[#FFAA2C] hover:text-white flex items-center space-x-1.5 cursor-pointer">
-                  <i data-lucide="orbit" class="w-4 h-4 text-[#FFAA2C]"></i>
-                  <span>3D Galaxy</span>
-                </button>
-              </div>
-
-            </div>
-
-            <!-- Right Column: Nodal 3D Quantum Core with Real-Time Lightning Arcs (6 cols) -->
-            <div class="lg:col-span-6 relative flex flex-col items-center justify-center min-h-[340px]">
-              
-              <!-- Three.js Canvas for 3D Quantum Portal -->
-              <div class="relative w-full h-[320px] rounded-2xl overflow-hidden cursor-crosshair border border-white/10 bg-[#04060C]">
-                <canvas id="hero-quantum-canvas" class="w-full h-full block"></canvas>
-                
-                <!-- Overlay HUD Telemetry (Nodal style) -->
-                <div class="pointer-events-none absolute top-3 left-3 text-[10px] font-mono text-[#00E5FF]/80 space-y-0.5">
-                  <div>PORTAL: <span class="text-white font-bold">ONLINE</span></div>
-                  <div>NEURAL LOAD: <span class="text-[#30DC97] font-bold">OPTIMAL</span></div>
-                  <div>FLUX: <span class="text-[#7C5CFF] font-bold">99.4%</span></div>
-                </div>
-
-                <!-- Top Right Audio Controls (Nodal frame_028 ref) -->
-                <div class="absolute top-3 right-3 flex items-center space-x-1.5 z-20">
-                  <button onclick="toggleMusicAudio()" id="portal-music-text" class="text-[10px] font-mono text-slate-400 hover:text-white pointer-events-auto bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-white/10 transition cursor-pointer" title="Toggle Ambient Audio">[ 🔊 MUSIC [OFF] ]</button>
-                  <button onclick="toggleSfxAudio()" id="portal-sfx-text" class="text-[10px] font-mono text-[#00E5FF] pointer-events-auto bg-black/60 backdrop-blur-md px-2 py-1 rounded border border-[#00E5FF]/30 transition cursor-pointer" title="Toggle Sound FX">[ ⚡ SFX [ON] ]</button>
-                </div>
-
-                <!-- Bottom Center Caption (Nodal frame_028 ref) -->
-                <div class="pointer-events-none absolute bottom-3 left-0 right-0 text-center">
-                  <span class="inline-block px-3 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/10 text-[10px] font-mono text-[#AAC0D6]/90 tracking-wider">
-                    Move your cursor close to the portal to attract lightning &bull; Drag to rotate
-                  </span>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-
         </div>
 
         <!-- ============================================================== -->

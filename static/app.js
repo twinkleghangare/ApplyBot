@@ -165,51 +165,88 @@ function init3DQuantumPortal() {
   const particleRing = new THREE.Points(particleGeom, particleMat);
   ringGroup.add(particleRing);
 
-  // 2. FLOATING DIAMOND CYBER-CORE (Centerpiece from frame_028)
+  // 2. FLOATING 4-QUADRANT DIAMOND CYBER-CORE (Exact Nodal Logo frame_018)
   const diamondGroup = new THREE.Group();
   scene.add(diamondGroup);
   quantumDiamond = diamondGroup;
 
-  // Solid dark crystalline faceted octahedron
-  const octGeom = new THREE.OctahedronGeometry(1.2, 0);
-  const octMat = new THREE.MeshStandardMaterial({
-    color: 0x060914,
-    roughness: 0.15,
-    metalness: 0.95,
-    transparent: true,
-    opacity: 0.88
-  });
-  const octMesh = new THREE.Mesh(octGeom, octMat);
-  diamondGroup.add(octMesh);
+  const tileGroup = new THREE.Group();
+  tileGroup.rotation.z = Math.PI / 4; // 45 degree tilt to form diamond
+  diamondGroup.add(tileGroup);
 
-  // Electric Cyan Wireframe cage
-  const wireGeom = new THREE.WireframeGeometry(new THREE.OctahedronGeometry(1.22, 0));
-  const wireMat = new THREE.LineBasicMaterial({
-    color: 0x00E5FF,
-    linewidth: 2,
-    transparent: true,
-    opacity: 0.95
-  });
-  const wireMesh = new THREE.LineSegments(wireGeom, wireMat);
-  diamondGroup.add(wireMesh);
+  const tileSize = 0.68;
+  const tileDepth = 0.24;
+  const tileOffset = 0.40;
+  const offsets = [
+    [-tileOffset, tileOffset],
+    [tileOffset, tileOffset],
+    [-tileOffset, -tileOffset],
+    [tileOffset, -tileOffset]
+  ];
 
-  // Inner Violet Nucleus (High energy pulse core)
-  const nucleusGeom = new THREE.IcosahedronGeometry(0.38, 1);
+  const tileMeshes = [];
+  offsets.forEach(([ox, oy]) => {
+    const boxGeom = new THREE.BoxGeometry(tileSize, tileSize, tileDepth);
+    const boxMat = new THREE.MeshStandardMaterial({
+      color: 0x060914,
+      emissive: 0x00E5FF,
+      emissiveIntensity: 0.35,
+      roughness: 0.15,
+      metalness: 0.95
+    });
+    const tileMesh = new THREE.Mesh(boxGeom, boxMat);
+    tileMesh.position.set(ox, oy, 0);
+
+    const wireGeom = new THREE.WireframeGeometry(new THREE.BoxGeometry(tileSize + 0.02, tileSize + 0.02, tileDepth + 0.02));
+    const wireMat = new THREE.LineBasicMaterial({ color: 0x00E5FF, linewidth: 2 });
+    const wireMesh = new THREE.LineSegments(wireGeom, wireMat);
+    tileMesh.add(wireMesh);
+
+    tileGroup.add(tileMesh);
+    tileMeshes.push(tileMesh);
+  });
+
+  // Inner High-Voltage Pulsing Core
+  const nucleusGeom = new THREE.IcosahedronGeometry(0.32, 1);
   const nucleusMat = new THREE.MeshBasicMaterial({
-    color: 0x7C5CFF,
+    color: 0xFFFFFF,
     wireframe: true,
     transparent: true,
-    opacity: 0.9
+    opacity: 0.95
   });
   const nucleusMesh = new THREE.Mesh(nucleusGeom, nucleusMat);
   diamondGroup.add(nucleusMesh);
 
-  // 3. PROCEDURAL ELECTRIC LIGHTNING ARCS
+  // Luminous Floor Reflection Plane (frame_018 ground reflection)
+  const floorCanvas = document.createElement("canvas");
+  floorCanvas.width = 256;
+  floorCanvas.height = 128;
+  const fctx = floorCanvas.getContext("2d");
+  const fgrad = fctx.createRadialGradient(128, 64, 0, 128, 64, 120);
+  fgrad.addColorStop(0, "rgba(0, 229, 255, 0.45)");
+  fgrad.addColorStop(0.4, "rgba(124, 92, 255, 0.18)");
+  fgrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+  fctx.fillStyle = fgrad;
+  fctx.fillRect(0, 0, 256, 128);
+
+  const floorTex = new THREE.CanvasTexture(floorCanvas);
+  const floorGeom = new THREE.PlaneGeometry(8, 2.5);
+  const floorMat = new THREE.MeshBasicMaterial({
+    map: floorTex,
+    transparent: true,
+    opacity: 0.8,
+    blending: THREE.AdditiveBlending
+  });
+  const floorMesh = new THREE.Mesh(floorGeom, floorMat);
+  floorMesh.position.set(0, -3.6, 0.1);
+  scene.add(floorMesh);
+
+  // 3. PROCEDURAL ELECTRIC LIGHTNING ARCS (8 Radial Branches)
   const arcsGroup = new THREE.Group();
   scene.add(arcsGroup);
   quantumArcsGroup = arcsGroup;
 
-  const NUM_BOLTS = 5;
+  const NUM_BOLTS = 8;
   const boltObjects = [];
 
   function generateJaggedPoints(start, end, subdivisions = 4, maxJitter = 0.45) {
@@ -241,7 +278,7 @@ function init3DQuantumPortal() {
 
   for (let b = 0; b < NUM_BOLTS; b++) {
     const geom = new THREE.BufferGeometry();
-    const count = 33; // for 4-5 subdivisions
+    const count = 33;
     const positions = new Float32Array(count * 3);
     geom.setAttribute("position", new THREE.BufferAttribute(positions, 3));
 
@@ -256,7 +293,7 @@ function init3DQuantumPortal() {
     const glowMat = new THREE.LineBasicMaterial({
       color: b % 2 === 0 ? 0x00E5FF : 0x7C5CFF,
       transparent: true,
-      opacity: 0.65,
+      opacity: 0.7,
       blending: THREE.AdditiveBlending
     });
     const glowLine = new THREE.Line(geom, glowMat);
@@ -355,6 +392,9 @@ function init3DQuantumPortal() {
 
     const pulseScale = 1 + Math.sin(time * 3.0) * 0.04;
     nucleusMesh.scale.set(pulseScale, pulseScale, pulseScale);
+    tileMeshes.forEach((tm, i) => {
+      tm.material.emissiveIntensity = 0.3 + Math.sin(time * 4 + i) * 0.15;
+    });
 
     torusMesh.rotation.z += 0.002;
     outerMesh.rotation.z -= 0.001;
