@@ -543,7 +543,7 @@ class ApplyBotApp {
               <span class="match-score-val mono">${job.match}%</span>
             </div>
             <div class="progress-bar-container">
-              <div class="progress-bar-fill" style="width: ${job.match}%;"></div>
+              <div class="progress-bar-fill" data-match="${job.match}"></div>
             </div>
           </div>
 
@@ -564,6 +564,10 @@ class ApplyBotApp {
       `;
       })
       .join("");
+
+    grid.querySelectorAll(".progress-bar-fill[data-match]").forEach((el) => {
+      el.style.width = el.getAttribute("data-match") + "%";
+    });
   }
 
   renderApplications() {
