@@ -169,7 +169,7 @@
 Agent is <span class="typed-text" id="hero-typed-text">scanning 11 portals for verified AI/ML roles</span><span class="typed-cursor" aria-hidden="true">|</span>
 </p>
 <div class="copilot-capsule hero-anim-item">
-<input type="text" id="copilot-input" class="capsule-input" placeholder="Ask Copilot (e.g. 'Show remote Internshala & Cutshort roles', 'Filter FraudLens matches')..." onkeydown="handleCopilotKey(event)">
+<input type="text" id="copilot-input" class="capsule-input" placeholder="Describe your search..." onkeydown="handleCopilotKey(event)">
 <span class="capsule-model-badge mono">✨ 3.1 Pro</span>
 <button class="capsule-send-btn" onclick="handleCopilotSubmit()" title="Submit Query" aria-label="Submit">
 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
@@ -253,6 +253,21 @@ Agent is <span class="typed-text" id="hero-typed-text">scanning 11 portals for v
 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
 </a>
 <button class="btn btn-ghost btn-sm" onclick="skipTopJob()">Skip</button>
+</div>
+</div>
+<div class="card stitch-card hero-anim-item" id="stitch-preview-card">
+<div class="stitch-card-top">
+<div class="stitch-brand-info">
+<span class="stitch-card-title">Design by Stitch</span>
+<span class="badge badge-verified mono">AI UI System</span>
+</div>
+<div class="stitch-actions">
+<button type="button" class="btn btn-ghost btn-sm" onclick="app.showToast('Previewing Stitch Design System')">▶ Preview</button>
+<button type="button" class="btn btn-ghost btn-sm" onclick="navigateTo('jobs')">✎ Edit</button>
+</div>
+</div>
+<div class="stitch-media-wrap">
+<img src="stitch-ui.jpg" alt="Design by Stitch Modular UI System" class="stitch-img" loading="lazy">
 </div>
 </div>
 </div>
