@@ -159,8 +159,6 @@
 <hr class="section-divider">
 <div class="hero-container" id="hero-wrapper">
 <div class="spotlight-beam" aria-hidden="true"></div>
-<div class="ambient-metaball mb-1" aria-hidden="true"></div>
-<div class="ambient-metaball mb-2" aria-hidden="true"></div>
 <div class="hero-canvas-wrap" id="hero-canvas-container" aria-hidden="true"></div>
 <div class="comet-track comet-1" aria-hidden="true"></div>
 <div class="comet-track comet-2" aria-hidden="true"></div>
@@ -263,29 +261,95 @@ Agent is <span class="typed-text" id="hero-typed-text">scanning 11 portals for v
 </div>
 </div>
 </div>
-<div class="horizon-arc" aria-hidden="true"></div>
 </div>
-<div class="meta-planet-grid hero-anim-item">
-<div class="card planet-card" onclick="setFilter('portal', 'Wellfound', document.querySelector('#portal-pills-row button:nth-child(9)')); navigateTo('jobs')" title="View FraudLens matched opportunities">
-<div class="planet-head">
-<div class="planet-sphere planet-amber"><div class="planet-ring"></div></div>
-<div><div class="planet-name">ETHERON · FRAUDLENS</div><span class="mono planet-tag">UPI ANOMALY CORE</span></div>
+<div class="telemetry-bento-grid hero-anim-item">
+<div class="card telemetry-card" onclick="setFilter('portal', 'Wellfound', document.querySelector('#portal-pills-row button:nth-child(9)')); navigateTo('jobs')" title="Filter jobs matching FraudLens">
+<div class="telemetry-card-top">
+<div class="telemetry-icon-box amber-glow">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFAA2C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+<path d="M9 12l2 2 4-4"></path>
+</svg>
 </div>
-<div class="planet-meta mono"><span>Latency: 42ms</span><span>Precision: 94.2%</span><span>MIHAN Nagpur</span></div>
+<div class="telemetry-header-meta">
+<div class="telemetry-title">FraudLens Core</div>
+<span class="telemetry-badge-amber mono">UPI ANOMALY HEURISTICS</span>
 </div>
-<div class="card planet-card" onclick="setFilter('portal', 'Internshala', document.querySelector('#portal-pills-row button:nth-child(2)')); navigateTo('jobs')" title="View MedVerify vision roles">
-<div class="planet-head">
-<div class="planet-sphere planet-mint"><div class="planet-ring"></div></div>
-<div><div class="planet-name">LUMENARA · MEDVERIFY</div><span class="mono planet-tag">CNN + OCR AUTH</span></div>
 </div>
-<div class="planet-meta mono"><span>Architecture: PyTorch</span><span>Accuracy: 98.1%</span><span>HSI Spectral</span></div>
+<p class="telemetry-desc">Real-time fraud classification engine on 120k UPI transactions with sub-50ms inference latency.</p>
+<div class="telemetry-metrics-row">
+<div class="telemetry-metric-item">
+<span class="telemetry-metric-label mono">LATENCY</span>
+<span class="telemetry-metric-val mono">42ms</span>
 </div>
-<div class="card planet-card" onclick="navigateTo('jobs')" title="Explore 11 portals queue">
-<div class="planet-head">
-<div class="planet-sphere planet-blue"><div class="planet-ring"></div></div>
-<div><div class="planet-name">ORIONIS · 11 PORTALS</div><span class="mono planet-tag">DISPATCH ECOSYSTEM</span></div>
+<div class="telemetry-metric-item">
+<span class="telemetry-metric-label mono">PRECISION</span>
+<span class="telemetry-metric-val mono text-mint">94.2%</span>
 </div>
-<div class="planet-meta mono"><span>11 Active Portals</span><span>64 Discovered</span><span>Optimal Queue</span></div>
+<div class="telemetry-metric-item">
+<span class="telemetry-metric-label mono">TESTBED</span>
+<span class="telemetry-metric-val mono">MIHAN Nagpur</span>
+</div>
+</div>
+</div>
+<div class="card telemetry-card" onclick="setFilter('portal', 'Internshala', document.querySelector('#portal-pills-row button:nth-child(2)')); navigateTo('jobs')" title="Filter jobs matching MedVerify">
+<div class="telemetry-card-top">
+<div class="telemetry-icon-box mint-glow">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#30DC97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="12" cy="12" r="10"></circle>
+<circle cx="12" cy="12" r="6"></circle>
+<circle cx="12" cy="12" r="2"></circle>
+</svg>
+</div>
+<div class="telemetry-header-meta">
+<div class="telemetry-title">MedVerify Vision</div>
+<span class="telemetry-badge-mint mono">CNN + OCR AUTHENTICATION</span>
+</div>
+</div>
+<p class="telemetry-desc">Deep learning spectral medicine authentication using PyTorch CNN with PaddleOCR verification.</p>
+<div class="telemetry-metrics-row">
+<div class="telemetry-metric-item">
+<span class="telemetry-metric-label mono">ARCHITECTURE</span>
+<span class="telemetry-metric-val mono">PyTorch</span>
+</div>
+<div class="telemetry-metric-item">
+<span class="telemetry-metric-label mono">ACCURACY</span>
+<span class="telemetry-metric-val mono text-mint">98.1%</span>
+</div>
+<div class="telemetry-metric-item">
+<span class="telemetry-metric-label mono">SPECTRAL</span>
+<span class="telemetry-metric-val mono">HSI Bands</span>
+</div>
+</div>
+</div>
+<div class="card telemetry-card" onclick="navigateTo('jobs')" title="Inspect all 11 active portals">
+<div class="telemetry-card-top">
+<div class="telemetry-icon-box violet-glow">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7C5CFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="12" cy="12" r="3"></circle>
+<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+</svg>
+</div>
+<div class="telemetry-header-meta">
+<div class="telemetry-title">Multi-Portal Swarm</div>
+<span class="telemetry-badge-violet mono">11 ACTIVE PLATFORMS</span>
+</div>
+</div>
+<p class="telemetry-desc">Autonomous crawler aggregating verified fresher openings across 11 Indian tech job platforms.</p>
+<div class="telemetry-metrics-row">
+<div class="telemetry-metric-item">
+<span class="telemetry-metric-label mono">PORTALS</span>
+<span class="telemetry-metric-val mono text-violet">11 Online</span>
+</div>
+<div class="telemetry-metric-item">
+<span class="telemetry-metric-label mono">DISCOVERED</span>
+<span class="telemetry-metric-val mono">64 Roles</span>
+</div>
+<div class="telemetry-metric-item">
+<span class="telemetry-metric-label mono">DISPATCH</span>
+<span class="telemetry-metric-val mono text-mint">Automated</span>
+</div>
+</div>
 </div>
 </div>
 </section>
@@ -472,26 +536,7 @@ Agent is <span class="typed-text" id="hero-typed-text">scanning 11 portals for v
 </div>
 </section>
 </main>
-<aside class="floating-dock" aria-label="Quick Navigation">
-<button class="dock-btn" onclick="triggerQuickScan()" title="Quick Scan (New Jobs)">
-<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-</button>
-<button class="dock-btn" onclick="navigateTo('jobs')" title="Inspect Jobs Grid">
-<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3l7 18 3-7 7-3L3 3z"></path></svg>
-</button>
-<button class="dock-btn" onclick="navigateTo('dashboard')" title="Dashboard Overview">
-<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"></path><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"></path><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"></path></svg>
-</button>
-<button class="dock-btn" onclick="toggleTheme()" title="Toggle Theme Palette">
-<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path></svg>
-</button>
-<button class="dock-btn" onclick="navigateTo('auth')" title="Authentication Gateway">
-<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-</button>
-<button class="dock-btn" onclick="navigateTo('applications')" title="Applications Queue">
-<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-</button>
-</aside>
+
 <div class="panel-backdrop" id="side-panel-backdrop" onclick="closeSidePanelOnBackdrop(event)">
 <aside class="slide-panel" id="slide-panel" onclick="event.stopPropagation()">
 <div class="panel-header">

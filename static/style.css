@@ -15,7 +15,7 @@
 --badge-review-bg: rgba(255, 170, 44, 0.1);
 --badge-suspicious-bg: rgba(255, 77, 77, 0.1);
 --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
---font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+--font-mono: "Cascadia Code", "SF Mono", "Segoe UI Mono", Consolas, Menlo, monospace;
 --radius-card: 8px;
 --radius-btn: 6px;
 --radius-badge: 4px;
@@ -643,51 +643,7 @@ display: flex;
 align-items: center;
 gap: 8px;
 }
-.horizon-arc {
-position: absolute;
-bottom: -12px;
-left: 5%;
-right: 5%;
-height: 32px;
-border-top: 1.5px solid rgba(96, 165, 250, 0.55);
-border-radius: 50% 50% 0 0;
-background: radial-gradient(ellipse at 50% 100%, rgba(96, 165, 250, 0.16) 0%, rgba(124, 92, 255, 0.08) 50%, transparent 80%);
-box-shadow: 0 -8px 24px rgba(96, 165, 250, 0.25);
-pointer-events: none;
-}
-.floating-dock {
-position: fixed;
-right: 18px;
-top: 50%;
-transform: translateY(-50%);
-background-color: var(--bg-card);
-border: 1px solid var(--border);
-border-radius: var(--radius-pill);
-padding: 8px 6px;
-display: flex;
-flex-direction: column;
-gap: 8px;
-z-index: 90;
-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-}
-.dock-btn {
-width: 32px;
-height: 32px;
-border-radius: 50%;
-background: transparent;
-border: none;
-color: var(--text-2);
-display: flex;
-align-items: center;
-justify-content: center;
-cursor: pointer;
-transition: all 150ms ease;
-}
-.dock-btn:hover {
-background-color: var(--bg-hover);
-color: var(--text-1);
-transform: scale(1.1);
-}
+
 .sticky-search-wrap {
 position: sticky;
 top: 56px;
@@ -1434,105 +1390,118 @@ color: var(--mint);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(124, 92, 255, 0.4), transparent);
   box-shadow: 0 0 16px rgba(124, 92, 255, 0.9), 0 0 32px rgba(48, 220, 151, 0.6);
 }
-.ambient-metaball {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(48px);
-  pointer-events: none;
-  opacity: 0.16;
-}
-.mb-1 {
-  top: -40px;
-  right: 15%;
-  width: 200px;
-  height: 200px;
-  background: var(--violet);
-  animation: floatMeta 8s infinite alternate ease-in-out;
-}
-.mb-2 {
-  bottom: 10px;
-  left: 10%;
-  width: 160px;
-  height: 160px;
-  background: var(--mint);
-  animation: floatMeta 10s infinite alternate-reverse ease-in-out;
-}
-@keyframes floatMeta {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(16px, -16px) scale(1.08); }
-}
-.meta-planet-grid {
+.telemetry-bento-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  margin-top: 22px;
+  gap: 16px;
+  margin-top: 24px;
 }
-.planet-card {
-  padding: 16px 18px;
+.telemetry-card {
+  padding: 18px 20px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: 12px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  transition: transform 150ms ease, border-color 150ms ease, background-color 150ms ease;
 }
-.planet-card:hover {
+.telemetry-card:hover {
+  transform: translateY(-2px);
   border-color: var(--violet);
+  background-color: var(--bg-hover);
 }
-.planet-head {
+.telemetry-card-top {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-.planet-sphere {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  position: relative;
+.telemetry-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: var(--bg-hover);
+  border: 1px solid var(--border);
   flex-shrink: 0;
 }
-.planet-amber {
-  background: radial-gradient(circle at 35% 35%, #FFAA2C, #B45309 70%, #451A03 100%);
-  box-shadow: 0 0 12px rgba(255, 170, 44, 0.4);
+.telemetry-icon-box.amber-glow {
+  background-color: rgba(255, 170, 44, 0.08);
+  border-color: rgba(255, 170, 44, 0.25);
 }
-.planet-mint {
-  background: radial-gradient(circle at 35% 35%, #30DC97, #059669 70%, #064E3B 100%);
-  box-shadow: 0 0 12px rgba(48, 220, 151, 0.4);
+.telemetry-icon-box.mint-glow {
+  background-color: rgba(48, 220, 151, 0.08);
+  border-color: rgba(48, 220, 151, 0.25);
 }
-.planet-blue {
-  background: radial-gradient(circle at 35% 35%, #60A5FA, #2563EB 70%, #1E3A8A 100%);
-  box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+.telemetry-icon-box.violet-glow {
+  background-color: rgba(124, 92, 255, 0.08);
+  border-color: rgba(124, 92, 255, 0.25);
 }
-.planet-ring {
-  position: absolute;
-  width: 44px;
-  height: 14px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transform: rotate(-25deg);
-  pointer-events: none;
-}
-.planet-name {
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--text-1);
-}
-.planet-tag {
-  font-size: 10px;
-  color: var(--violet);
-}
-.planet-meta {
+.telemetry-header-meta {
   display: flex;
-  justify-content: space-between;
-  font-size: 11px;
+  flex-direction: column;
+  gap: 2px;
+}
+.telemetry-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.01em;
+}
+.telemetry-badge-amber {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--amber);
+  letter-spacing: 0.04em;
+}
+.telemetry-badge-mint {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--mint);
+  letter-spacing: 0.04em;
+}
+.telemetry-badge-violet {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--violet);
+  letter-spacing: 0.04em;
+}
+.telemetry-desc {
+  font-size: 12px;
+  line-height: 1.5;
   color: var(--text-2);
+  margin: 0;
+}
+.telemetry-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding-top: 10px;
   border-top: 1px solid var(--border);
-  padding-top: 8px;
+}
+.telemetry-metric-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.telemetry-metric-label {
+  font-size: 9.5px;
+  color: var(--text-2);
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+.telemetry-metric-val {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-1);
 }
 
 @media (max-width: 900px) {
-  .meta-planet-grid {
+  .telemetry-bento-grid {
     grid-template-columns: 1fr;
   }
   .auth-bento-grid {
@@ -1549,9 +1518,6 @@ grid-template-columns: 1fr;
 }
 .profile-two-col {
 grid-template-columns: 1fr;
-}
-.floating-dock {
-display: none;
 }
 .nav-links {
 display: none;
