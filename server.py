@@ -1275,6 +1275,14 @@ app.mount("/static", StaticFiles(directory=str(ROOT_DIR / "static")), name="stat
 def index():
     return FileResponse(ROOT_DIR / "static/index.html")
 
+@app.get("/style.css")
+def serve_style():
+    return FileResponse(ROOT_DIR / "static/style.css")
+
+@app.get("/app.js")
+def serve_app_js():
+    return FileResponse(ROOT_DIR / "static/app.js")
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))

@@ -1,43 +1,43 @@
 {
-  "id": "alex",
-  "name": "Alex Sharma",
-  "email": "alex.sharma.tech@gmail.com",
+  "id": "twinkle",
+  "name": "Twinkle Ghangare",
+  "email": "twinkle.ghangare@gmail.com",
   "phone": "+91 9876543210",
-  "location": "Bengaluru, Karnataka, India",
-  "linkedin": "https://www.linkedin.com/in/alexsharma",
-  "github": "https://github.com/alexsharma",
-  "degree": "BTech in Computer Science & Engineering",
-  "institution": "VTU Bengaluru (CGPA: 8.45)",
+  "location": "Nagpur / Remote / Bengaluru, India",
+  "linkedin": "https://www.linkedin.com/in/twinkleghangare",
+  "github": "https://github.com/twinkleghangare",
+  "degree": "B.Tech AI & Data Science",
+  "institution": "KDK College of Engineering, Nagpur (CGPA: 8.19)",
   "skills": [
     "Python",
+    "Machine Learning",
+    "Deep Learning",
+    "PyTorch",
+    "TensorFlow",
     "FastAPI",
     "Docker",
-    "PyTorch",
-    "PostgreSQL",
-    "Redis",
-    "React",
-    "Next.js",
-    "LangChain",
-    "LLMs",
-    "REST APIs",
-    "Git",
-    "Kubernetes",
-    "Tailwind CSS"
+    "SQL",
+    "Pandas",
+    "NumPy",
+    "Scikit-Learn",
+    "NLP",
+    "Computer Vision",
+    "REST APIs"
   ],
   "projects": [
-    "AgentFlow \u2014 Autonomous Multi-Agent AI Workflow Orchestrator",
-    "DocuSense \u2014 RAG Search Engine over Enterprise Documents",
-    "CodeReviewer AI \u2014 Automated Git PR Code Audit Bot"
+    "FraudLens \u2014 Real-Time Transaction Anomaly & Digital Payment Scam Detector",
+    "MedVerify \u2014 AI Medicine Authentication System (CNN + OCR)",
+    "HSI Classification \u2014 Hyperspectral Image Land Cover & Spectral Feature Pipeline"
   ],
   "target_roles": [
-    "AI Engineer Intern",
-    "Generative AI Developer",
-    "Python Backend Intern",
-    "Full Stack AI Intern"
+    "AI/ML Engineer Intern",
+    "Machine Learning Intern",
+    "Data Science Intern",
+    "Python Developer Intern"
   ],
   "target_locations": [
-    "Bengaluru, Karnataka, India",
     "Remote",
-    "Hyderabad, Telangana, India"
+    "Bengaluru, Karnataka, India",
+    "Pune, Maharashtra, India"
   ]
 }

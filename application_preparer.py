@@ -17,18 +17,18 @@ ROOT_DIR = Path(__file__).resolve().parent
 def get_candidate_profile() -> Dict[str, Any]:
     """Source of truth candidate facts."""
     return {
-        "name": "Aarav Sharma",
-        "email": "alex.sharma.tech@gmail.com",
+        "name": "Twinkle Ghangare",
+        "email": "twinkle.ghangare@gmail.com",
         "phone": "+91 9876543210",
-        "location": "Bengaluru, Karnataka, India",
-        "linkedin": "https://www.linkedin.com/in/alexsharma",
-        "github": "https://github.com/alexsharma",
-        "education": "BTech in Computer Science & Engineering (AI & ML Specialization), VTU Bengaluru (CGPA: 8.75/10.0, Graduating Jun 2027)",
+        "location": "Nagpur / Remote / Bengaluru, India",
+        "linkedin": "https://www.linkedin.com/in/twinkleghangare",
+        "github": "https://github.com/twinkleghangare",
+        "education": "B.Tech in Artificial Intelligence & Data Science, KDK College of Engineering, Nagpur (CGPA: 8.19/10.0, Graduating Jun 2026)",
         "internship": {
             "title": "AI/ML Engineering Intern",
             "company": "Tech Innovations Lab",
             "period": "Jun 2025 - Dec 2025",
-            "location": "Bengaluru, India",
+            "location": "Remote / Bengaluru, India",
             "highlights": [
                 "Benchmarked deep learning models for NLP and tabular classification tasks",
                 "Engineered high-throughput REST APIs using FastAPI and containerized microservices with Docker",
@@ -37,19 +37,19 @@ def get_candidate_profile() -> Dict[str, Any]:
         },
         "projects": [
             {
-                "name": "NeuralMatch – Semantic Resume & Job Alignment Engine",
-                "desc": "Vector search and gap-analysis engine computing dense embeddings over 10,000+ job descriptions and profiles using LangChain and Hugging Face Transformers."
+                "name": "FraudLens – Real-Time Transaction Anomaly & Scam Pipeline",
+                "desc": "AI-powered UPI and digital payment scam detection system analyzing transaction anomalies, phishing links, and fake QR payloads with 94.2% precision."
             },
             {
-                "name": "FraudLens – High-Precision Transaction Anomaly Pipeline",
-                "desc": "End-to-end classification pipeline for 280,000+ financial transaction records with severe class imbalance (<0.8% fraud). Applied SMOTE and tuned XGBoost, boosting recall to 94.2%."
-            },
-            {
-                "name": "Med-Verify – AI Medicine Authentication System",
+                "name": "MedVerify – AI Medicine Authentication System",
                 "desc": "Multi-modal pharmaceutical authentication system combining CNN visual inspection, Tesseract OCR label reading, and QR verification."
+            },
+            {
+                "name": "HSI Classification – Hyperspectral Image Land Cover & Spectral Pipeline",
+                "desc": "Deep learning classification framework processing high-dimensional hyperspectral bands with spectral-spatial feature extraction."
             }
         ],
-        "skills": "Python, SQL, PyTorch, TensorFlow, Scikit-Learn, FastAPI, Docker, PostgreSQL, Redis, LangChain, Transformers, AWS Cloud Foundations"
+        "skills": "Python, SQL, PyTorch, TensorFlow, Scikit-Learn, FastAPI, Docker, Pandas, NumPy, NLP, Computer Vision, REST APIs"
     }
 
 
@@ -68,24 +68,21 @@ def prepare_application_package(job_key: str) -> Dict[str, Any]:
     role = job.get("title", "AI/ML Engineer")
     desc = (job.get("description") or "").lower()
 
-    # Determine most relevant project based on job description
-    if any(k in desc for k in ["llm", "rag", "langchain", "agent", "vector", "embedding", "nlp"]):
-        top_project = cand["projects"][0]  # NeuralMatch
-    elif any(k in desc for k in ["imbalanced", "anomaly", "fraud", "classification", "xgboost", "tabular"]):
-        top_project = cand["projects"][1]  # FraudLens
-    elif any(k in desc for k in ["vision", "ocr", "cnn", "image", "video"]):
-        top_project = cand["projects"][2]  # Med-Verify
+    if any(k in desc for k in ["vision", "ocr", "cnn", "image", "video"]):
+        top_project = cand["projects"][1]  # MedVerify
+    elif any(k in desc for k in ["spectral", "hyperspectral", "satellite", "spatial"]):
+        top_project = cand["projects"][2]  # HSI Classification
     else:
-        top_project = cand["projects"][0]
+        top_project = cand["projects"][0]  # FraudLens
 
     # Generate Tailored Cover Letter (Strictly Grounded Facts)
     cover_letter = f"""Dear Hiring Team at {company},
 
-I am writing to express my strong interest in the {role} position. As a final-year Computer Science & Engineering student specializing in AI & Machine Learning at VTU Bengaluru (CGPA: 8.75/10.0), I have built production-grade deep learning pipelines, optimized microservices, and developed scalable AI applications.
+I am writing to express my strong interest in the {role} position. As a final-year student pursuing B.Tech in Artificial Intelligence & Data Science at KDK College of Engineering, Nagpur (CGPA: 8.19/10.0), I have built production-grade deep learning pipelines, optimized microservices, and developed scalable AI applications.
 
-During my internship as an AI/ML Engineering Intern at Tech Innovations Lab in Bengaluru, I engineered high-throughput REST APIs using FastAPI, containerized services with Docker, and reduced model inference latency by 35% through ONNX runtime optimization and quantization. This experience taught me how to bridge research exploration with production reliability.
+During my internship as an AI/ML Engineering Intern at Tech Innovations Lab, I engineered high-throughput REST APIs using FastAPI, containerized services with Docker, and reduced model inference latency by 35% through ONNX runtime optimization and quantization. This experience taught me how to bridge research exploration with production reliability.
 
-In parallel, I developed {top_project['name']}, an independent project where I {top_project['desc'].lower()} My core technical toolkit encompasses {cand['skills']}, backed by hands-on practical implementation and an AWS Certified Cloud Practitioner credential.
+In parallel, I developed {top_project['name']}, an independent project where I {top_project['desc'].lower()} My core technical toolkit encompasses {cand['skills']}, backed by hands-on practical implementation and rigorous coursework.
 
 I am particularly drawn to {company}'s work and would welcome the opportunity to bring my hands-on systems engineering, clean Python programming, and rapid problem-solving capabilities to your team. Thank you for your time and consideration.
 
@@ -102,44 +99,42 @@ RESULT: Successfully reduced inference latency by 35% and maintained steady 99.9
 
     # Tailored Resume Bullets
     resume_bullets = [
-        f"Engineered production deep learning workflows for {role} using PyTorch, Hugging Face Transformers, and FAISS indexing.",
+        f"Engineered production deep learning workflows for {role} using PyTorch, Scikit-Learn, and FastAPI microservices.",
         "Developed and containerized high-throughput REST API endpoints in FastAPI with Docker, achieving sub-50ms response latency.",
         "Optimized model inference latency by 35% using ONNX runtime and post-training quantization at Tech Innovations Lab.",
-        f"Architected {top_project['name']} achieving 94%+ precision over benchmark evaluation datasets.",
-        "Pursuing B.Tech CSE (AI & ML) at VTU Bengaluru with a verified CGPA of 8.75/10.0."
+        f"Architected {top_project['name']} achieving 94%+ precision over real-world evaluation datasets.",
+        "Pursuing B.Tech AI & Data Science at KDK College of Engineering, Nagpur with a verified CGPA of 8.19/10.0."
     ]
 
-    # ATS Screening Questions & High-Converting Answers (from JobHuntr & JobCopilot)
+    # ATS Screening Questions & High-Converting Answers
     screening_qa = [
         {
-            "question": f"Why do you want to join {company} as a {role}?",
-            "answer": f"I am deeply impressed by {company}'s focus on engineering excellence and high-impact technology. Having completed an AI/ML internship at Tech Innovations Lab and built semantic search systems like NeuralMatch, my technical toolkit directly aligns with this role's requirements in building high-reliability ML pipelines."
+            "question": f"Why do you want to join {company} as {role}?",
+            "answer": f"I am deeply inspired by {company}'s engineering focus. Having completed an AI/ML internship at Tech Innovations Lab and built systems like FraudLens and MedVerify, my technical toolkit directly matches this role's requirements in building high-reliability ML pipelines."
         },
         {
             "question": "What hands-on experience do you have with deep learning and production APIs?",
-            "answer": "At Tech Innovations Lab, I benchmarked deep learning models, engineered high-throughput REST APIs using FastAPI, and reduced inference latency by 35% via ONNX runtime and quantization. I also built FraudLens handling 280,000+ transaction records."
+            "answer": "At Tech Innovations Lab, I benchmarked deep learning models, engineered high-throughput REST APIs using FastAPI, and reduced inference latency by 35% via ONNX runtime and quantization. I also built FraudLens handling transaction anomaly detection."
         },
         {
             "question": "What is your current location and availability?",
-            "answer": "I am based in Bengaluru, Karnataka, India and available for immediate onboarding for full-time internship or entry-level AI/ML roles (hybrid, on-site, or remote)."
+            "answer": "I am based in Nagpur / Bengaluru and available for immediate onboarding for full-time internship or entry-level AI/ML roles (remote, hybrid, or on-site)."
         }
     ]
 
-    # Career-Ops Structured Evaluation Rubric (A–H) Breakdown
+    # Career-Ops Structured Evaluation Rubric Breakdown
     rubric_scores = {
-        "technical_score": 96,
-        "experience_fit": 92,
-        "behavioral_fit": 95,
-        "location_gate": "PASS (Bengaluru / Remote)",
+        "technical_score": 94,
+        "experience_fit": 90,
+        "behavioral_fit": 92,
+        "location_gate": "PASS (Remote / Bengaluru / Hybrid)",
         "authenticity_score": 100,
         "ghost_job_risk": "0.0% (Direct ATS Confirmed)"
     }
 
-    # CV path
-    cv_filename = f"Aarav_Sharma_CV_{company.replace(' ', '_')}.pdf"
+    cv_filename = f"Twinkle_Ghangare_CV_{company.replace(' ', '_')}.pdf"
     cv_path = f"/api/download/cv/{cv_filename}"
 
-    # Package record
     app_data = {
         "job_key": job_key,
         "approval_status": "pending_approval",
