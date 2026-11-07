@@ -820,8 +820,10 @@ ${CANDIDATE_PROFILE.name}`;
     sections.forEach((s) => {
       const el = document.getElementById(`section-${s}`);
       const btn = document.getElementById(`nav-${s}`);
+      const railBtn = document.getElementById(`rail-nav-${s}`);
       if (el) el.classList.toggle("active", s === sectionId);
       if (btn) btn.classList.toggle("active", s === sectionId);
+      if (railBtn) railBtn.classList.toggle("active", s === sectionId);
     });
 
     const menu = document.getElementById("nav-menu");

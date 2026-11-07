@@ -7,6 +7,43 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="app-shell">
+<aside class="sidebar-rail" id="sidebar-rail" aria-label="Quick Navigation">
+<div class="rail-top">
+<button type="button" class="rail-logo-btn" onclick="navigateTo('dashboard')" title="ApplyBot Canvas">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+</svg>
+</button>
+<nav class="rail-nav">
+<button type="button" class="rail-btn active" id="rail-nav-dashboard" onclick="navigateTo('dashboard')" title="Agent Canvas (Dashboard)">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
+</button>
+<button type="button" class="rail-btn" id="rail-nav-jobs" onclick="navigateTo('jobs')" title="11 Active Portals (Jobs)">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+</button>
+<button type="button" class="rail-btn" id="rail-nav-applications" onclick="navigateTo('applications')" title="Applications Pipeline">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+</button>
+<button type="button" class="rail-btn" id="rail-nav-outreach" onclick="navigateTo('outreach')" title="Recruiter Outreach">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+</button>
+<button type="button" class="rail-btn" id="rail-nav-profile" onclick="navigateTo('profile')" title="Candidate Profile">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+</button>
+<button type="button" class="rail-btn" id="rail-nav-auth" onclick="navigateTo('auth')" title="Access Gateway">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+</button>
+</nav>
+</div>
+<div class="rail-bottom">
+<button type="button" class="rail-avatar-btn" onclick="navigateTo('profile')" title="Twinkle Ghangare (8.19 CGPA)">
+<span class="mono">TG</span>
+<span class="rail-avatar-pip"></span>
+</button>
+</div>
+</aside>
+<div class="main-viewport">
 <header class="navbar-wrapper" id="main-navbar">
 <div class="container navbar">
 <div class="nav-brand" onclick="navigateTo('dashboard')">
@@ -14,14 +51,16 @@
 <span class="brand-badge">AI Career Agent</span>
 </div>
 <nav class="nav-links" id="nav-menu">
-<button class="nav-btn" id="nav-auth" onclick="navigateTo('auth')">Auth</button>
-<button class="nav-btn active" id="nav-dashboard" onclick="navigateTo('dashboard')">Dashboard</button>
-<button class="nav-btn" id="nav-jobs" onclick="navigateTo('jobs')">Jobs</button>
-<button class="nav-btn" id="nav-applications" onclick="navigateTo('applications')">Applications</button>
-<button class="nav-btn" id="nav-outreach" onclick="navigateTo('outreach')">Outreach</button>
-<button class="nav-btn" id="nav-profile" onclick="navigateTo('profile')">Profile</button>
+<button type="button" class="nav-btn" id="nav-auth" onclick="navigateTo('auth')">Auth</button>
+<button type="button" class="nav-btn active" id="nav-dashboard" onclick="navigateTo('dashboard')">Dashboard</button>
+<button type="button" class="nav-btn" id="nav-jobs" onclick="navigateTo('jobs')">Jobs</button>
+<button type="button" class="nav-btn" id="nav-applications" onclick="navigateTo('applications')">Applications</button>
+<button type="button" class="nav-btn" id="nav-outreach" onclick="navigateTo('outreach')">Outreach</button>
+<button type="button" class="nav-btn" id="nav-profile" onclick="navigateTo('profile')">Profile</button>
 </nav>
 <div class="nav-actions">
+<button type="button" class="btn btn-ghost btn-sm" id="topbar-allow-run" onclick="allowTodaysRun()">+ Run</button>
+<button type="button" class="btn btn-violet btn-sm" onclick="app.showToast('Session saved')">Save</button>
 <div class="user-auth-pill" id="navbar-auth-pill" onclick="navigateTo('auth')" title="Authenticated Candidate">
 <span class="user-avatar-tiny mono" id="nav-avatar-initials">TG</span>
 <span class="user-auth-name" id="nav-user-name">Twinkle</span>
@@ -56,55 +95,14 @@
 </header>
 <main class="container">
 <section id="section-auth" class="page-section">
-<div class="section-label">00 — AUTHENTICATION &amp; ACCESS GATEWAY</div>
+<div class="section-label">00 — CANDIDATE ACCESS GATEWAY</div>
 <hr class="section-divider">
 <div class="auth-bento-grid">
-<div class="card auth-guide-card">
-<div>
-<span class="badge badge-verified mono">✨ STITCH SECURITY 3.1 PRO</span>
-<div class="status-indicator-row mt-10">
-<span class="status-dot"></span>
-<span class="status-text mono" id="auth-status-dot-label">Gateway Online · 11 Portals Authenticated</span>
-</div>
-<h2 class="auth-guide-title mt-10">Welcome to ApplyBot.</h2>
-<p class="auth-guide-desc mt-10">Autonomous multi-portal job agent engineered for AI &amp; Data Science candidates. Verify credentials to orchestrate live applications across 11 Indian platforms.</p>
-</div>
-<div class="stepped-guides-list">
-<div class="step-guide-item">
-<span class="step-num mono">01</span>
-<div>
-<div class="step-title">Verified Identity &amp; Profile</div>
-<div class="step-sub">Twinkle Ghangare · KDK College Nagpur · 8.19 CGPA · B.Tech AI &amp; DS</div>
-</div>
-</div>
-<div class="step-guide-item">
-<span class="step-num mono">02</span>
-<div>
-<div class="step-title">11 Indian Portals Aggregation</div>
-<div class="step-sub">Internshala, Saarthi, Freshersworld, Naukri, LinkedIn, Indeed, foundit, Wellfound, Cutshort, NCS, WorkIndia</div>
-</div>
-</div>
-<div class="step-guide-item">
-<span class="step-num mono">03</span>
-<div>
-<div class="step-title">Deterministic Project Alignment</div>
-<div class="step-sub">FraudLens (UPI anomaly heuristics) &amp; MedVerify (CNN + OCR medicine check) match rubric</div>
-</div>
-</div>
-<div class="step-guide-item">
-<span class="step-num mono">04</span>
-<div>
-<div class="step-title">Direct Portal Redirection</div>
-<div class="step-sub">Human-in-the-loop review with one-click official portal launch &amp; automated submission</div>
-</div>
-</div>
-</div>
-</div>
 <div class="card auth-form-card">
 <div class="auth-card-top">
 <div>
 <h3 class="auth-card-heading">Candidate Gateway</h3>
-<p class="auth-card-sub mono">Sign in or switch candidate session</p>
+<p class="auth-card-sub mono">Twinkle Ghangare · 11 Active Portals</p>
 </div>
 <span class="user-avatar-pill mono" id="auth-avatar-pill">TG</span>
 </div>
@@ -118,8 +116,8 @@
 <input type="email" id="auth-email" class="text-input" value="twinkle.ghangare@gmail.com" required placeholder="Enter candidate email">
 </div>
 <div class="input-block">
-<label class="input-label mono" for="auth-passcode">Access Key / Passphrase</label>
-<input type="password" id="auth-passcode" class="text-input" value="applybot-twinkle-2026" required placeholder="Enter secret passphrase">
+<label class="input-label mono" for="auth-passcode">Access Passphrase</label>
+<input type="password" id="auth-passcode" class="text-input" value="applybot-twinkle-2026" required placeholder="Enter passphrase">
 </div>
 <div id="auth-register-fields" class="auth-register-hidden">
 <div class="input-block">
@@ -127,7 +125,7 @@
 <input type="text" id="auth-name" class="text-input" value="Twinkle Ghangare" placeholder="Full Name">
 </div>
 <div class="input-block">
-<label class="input-label mono" for="auth-institution">College / Institution</label>
+<label class="input-label mono" for="auth-institution">Institution</label>
 <input type="text" id="auth-institution" class="text-input" value="KDK College of Engineering, Nagpur" placeholder="Institution">
 </div>
 </div>
@@ -140,9 +138,14 @@
 </div>
 <button type="submit" class="btn btn-violet mt-10" id="auth-submit-btn">Authenticate &amp; Enter ApplyBot →</button>
 </form>
-<div class="auth-portals-summary">
-<span class="input-label mono">Active Session Tokens:</span>
-<div class="auth-portal-pills">
+</div>
+<div class="card auth-guide-card">
+<span class="badge badge-verified mono">✓ SECURE SESSION ACTIVE</span>
+<h3 class="auth-guide-title mt-10">Twinkle Ghangare</h3>
+<p class="auth-guide-desc">B.Tech in Artificial Intelligence &amp; Data Science · KDK College of Engineering, Nagpur (CGPA: 8.19).</p>
+<div class="auth-portals-summary mt-10">
+<span class="input-label mono">Authenticated Feeds:</span>
+<div class="auth-portal-pills mt-6">
 <span class="auth-portal-chip mono">✓ Internshala</span>
 <span class="auth-portal-chip mono">✓ Saarthi</span>
 <span class="auth-portal-chip mono">✓ Freshersworld</span>
@@ -160,115 +163,159 @@
 </div>
 </section>
 <section id="section-dashboard" class="page-section active">
-<div class="section-label">01 — DASHBOARD</div>
+<div class="section-label">01 — AGENT ORCHESTRATION CANVAS</div>
 <hr class="section-divider">
-<div class="hero-container" id="hero-wrapper">
-<div class="hero-split-grid">
-<div class="hero-left-col">
-<div class="status-indicator-row hero-anim-item">
-<span class="status-dot"></span>
-<span class="status-text mono" id="agent-status-label">Agent Online · 11 Portals Scanned</span>
+
+<div class="canvas-kpi-bar">
+<div class="kpi-chip">
+<span class="kpi-num mono" id="stat-discovered" data-target="64">0</span>
+<span class="kpi-label mono">Discovered</span>
 </div>
-<h1 class="hero-heading hero-anim-item">Good morning, Twinkle.</h1>
-<p class="hero-subtitle hero-anim-item">
-Agent is <span class="typed-text" id="hero-typed-text">scanning 11 portals for verified AI/ML roles</span><span class="typed-cursor" aria-hidden="true">|</span>
-</p>
-<div class="stitch-audio-pill hero-anim-item" onclick="app.showToast('Autonomous scanner active across 11 portals')">
-<span class="audio-mic-dot">🎙</span>
-<span class="audio-status-text">Autonomous Scanner Active</span>
-<span class="audio-stop-btn" onclick="event.stopPropagation(); pauseAgent()" title="Pause Scanner">⏹</span>
+<div class="kpi-chip">
+<span class="kpi-num mono" id="stat-verified" data-target="58">0</span>
+<span class="kpi-label mono">Verified</span>
 </div>
-<div class="hero-actions-row hero-anim-item">
-<button class="btn btn-violet" id="btn-allow-run" onclick="allowTodaysRun()">
-<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-<polygon points="5 3 19 12 5 21 5 3"></polygon>
-</svg>
-<span>▶ Allow Today's Run</span>
-</button>
-<button class="btn btn-ghost" id="btn-pause-agent" onclick="pauseAgent()">
-<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-<rect x="6" y="4" width="4" height="16"></rect>
-<rect x="14" y="4" width="4" height="16"></rect>
-</svg>
-<span>⏸ Pause</span>
-</button>
+<div class="kpi-chip">
+<span class="kpi-num mono" id="stat-match" data-target="96" data-suffix="%">0%</span>
+<span class="kpi-label mono">Match</span>
 </div>
-<div class="stat-cards-grid">
-<div class="stat-card">
-<span class="stat-number mono" id="stat-discovered" data-target="64">0</span>
-<span class="stat-name mono">Discovered</span>
+<div class="kpi-chip">
+<span class="kpi-num mono" id="stat-pending" data-target="14">0</span>
+<span class="kpi-label mono">Pending</span>
 </div>
-<div class="stat-card">
-<span class="stat-number mono" id="stat-verified" data-target="58">0</span>
-<span class="stat-name mono">Verified</span>
-</div>
-<div class="stat-card">
-<span class="stat-number mono" id="stat-match" data-target="96" data-suffix="%">0%</span>
-<span class="stat-name mono">High Match</span>
-</div>
-<div class="stat-card">
-<span class="stat-number mono" id="stat-pending" data-target="14">0</span>
-<span class="stat-name mono">Pending</span>
-</div>
-</div>
-</div>
-<div class="hero-right-col">
-<div class="card gauge-card hero-anim-item">
-<div class="gauge-head">
-<div>
-<span class="gauge-label mono">Daily Target</span>
-<div class="gauge-score mono" id="gauge-score-text">3 / 25 applied today</div>
-</div>
-<div class="gauge-dial-wrap">
-<svg class="gauge-svg" width="56" height="56" viewBox="0 0 100 100">
-<circle class="gauge-bg" cx="50" cy="50" r="40" />
-<circle class="gauge-meter" id="gauge-circle" cx="50" cy="50" r="40" />
-</svg>
-<span class="gauge-center-val mono" id="gauge-pct-text">12%</span>
-</div>
-</div>
+<div class="kpi-chip kpi-chip-target">
+<span class="kpi-label mono">Daily Target</span>
+<span class="kpi-val mono" id="gauge-score-text">3 / 25 applied</span>
 <div class="progress-bar-container">
 <div class="progress-bar-fill" id="target-progress-bar"></div>
 </div>
-<div class="gauge-sub mono" id="target-gauge-sub">12% completed towards daily target</div>
 </div>
-<div class="card top-pending-card hero-anim-item" id="top-pending-card">
+</div>
+
+<div class="agent-canvas-board">
+<svg class="canvas-wires-svg" viewBox="0 0 1000 520" preserveAspectRatio="none" aria-hidden="true">
+<path class="wire-curve" d="M 280 180 C 340 180, 360 250, 410 250"></path>
+<path class="wire-curve" d="M 680 200 C 720 200, 740 120, 780 120"></path>
+<path class="wire-curve" d="M 680 280 C 720 280, 740 380, 780 380"></path>
+<path class="wire-curve" d="M 410 330 C 370 330, 340 420, 280 420"></path>
+<circle class="wire-dot" r="4">
+<animateMotion path="M 280 180 C 340 180, 360 250, 410 250" dur="2.8s" repeatCount="indefinite"></animateMotion>
+</circle>
+<circle class="wire-dot" r="4">
+<animateMotion path="M 680 200 C 720 200, 740 120, 780 120" dur="2.4s" repeatCount="indefinite"></animateMotion>
+</circle>
+<circle class="wire-dot" r="4">
+<animateMotion path="M 680 280 C 720 280, 740 380, 780 380" dur="3.2s" repeatCount="indefinite"></animateMotion>
+</circle>
+</svg>
+
+<div class="canvas-nodes-layer">
+<div class="cnode cnode-blue-glow" id="node-ingestion">
+<div class="cnode-header">
+<div class="cnode-title-group">
+<span class="cnode-icon">🌐</span>
+<div>
+<h4 class="cnode-name">Portal Ingestion Agent</h4>
+<span class="cnode-sub mono">11 Indian ATS Portals</span>
+</div>
+</div>
+<span class="cnode-badge cnode-badge-blue mono">● Analyzing</span>
+</div>
+<div class="cnode-chips">
+<span class="cnode-chip mono">Internshala · Saarthi · Freshersworld</span>
+<span class="cnode-chip mono">Naukri · LinkedIn · Indeed · foundit</span>
+<span class="cnode-chip mono">Wellfound · Cutshort · NCS · WorkIndia</span>
+</div>
+<div class="cnode-meta-grid mono">
+<div><span>Progress</span><strong>100%</strong></div>
+<div><span>Scan Rate</span><strong>12.4K/hr</strong></div>
+<div><span>Feeds</span><strong>11 Active</strong></div>
+</div>
+</div>
+
+<div class="cnode cnode-center-master" id="node-supervisor">
+<div class="cnode-master-tab mono">Supervisor · Career Orchestrator</div>
+<div class="cnode-master-prompt">
+<p>Autonomous application run for <strong>Twinkle Ghangare</strong> (B.Tech AI &amp; Data Science · KDK College Nagpur · 8.19 CGPA). Algorithmic alignment with <strong>FraudLens</strong> (UPI Anomaly Detection) &amp; <strong>MedVerify</strong> (CNN + OCR) across 11 portals.</p>
+</div>
+<div class="cnode-thinking-bar">
+<span class="cnode-thinking-text mono">Agent active · Monitoring 11 portals</span>
+<button type="button" class="cnode-link-btn mono" onclick="navigateTo('jobs')">See roles →</button>
+</div>
+<div class="cnode-bottom-actions">
+<div class="cnode-action-pills">
+<button type="button" class="btn btn-ghost btn-sm" onclick="quickFillCandidate('twinkle')">👤 Twinkle (8.19)</button>
+<span class="cnode-model-pill mono">Model: Flash ▾</span>
+</div>
+<div class="cnode-run-actions">
+<button type="button" class="btn btn-violet btn-sm" id="btn-allow-run" onclick="allowTodaysRun()">▶ Allow Today's Run</button>
+<button type="button" class="btn btn-ghost btn-sm" id="btn-pause-agent" onclick="pauseAgent()">⏸ Pause</button>
+</div>
+</div>
+</div>
+
+<div class="cnode cnode-dark" id="node-ranking">
+<div class="cnode-header">
+<div>
+<h4 class="cnode-name">Ranking &amp; Match Agent</h4>
+<span class="cnode-sub mono">Rubric Alignment</span>
+</div>
+<span class="cnode-big-metric mono">96%</span>
+</div>
+<p class="cnode-desc">PyTorch, FastAPI, FraudLens UPI anomaly heuristics &amp; MedVerify CNN vision alignment.</p>
+</div>
+
+<div class="cnode cnode-dark" id="node-security">
+<div class="cnode-header">
+<div>
+<h4 class="cnode-name">Verification &amp; Anti-Scam</h4>
+<span class="cnode-sub mono">Scam Defense</span>
+</div>
+<span class="cnode-badge cnode-badge-green mono">● Active</span>
+</div>
+<p class="cnode-desc">Zero placement fee policy · 58 verified openings · 0 fraudulent roles permitted.</p>
+</div>
+
+<div class="cnode cnode-dark" id="node-dispatch">
+<div class="cnode-header">
+<div>
+<h4 class="cnode-name">Direct Portal Dispatch</h4>
+<span class="cnode-sub mono">Human-in-the-Loop</span>
+</div>
+<span class="cnode-badge cnode-badge-blue mono">Ready</span>
+</div>
+<p class="cnode-desc">One-click official portal launch with tailored cover letters and screening Q&amp;A.</p>
+</div>
+</div>
+
+<div class="canvas-bottom-dock">
+<div class="dock-pill-tools">
+<button type="button" class="dock-btn" onclick="app.showToast('Zoom in')">+</button>
+<button type="button" class="dock-btn" onclick="app.showToast('Zoom out')">-</button>
+<button type="button" class="dock-btn" onclick="app.showToast('Reset view')">👁</button>
+<button type="button" class="dock-btn" onclick="app.showToast('Focused on Orchestrator')">🎯</button>
+</div>
+<div class="dock-zoom-badge mono">100%</div>
+</div>
+</div>
+
+<div class="card top-pending-card" id="top-pending-card">
 <div class="top-card-header">
 <div class="top-card-company-wrap">
-<div class="floating-copilot" aria-hidden="true">
-<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-<circle cx="12" cy="12" r="9"></circle>
-<circle cx="9" cy="10" r="1" fill="currentColor"></circle>
-<circle cx="15" cy="10" r="1" fill="currentColor"></circle>
-<path d="M8 15s1.5 2 4 2 4-2 4-2"></path>
-</svg>
-</div>
 <span class="top-company-name">Sprinto</span>
+<span class="portal-source-tag mono">via Wellfound</span>
 </div>
 <span class="badge badge-verified mono">✓ VERIFIED</span>
 </div>
 <h3 class="top-role-title">AI/ML Engineer Intern</h3>
-<div class="top-card-tags mono">📍 Remote · 🏢 Startup · 💰 ₹25k/mo · 94% Match · Wellfound</div>
+<div class="top-card-tags mono">📍 Remote · 🏢 Startup · 💰 ₹25k/mo · 94% Match</div>
 <div class="top-card-actions">
-<button class="btn btn-violet btn-sm" onclick="reviewJob('Sprinto')">Review &amp; Apply</button>
+<button type="button" class="btn btn-violet btn-sm" onclick="reviewJob('Sprinto')">Review &amp; Apply</button>
 <a id="top-card-redirect" href="https://wellfound.com/jobs" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm btn-redirect" title="Open official job listing on Wellfound">
 <span>Visit Portal</span>
 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
 </a>
-<button class="btn btn-ghost btn-sm" onclick="skipTopJob()">Skip</button>
-</div>
-</div>
-<div class="stitch-status-banner hero-anim-item">
-<div class="stitch-banner-content">
-<span class="stitch-pill-dots">●●</span>
-<span class="stitch-banner-title">Autonomous Execution</span>
-<span class="stitch-banner-badge mono">✓ 11 Portals Synced</span>
-</div>
-<div class="stitch-banner-meta mono">
-<span>Zero Manual Bottlenecks</span> · <span>Deterministic Job Verification</span>
-</div>
-</div>
-</div>
+<button type="button" class="btn btn-ghost btn-sm" onclick="skipTopJob()">Skip</button>
 </div>
 </div>
 </section>
@@ -455,6 +502,8 @@ Agent is <span class="typed-text" id="hero-typed-text">scanning 11 portals for v
 </div>
 </section>
 </main>
+</div>
+</div>
 
 <div class="panel-backdrop" id="side-panel-backdrop" onclick="closeSidePanelOnBackdrop(event)">
 <aside class="slide-panel" id="slide-panel" onclick="event.stopPropagation()">
