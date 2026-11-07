@@ -168,12 +168,10 @@
 <p class="hero-subtitle hero-anim-item">
 Agent is <span class="typed-text" id="hero-typed-text">scanning 11 portals for verified AI/ML roles</span><span class="typed-cursor" aria-hidden="true">|</span>
 </p>
-<div class="copilot-capsule hero-anim-item">
-<input type="text" id="copilot-input" class="capsule-input" placeholder="Describe your search..." onkeydown="handleCopilotKey(event)">
-<span class="capsule-model-badge mono">✨ 3.1 Pro</span>
-<button class="capsule-send-btn" onclick="handleCopilotSubmit()" title="Submit Query" aria-label="Submit">
-<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
-</button>
+<div class="stitch-audio-pill hero-anim-item" onclick="app.showToast('Autonomous scanner active across 11 portals')">
+<span class="audio-mic-dot">🎙</span>
+<span class="audio-status-text">Autonomous Scanner Active</span>
+<span class="audio-stop-btn" onclick="event.stopPropagation(); pauseAgent()" title="Pause Scanner">⏹</span>
 </div>
 <div class="hero-actions-row hero-anim-item">
 <button class="btn btn-violet" id="btn-allow-run" onclick="allowTodaysRun()">
@@ -255,19 +253,14 @@ Agent is <span class="typed-text" id="hero-typed-text">scanning 11 portals for v
 <button class="btn btn-ghost btn-sm" onclick="skipTopJob()">Skip</button>
 </div>
 </div>
-<div class="card stitch-card hero-anim-item" id="stitch-preview-card">
-<div class="stitch-card-top">
-<div class="stitch-brand-info">
-<span class="stitch-card-title">Design by Stitch</span>
-<span class="badge badge-verified mono">AI UI System</span>
+<div class="stitch-status-banner hero-anim-item">
+<div class="stitch-banner-content">
+<span class="stitch-pill-dots">●●</span>
+<span class="stitch-banner-title">Autonomous Execution</span>
+<span class="stitch-banner-badge mono">✓ 11 Portals Synced</span>
 </div>
-<div class="stitch-actions">
-<button type="button" class="btn btn-ghost btn-sm" onclick="app.showToast('Previewing Stitch Design System')">▶ Preview</button>
-<button type="button" class="btn btn-ghost btn-sm" onclick="navigateTo('jobs')">✎ Edit</button>
-</div>
-</div>
-<div class="stitch-media-wrap">
-<img src="stitch-ui.jpg" alt="Design by Stitch Modular UI System" class="stitch-img" loading="lazy">
+<div class="stitch-banner-meta mono">
+<span>Zero Manual Bottlenecks</span> · <span>Deterministic Job Verification</span>
 </div>
 </div>
 </div>
