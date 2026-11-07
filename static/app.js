@@ -1,7 +1,8 @@
 // ============================================================================
 // ApplyBot — Autonomous AI Career Agent Controller
 // Candidate: Twinkle Ghangare (B.Tech AI & Data Science, KDK College Nagpur, CGPA 8.19)
-// Three.js (300 particles) + GSAP & ScrollTrigger Animations
+// Three.js (300 particles with mouse repulsion) + GSAP Smooth Motion Suite
+// Inspired by Haris Hamza Ali (particle physics + typewriter) & Cosmic Dark SaaS
 // ============================================================================
 
 const JOBS = [
@@ -108,14 +109,18 @@ const dailyTargetCount = 25;
 let lastScrollY = 0;
 
 // Three.js State
-let threeScene, threeCamera, threeRenderer, starPoints;
+let threeScene, threeCamera, threeRenderer, starGeometry;
 let starfieldAnimId = null;
 let isStarfieldActive = true;
+let particleBases = [];
+let particleCurrents = [];
+let mouse = { x: -9999, y: -9999, active: false };
 
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
   initGSAPNavbar();
-  initThreeStarfield();
+  initThreeInteractiveStarfield();
+  initTypewriterTagline();
   renderJobsGrid();
   renderApplicationsTable();
   renderOutreachTable();
@@ -124,17 +129,17 @@ document.addEventListener("DOMContentLoaded", () => {
   setupDropzone();
   fetchLiveBackendData();
 
-  // Run initial GSAP entry animations
   triggerDashboardGSAP();
 });
 
 // ============================================================================
-// 1. THREE.JS: SUBTLE 300-PARTICLE STAR FIELD BEHIND DASHBOARD HERO
+// 1. THREE.JS: 300-PARTICLE STAR FIELD WITH MOUSE REPULSION PHYSICS
 // ============================================================================
 
-function initThreeStarfield() {
+function initThreeInteractiveStarfield() {
   const container = document.getElementById("hero-canvas-container");
-  if (!container || window.innerWidth < 768 || typeof THREE === "undefined") {
+  const heroWrapper = document.getElementById("hero-wrapper");
+  if (!container || !heroWrapper || window.innerWidth < 768 || typeof THREE === "undefined") {
     return;
   }
 
@@ -143,26 +148,35 @@ function initThreeStarfield() {
 
   threeScene = new THREE.Scene();
   threeCamera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
-  threeCamera.position.z = 220;
+  threeCamera.position.z = 240;
 
   threeRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "low-power" });
   threeRenderer.setSize(width, height);
   threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   container.appendChild(threeRenderer.domElement);
 
-  // Exactly 300 particles
   const particleCount = 300;
   const positions = new Float32Array(particleCount * 3);
   const colors = new Float32Array(particleCount * 3);
 
   const color1 = new THREE.Color(0x7C5CFF); // Violet
   const color2 = new THREE.Color(0x30DC97); // Mint
-  const color3 = new THREE.Color(0x9A9AA5); // Subtle silver
+  const color3 = new THREE.Color(0x9A9AA5); // Silver
+
+  particleBases = [];
+  particleCurrents = [];
 
   for (let i = 0; i < particleCount; i++) {
-    positions[i * 3] = (Math.random() - 0.5) * 550;
-    positions[i * 3 + 1] = (Math.random() - 0.5) * 350;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 200;
+    const bx = (Math.random() - 0.5) * 580;
+    const by = (Math.random() - 0.5) * 360;
+    const bz = (Math.random() - 0.5) * 180;
+
+    particleBases.push({ x: bx, y: by, z: bz, seed: Math.random() * 10 });
+    particleCurrents.push({ x: bx, y: by, z: bz });
+
+    positions[i * 3] = bx;
+    positions[i * 3 + 1] = by;
+    positions[i * 3 + 2] = bz;
 
     const r = Math.random();
     const c = r < 0.4 ? color1 : r < 0.7 ? color2 : color3;
@@ -171,27 +185,73 @@ function initThreeStarfield() {
     colors[i * 3 + 2] = c.b;
   }
 
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-  geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+  starGeometry = new THREE.BufferGeometry();
+  starGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  starGeometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
 
   const material = new THREE.PointsMaterial({
-    size: 2.2,
+    size: 2.4,
     vertexColors: true,
     transparent: true,
-    opacity: 0.55
+    opacity: 0.65
   });
 
-  starPoints = new THREE.Points(geometry, material);
+  const starPoints = new THREE.Points(starGeometry, material);
   threeScene.add(starPoints);
 
+  // Mouse hover tracking over hero container (repels particles)
+  heroWrapper.addEventListener("pointermove", (e) => {
+    const rect = heroWrapper.getBoundingClientRect();
+    mouse.x = (e.clientX - rect.left - rect.width / 2);
+    mouse.y = -(e.clientY - rect.top - rect.height / 2);
+    mouse.active = true;
+  });
+
+  heroWrapper.addEventListener("pointerleave", () => {
+    mouse.active = false;
+    mouse.x = -9999;
+    mouse.y = -9999;
+  });
+
+  let clock = 0;
   function animateStars() {
     if (!isStarfieldActive) return;
     starfieldAnimId = requestAnimationFrame(animateStars);
-    if (starPoints) {
-      starPoints.rotation.y += 0.0004;
-      starPoints.rotation.x += 0.0002;
+    clock += 0.015;
+
+    const posAttr = starGeometry.attributes.position;
+    const arr = posAttr.array;
+
+    for (let i = 0; i < particleCount; i++) {
+      const base = particleBases[i];
+      const cur = particleCurrents[i];
+
+      // Gentle ambient drift
+      const targetX = base.x + Math.sin(clock + base.seed) * 5;
+      const targetY = base.y + Math.cos(clock * 0.8 + base.seed) * 5;
+
+      // Mouse repulsion physics
+      if (mouse.active) {
+        const dx = cur.x - mouse.x;
+        const dy = cur.y - mouse.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 110 && dist > 0.1) {
+          const force = (1 - dist / 110) * 18;
+          cur.x += (dx / dist) * force;
+          cur.y += (dy / dist) * force;
+        }
+      }
+
+      // Spring return to base
+      cur.x += (targetX - cur.x) * 0.06;
+      cur.y += (targetY - cur.y) * 0.06;
+
+      arr[i * 3] = cur.x;
+      arr[i * 3 + 1] = cur.y;
     }
+
+    posAttr.needsUpdate = true;
+    starPoints.rotation.z += 0.0002;
     threeRenderer.render(threeScene, threeCamera);
   }
   animateStars();
@@ -217,6 +277,7 @@ function initThreeStarfield() {
     if (threeRenderer && threeRenderer.domElement) {
       threeRenderer.domElement.style.display = "block";
     }
+    isStarfieldActive = true;
     const nw = container.clientWidth || 800;
     const nh = container.clientHeight || 450;
     threeCamera.aspect = nw / nh;
@@ -226,7 +287,54 @@ function initThreeStarfield() {
 }
 
 // ============================================================================
-// 2. GSAP ANIMATIONS
+// 2. GSAP TYPEWRITER TAGLINE CYCLE (Haris Hamza Ali + Space Reference)
+// ============================================================================
+
+function initTypewriterTagline() {
+  const el = document.getElementById("hero-typed-text");
+  if (!el || typeof gsap === "undefined") return;
+
+  const taglines = [
+    "scanning 8 portals for ML intern opportunities",
+    "evaluating FraudLens scam heuristics & 94.2% precision",
+    "auto-generating tailored cover letters in real-time",
+    "24 verified tech opportunities queued for review"
+  ];
+  let idx = 0;
+
+  function cycle() {
+    gsap.delayedCall(2.8, () => {
+      const cur = taglines[idx];
+      idx = (idx + 1) % taglines.length;
+      const nxt = taglines[idx];
+      const tracker = { n: cur.length };
+
+      gsap.timeline({ onComplete: cycle })
+        // Backspace
+        .to(tracker, {
+          n: 0,
+          duration: cur.length * 0.02,
+          ease: "none",
+          onUpdate: () => {
+            el.innerText = cur.slice(0, Math.round(tracker.n)) || "\u200B";
+          }
+        })
+        // Type forward
+        .to(tracker, {
+          n: nxt.length,
+          duration: nxt.length * 0.035,
+          ease: "none",
+          onUpdate: () => {
+            el.innerText = nxt.slice(0, Math.round(tracker.n)) || "\u200B";
+          }
+        });
+    });
+  }
+  cycle();
+}
+
+// ============================================================================
+// 3. GSAP MOTION SUITE (Exact Specs)
 // ============================================================================
 
 function triggerDashboardGSAP() {
@@ -340,7 +448,7 @@ function animateJobsGSAP() {
 }
 
 // ============================================================================
-// 3. THEME TOGGLE (0.2s CSS transition, localStorage)
+// 4. THEME TOGGLE (0.2s CSS transition, localStorage)
 // ============================================================================
 
 function initTheme() {
@@ -376,7 +484,7 @@ function toggleMobileMenu() {
 }
 
 // ============================================================================
-// 4. NAVIGATION (5 Numbered Screens)
+// 5. NAVIGATION (5 Numbered Screens)
 // ============================================================================
 
 function navigateTo(id) {
@@ -408,7 +516,7 @@ function navigateTo(id) {
 }
 
 // ============================================================================
-// 5. AGENT CONTROLS
+// 6. AGENT CONTROLS
 // ============================================================================
 
 function allowTodaysRun() {
@@ -474,7 +582,7 @@ function skipTopJob() {
 }
 
 // ============================================================================
-// 6. SCREEN 2: JOBS (OpenTrain Layout & Filter Bounce)
+// 7. SCREEN 2: JOBS (Filter Scale Bounce & OpenTrain Grid)
 // ============================================================================
 
 function filterJobs() {
@@ -634,7 +742,7 @@ function emailHRForJob(company) {
 }
 
 // ============================================================================
-// 7. SCREEN 3: APPLICATIONS & SLIDE PANEL (fromTo x:400->0 0.3s power3.out)
+// 8. SCREEN 3: APPLICATIONS & SLIDE PANEL (fromTo x:400->0 0.3s power3.out)
 // ============================================================================
 
 function switchAppTab(status) {
@@ -804,7 +912,7 @@ function submitCurrentApplication() {
 }
 
 // ============================================================================
-// 8. SCREEN 4: HR OUTREACH
+// 9. SCREEN 4: HR OUTREACH
 // ============================================================================
 
 function renderOutreachTable() {
@@ -904,7 +1012,7 @@ function markOutreachSent(company) {
 }
 
 // ============================================================================
-// 9. SCREEN 5: PROFILE & DROPZONE
+// 10. SCREEN 5: PROFILE & DROPZONE
 // ============================================================================
 
 function updateSliderLabel(val) {
@@ -959,7 +1067,7 @@ function handleBellClick() {
 }
 
 // ============================================================================
-// 10. TOAST & KEYBOARD LISTENERS
+// 11. TOAST & KEYBOARD LISTENERS
 // ============================================================================
 
 function showToast(msg) {
@@ -984,7 +1092,7 @@ function setupKeyboardListeners() {
 }
 
 // ============================================================================
-// 11. LIVE BACKEND SYNC
+// 12. LIVE BACKEND SYNC
 // ============================================================================
 
 async function fetchLiveBackendData() {

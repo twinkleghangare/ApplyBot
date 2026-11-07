@@ -1,6 +1,7 @@
 /* ==========================================================================
    ApplyBot — Design System & Stylesheet
    Strict Tokens, Zero Glassmorphism/Glow/Blur, Thin 1px Borders, GSAP + Three.js
+   Inspired by Haris Hamza Ali (particle physics + typewriter) & Cosmic Dark SaaS
    ========================================================================== */
 
 :root,
@@ -341,12 +342,14 @@ body {
 }
 
 /* ==========================================================================
-   SCREEN 1: DASHBOARD (Hero 60/40 Split + Three.js Starfield)
+   SCREEN 1: DASHBOARD (Hero 60/40 Split + Three.js Starfield + Cosmic Effects)
    ========================================================================== */
 
 .hero-container {
   position: relative;
   border-radius: var(--radius-card);
+  overflow: hidden;
+  padding: 12px 0 24px 0;
 }
 
 .hero-canvas-wrap {
@@ -362,6 +365,42 @@ body {
   display: block;
   width: 100% !important;
   height: 100% !important;
+}
+
+/* Shooting Stars / Comets (Image 1 Space Reference) */
+.comet-track {
+  position: absolute;
+  height: 1.5px;
+  background: linear-gradient(90deg, rgba(124, 92, 255, 0.8), rgba(48, 220, 151, 0.8), transparent);
+  border-radius: 9999px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.comet-1 {
+  width: 140px;
+  top: 15%;
+  left: 20%;
+  transform: rotate(-35deg);
+  animation: cometShoot 7s infinite ease-in-out;
+  animation-delay: 1.2s;
+}
+
+.comet-2 {
+  width: 100px;
+  top: 40%;
+  left: 55%;
+  transform: rotate(-35deg);
+  animation: cometShoot 9s infinite ease-in-out;
+  animation-delay: 4.5s;
+}
+
+@keyframes cometShoot {
+  0% { transform: translate(-80px, -60px) rotate(-35deg); opacity: 0; }
+  10% { opacity: 0.9; }
+  25% { transform: translate(220px, 160px) rotate(-35deg); opacity: 0; }
+  100% { opacity: 0; }
 }
 
 .hero-split-grid {
@@ -414,6 +453,19 @@ body {
   font-weight: 600;
   color: var(--mint);
   margin-bottom: 24px;
+  min-height: 28px;
+}
+
+.typed-cursor {
+  font-weight: 300;
+  color: var(--mint);
+  animation: blinkCursor 0.8s infinite;
+  margin-left: 2px;
+}
+
+@keyframes blinkCursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 .hero-actions-row {
@@ -524,6 +576,25 @@ body {
   margin-bottom: 8px;
 }
 
+.top-card-company-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.floating-copilot {
+  color: var(--mint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: copilotFloat 3s infinite ease-in-out;
+}
+
+@keyframes copilotFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(3deg); }
+}
+
 .top-company-name {
   font-size: 15px;
   font-weight: 800;
@@ -547,6 +618,17 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+/* Glowing Planetary Horizon Arc (Image 2 Reference) */
+.horizon-arc {
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(124, 92, 255, 0.4) 30%, rgba(48, 220, 151, 0.5) 50%, rgba(124, 92, 255, 0.4) 70%, transparent);
+  pointer-events: none;
 }
 
 /* ==========================================================================

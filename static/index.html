@@ -66,9 +66,13 @@
       <div class="section-label">01 — DASHBOARD</div>
       <hr class="section-divider">
 
-      <!-- Hero Section with Contained Three.js Particle Starfield -->
+      <!-- Hero Section with Contained Three.js Particle Starfield + Cosmic Effects -->
       <div class="hero-container" id="hero-wrapper">
         <div class="hero-canvas-wrap" id="hero-canvas-container" aria-hidden="true"></div>
+
+        <!-- Shooting Star Streaks (Image 1 Space Reference) -->
+        <div class="comet-track comet-1" aria-hidden="true"></div>
+        <div class="comet-track comet-2" aria-hidden="true"></div>
 
         <div class="hero-split-grid">
           <!-- Left Column (60%) -->
@@ -79,7 +83,11 @@
             </div>
 
             <h1 class="hero-heading hero-anim-item">Good morning, Twinkle.</h1>
-            <p class="hero-subtitle hero-anim-item">Agent scanned 8 portals. 24 new opportunities found.</p>
+
+            <!-- Interactive Typewriter Tagline (Haris Hamza Ali & Space Reference) -->
+            <p class="hero-subtitle hero-anim-item">
+              Agent is <span class="typed-text" id="hero-typed-text">scanning 8 portals for ML intern opportunities</span><span class="typed-cursor" aria-hidden="true">|</span>
+            </p>
 
             <div class="hero-actions-row hero-anim-item">
               <button class="btn btn-violet" id="btn-allow-run" onclick="allowTodaysRun()">
@@ -135,7 +143,17 @@
             <!-- Top Pending Job Card Compact -->
             <div class="card top-pending-card hero-anim-item" id="top-pending-card">
               <div class="top-card-header">
-                <span class="top-company-name">Sprinto</span>
+                <div class="top-card-company-wrap">
+                  <div class="floating-copilot" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="9"></circle>
+                      <circle cx="9" cy="10" r="1" fill="currentColor"></circle>
+                      <circle cx="15" cy="10" r="1" fill="currentColor"></circle>
+                      <path d="M8 15s1.5 2 4 2 4-2 4-2"></path>
+                    </svg>
+                  </div>
+                  <span class="top-company-name">Sprinto</span>
+                </div>
                 <span class="badge badge-verified mono">✓ VERIFIED</span>
               </div>
               <h3 class="top-role-title">AI/ML Engineer Intern</h3>
@@ -147,6 +165,9 @@
             </div>
           </div>
         </div>
+
+        <!-- Glowing Planetary Horizon Wireframe Arc (Image 2 Reference) -->
+        <div class="horizon-arc" aria-hidden="true"></div>
       </div>
     </section>
 
