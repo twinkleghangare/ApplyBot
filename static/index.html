@@ -62,83 +62,88 @@
   <main class="container">
 
     <!-- SCREEN 1: DASHBOARD -->
-    <section id="section-dashboard" class="page-section active animate-hero">
+    <section id="section-dashboard" class="page-section active">
       <div class="section-label">01 — DASHBOARD</div>
       <hr class="section-divider">
 
-      <div class="hero-split-grid">
-        <!-- Left Column (60%) -->
-        <div class="hero-left-col">
-          <div class="status-indicator-row">
-            <span class="status-dot"></span>
-            <span class="status-text mono" id="agent-status-label">Agent Online · Ready for Execution</span>
+      <!-- Hero Section with Contained Three.js Particle Starfield -->
+      <div class="hero-container" id="hero-wrapper">
+        <div class="hero-canvas-wrap" id="hero-canvas-container" aria-hidden="true"></div>
+
+        <div class="hero-split-grid">
+          <!-- Left Column (60%) -->
+          <div class="hero-left-col">
+            <div class="status-indicator-row hero-anim-item">
+              <span class="status-dot"></span>
+              <span class="status-text mono" id="agent-status-label">Agent Online · Ready for Execution</span>
+            </div>
+
+            <h1 class="hero-heading hero-anim-item">Good morning, Twinkle.</h1>
+            <p class="hero-subtitle hero-anim-item">Agent scanned 8 portals. 24 new opportunities found.</p>
+
+            <div class="hero-actions-row hero-anim-item">
+              <button class="btn btn-violet" id="btn-allow-run" onclick="allowTodaysRun()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                <span>▶ Allow Today's Run</span>
+              </button>
+              <button class="btn btn-ghost" id="btn-pause-agent" onclick="pauseAgent()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="6" y="4" width="4" height="16"></rect>
+                  <rect x="14" y="4" width="4" height="16"></rect>
+                </svg>
+                <span>⏸ Pause</span>
+              </button>
+            </div>
+
+            <!-- 4 Stat Cards (2x2 Grid) -->
+            <div class="stat-cards-grid">
+              <div class="stat-card">
+                <span class="stat-number mono" id="stat-discovered" data-target="59">0</span>
+                <span class="stat-name mono">Discovered</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-number mono" id="stat-verified" data-target="52">0</span>
+                <span class="stat-name mono">Verified</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-number mono" id="stat-match" data-target="94" data-suffix="%">0%</span>
+                <span class="stat-name mono">High Match</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-number mono" id="stat-pending" data-target="12">0</span>
+                <span class="stat-name mono">Pending</span>
+              </div>
+            </div>
           </div>
 
-          <h1 class="hero-heading">Good morning, Twinkle.</h1>
-          <p class="hero-subtitle">Agent scanned 8 portals. 24 new opportunities found.</p>
+          <!-- Right Column (40%) -->
+          <div class="hero-right-col">
+            <!-- Daily Target Gauge Card -->
+            <div class="card gauge-card hero-anim-item">
+              <div class="gauge-head">
+                <span class="gauge-label mono">Daily Target</span>
+                <span class="gauge-score mono" id="gauge-score-text">3 / 25 applied today</span>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="target-progress-bar"></div>
+              </div>
+              <div class="gauge-sub mono" id="target-gauge-sub">12% completed towards daily target</div>
+            </div>
 
-          <div class="hero-actions-row">
-            <button class="btn btn-violet" id="btn-allow-run" onclick="allowTodaysRun()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
-              <span>▶ Allow Today's Run</span>
-            </button>
-            <button class="btn btn-ghost" id="btn-pause-agent" onclick="pauseAgent()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="6" y="4" width="4" height="16"></rect>
-                <rect x="14" y="4" width="4" height="16"></rect>
-              </svg>
-              <span>⏸ Pause</span>
-            </button>
-          </div>
-
-          <!-- 4 Stat Cards (2x2 Grid) -->
-          <div class="stat-cards-grid">
-            <div class="stat-card">
-              <span class="stat-number mono" id="stat-discovered" data-target="59">0</span>
-              <span class="stat-name mono">Discovered</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-number mono" id="stat-verified" data-target="52">0</span>
-              <span class="stat-name mono">Verified</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-number mono" id="stat-match" data-target="94" data-suffix="%">0%</span>
-              <span class="stat-name mono">High Match</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-number mono" id="stat-pending" data-target="12">0</span>
-              <span class="stat-name mono">Pending</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right Column (40%) -->
-        <div class="hero-right-col">
-          <!-- Daily Target Gauge Card -->
-          <div class="card gauge-card">
-            <div class="gauge-head">
-              <span class="gauge-label mono">Daily Target</span>
-              <span class="gauge-score mono" id="gauge-score-text">3 / 25 applied today</span>
-            </div>
-            <div class="progress-bar-container">
-              <div class="progress-bar-fill" id="target-progress-bar"></div>
-            </div>
-            <div class="gauge-sub mono" id="target-gauge-sub">12% completed towards daily target</div>
-          </div>
-
-          <!-- Top Pending Job Card Compact -->
-          <div class="card top-pending-card" id="top-pending-card">
-            <div class="top-card-header">
-              <span class="top-company-name">Sprinto</span>
-              <span class="badge badge-verified mono">✓ VERIFIED</span>
-            </div>
-            <h3 class="top-role-title">AI/ML Engineer Intern</h3>
-            <div class="top-card-tags mono">📍 Remote · 🏢 Startup · 💰 ₹25k/mo · 94% Match</div>
-            <div class="top-card-actions">
-              <button class="btn btn-violet btn-sm" onclick="reviewJob('Sprinto')">Review &amp; Apply</button>
-              <button class="btn btn-ghost btn-sm" onclick="skipTopJob()">Skip</button>
+            <!-- Top Pending Job Card Compact -->
+            <div class="card top-pending-card hero-anim-item" id="top-pending-card">
+              <div class="top-card-header">
+                <span class="top-company-name">Sprinto</span>
+                <span class="badge badge-verified mono">✓ VERIFIED</span>
+              </div>
+              <h3 class="top-role-title">AI/ML Engineer Intern</h3>
+              <div class="top-card-tags mono">📍 Remote · 🏢 Startup · 💰 ₹25k/mo · 94% Match</div>
+              <div class="top-card-actions">
+                <button class="btn btn-violet btn-sm" onclick="reviewJob('Sprinto')">Review &amp; Apply</button>
+                <button class="btn btn-ghost btn-sm" onclick="skipTopJob()">Skip</button>
+              </div>
             </div>
           </div>
         </div>
@@ -183,7 +188,6 @@
       <div class="section-label">03 — APPLICATIONS</div>
       <hr class="section-divider">
 
-      <!-- Tabs with animated indicator -->
       <div class="tabs-nav-container">
         <div class="tabs-list" id="app-tabs-list">
           <button class="tab-item active" id="tab-pending" onclick="switchAppTab('Pending')">Pending (2)</button>
@@ -193,7 +197,6 @@
         </div>
       </div>
 
-      <!-- Dense Table -->
       <div class="table-container card">
         <table class="dense-table">
           <thead>
@@ -356,7 +359,7 @@
 
   <!-- 380px SLIDE PANEL (ON ROW CLICK) -->
   <div class="panel-backdrop" id="side-panel-backdrop" onclick="closeSidePanelOnBackdrop(event)">
-    <aside class="slide-panel" onclick="event.stopPropagation()">
+    <aside class="slide-panel" id="slide-panel" onclick="event.stopPropagation()">
       <div class="panel-header">
         <div>
           <h3 class="panel-role-title" id="panel-role-title">AI/ML Engineer Intern</h3>
@@ -407,6 +410,13 @@
   </div>
 
   <div class="toast-shelf" id="toast-shelf"></div>
+
+  <!-- CDN: Three.js and GSAP with ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <!-- App Controller -->
   <script src="app.js"></script>
 </body>
 </html>

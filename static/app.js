@@ -1,5 +1,8 @@
+// ============================================================================
 // ApplyBot — Autonomous AI Career Agent Controller
 // Candidate: Twinkle Ghangare (B.Tech AI & Data Science, KDK College Nagpur, CGPA 8.19)
+// Three.js (300 particles) + GSAP & ScrollTrigger Animations
+// ============================================================================
 
 const JOBS = [
   {
@@ -104,11 +107,15 @@ let dailyAppliedCount = 3;
 const dailyTargetCount = 25;
 let lastScrollY = 0;
 
+// Three.js State
+let threeScene, threeCamera, threeRenderer, starPoints;
+let starfieldAnimId = null;
+let isStarfieldActive = true;
+
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
-  initNavbarScroll();
-  animateStatCounters();
-  initTargetProgressBar();
+  initGSAPNavbar();
+  initThreeStarfield();
   renderJobsGrid();
   renderApplicationsTable();
   renderOutreachTable();
@@ -116,9 +123,226 @@ document.addEventListener("DOMContentLoaded", () => {
   setupKeyboardListeners();
   setupDropzone();
   fetchLiveBackendData();
+
+  // Run initial GSAP entry animations
+  triggerDashboardGSAP();
 });
 
-// 1. THEME TOGGLE (200ms Transition, localStorage)
+// ============================================================================
+// 1. THREE.JS: SUBTLE 300-PARTICLE STAR FIELD BEHIND DASHBOARD HERO
+// ============================================================================
+
+function initThreeStarfield() {
+  const container = document.getElementById("hero-canvas-container");
+  if (!container || window.innerWidth < 768 || typeof THREE === "undefined") {
+    return;
+  }
+
+  const width = container.clientWidth || 800;
+  const height = container.clientHeight || 450;
+
+  threeScene = new THREE.Scene();
+  threeCamera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
+  threeCamera.position.z = 220;
+
+  threeRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "low-power" });
+  threeRenderer.setSize(width, height);
+  threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  container.appendChild(threeRenderer.domElement);
+
+  // Exactly 300 particles
+  const particleCount = 300;
+  const positions = new Float32Array(particleCount * 3);
+  const colors = new Float32Array(particleCount * 3);
+
+  const color1 = new THREE.Color(0x7C5CFF); // Violet
+  const color2 = new THREE.Color(0x30DC97); // Mint
+  const color3 = new THREE.Color(0x9A9AA5); // Subtle silver
+
+  for (let i = 0; i < particleCount; i++) {
+    positions[i * 3] = (Math.random() - 0.5) * 550;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 350;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 200;
+
+    const r = Math.random();
+    const c = r < 0.4 ? color1 : r < 0.7 ? color2 : color3;
+    colors[i * 3] = c.r;
+    colors[i * 3 + 1] = c.g;
+    colors[i * 3 + 2] = c.b;
+  }
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+  const material = new THREE.PointsMaterial({
+    size: 2.2,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.55
+  });
+
+  starPoints = new THREE.Points(geometry, material);
+  threeScene.add(starPoints);
+
+  function animateStars() {
+    if (!isStarfieldActive) return;
+    starfieldAnimId = requestAnimationFrame(animateStars);
+    if (starPoints) {
+      starPoints.rotation.y += 0.0004;
+      starPoints.rotation.x += 0.0002;
+    }
+    threeRenderer.render(threeScene, threeCamera);
+  }
+  animateStars();
+
+  // Pause when tab hidden
+  document.addEventListener("visibilitychange", () => {
+    isStarfieldActive = !document.hidden;
+    if (isStarfieldActive) {
+      cancelAnimationFrame(starfieldAnimId);
+      animateStars();
+    }
+  });
+
+  // Resize listener
+  window.addEventListener("resize", () => {
+    if (window.innerWidth < 768) {
+      if (threeRenderer && threeRenderer.domElement) {
+        threeRenderer.domElement.style.display = "none";
+      }
+      isStarfieldActive = false;
+      return;
+    }
+    if (threeRenderer && threeRenderer.domElement) {
+      threeRenderer.domElement.style.display = "block";
+    }
+    const nw = container.clientWidth || 800;
+    const nh = container.clientHeight || 450;
+    threeCamera.aspect = nw / nh;
+    threeCamera.updateProjectionMatrix();
+    threeRenderer.setSize(nw, nh);
+  });
+}
+
+// ============================================================================
+// 2. GSAP ANIMATIONS
+// ============================================================================
+
+function triggerDashboardGSAP() {
+  if (typeof gsap === "undefined") return;
+
+  // 1. Hero — gsap.from title/subtitle/buttons stagger 0.2s
+  gsap.from(".hero-anim-item", {
+    opacity: 0,
+    y: 18,
+    stagger: 0.2,
+    duration: 0.55,
+    ease: "power2.out"
+  });
+
+  // 2. Stats — stagger 0.1s scale+fade on load
+  gsap.from(".stat-card", {
+    opacity: 0,
+    scale: 0.95,
+    stagger: 0.1,
+    duration: 0.5,
+    ease: "back.out(1.5)"
+  });
+
+  // 3. Counters — gsap count-up 1.5s
+  animateCountersGSAP();
+
+  // 4. Progress — gsap.to width 1.2s ease-out
+  updateTargetProgressGSAP(dailyAppliedCount, dailyTargetCount);
+}
+
+function animateCountersGSAP() {
+  if (typeof gsap === "undefined") return;
+
+  document.querySelectorAll(".stat-number[data-target]").forEach((el) => {
+    const target = parseFloat(el.getAttribute("data-target")) || 0;
+    const suffix = el.getAttribute("data-suffix") || "";
+    const counterObj = { val: 0 };
+
+    gsap.to(counterObj, {
+      val: target,
+      duration: 1.5,
+      ease: "power2.out",
+      onUpdate: () => {
+        el.innerText = Math.round(counterObj.val) + suffix;
+      }
+    });
+  });
+}
+
+function updateTargetProgressGSAP(count, target) {
+  const pct = Math.round((count / target) * 100);
+  const scoreText = document.getElementById("gauge-score-text");
+  const sub = document.getElementById("target-gauge-sub");
+  if (scoreText) scoreText.innerText = `${count} / ${target} applied today`;
+  if (sub) sub.innerText = `${pct}% completed towards daily target`;
+
+  if (typeof gsap !== "undefined") {
+    // Progress — gsap.to width 1.2s ease-out
+    gsap.to("#target-progress-bar", {
+      width: pct + "%",
+      duration: 1.2,
+      ease: "power2.out"
+    });
+  } else {
+    const bar = document.getElementById("target-progress-bar");
+    if (bar) bar.style.width = pct + "%";
+  }
+}
+
+// 5. Navbar — ScrollTrigger hide/show y:-56px 0.3s
+function initGSAPNavbar() {
+  window.addEventListener("scroll", () => {
+    const cur = window.scrollY;
+    if (typeof gsap !== "undefined") {
+      if (cur > 65 && cur > lastScrollY) {
+        gsap.to("#main-navbar", { y: -56, duration: 0.3, ease: "power2.out" });
+      } else {
+        gsap.to("#main-navbar", { y: 0, duration: 0.3, ease: "power2.out" });
+      }
+    }
+    lastScrollY = cur;
+  });
+}
+
+// 6. Jobs — ScrollTrigger fade-up stagger 0.08s
+function animateJobsGSAP() {
+  if (typeof gsap === "undefined") return;
+
+  if (typeof ScrollTrigger !== "undefined") {
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.from(".job-card", {
+      y: 20,
+      opacity: 0,
+      stagger: 0.08,
+      duration: 0.4,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: "#jobs-grid",
+        start: "top 85%"
+      }
+    });
+  } else {
+    gsap.from(".job-card", {
+      y: 20,
+      opacity: 0,
+      stagger: 0.08,
+      duration: 0.4,
+      ease: "power2.out"
+    });
+  }
+}
+
+// ============================================================================
+// 3. THEME TOGGLE (0.2s CSS transition, localStorage)
+// ============================================================================
+
 function initTheme() {
   const savedTheme = localStorage.getItem("applybot_theme") || "dark";
   document.documentElement.setAttribute("data-theme", savedTheme);
@@ -146,26 +370,15 @@ function updateThemeIcon(theme) {
   }
 }
 
-// 2. NAVBAR SCROLL & MOBILE MENU
-function initNavbarScroll() {
-  const navbar = document.getElementById("main-navbar");
-  window.addEventListener("scroll", () => {
-    const cur = window.scrollY;
-    if (cur > 70 && cur > lastScrollY) {
-      navbar.classList.add("navbar-hidden");
-    } else {
-      navbar.classList.remove("navbar-hidden");
-    }
-    lastScrollY = cur;
-  });
-}
-
 function toggleMobileMenu() {
   const m = document.getElementById("nav-menu");
   if (m) m.classList.toggle("open");
 }
 
-// 3. NAVIGATION (Numbered Sections)
+// ============================================================================
+// 4. NAVIGATION (5 Numbered Screens)
+// ============================================================================
+
 function navigateTo(id) {
   ["dashboard", "jobs", "applications", "outreach", "profile"].forEach((s) => {
     const sec = document.getElementById(`section-${s}`);
@@ -179,9 +392,6 @@ function navigateTo(id) {
 
   if (target) {
     target.classList.add("active");
-    target.classList.remove("animate-hero");
-    void target.offsetWidth;
-    target.classList.add("animate-hero");
   }
   if (targetNav) targetNav.classList.add("active");
 
@@ -191,52 +401,16 @@ function navigateTo(id) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 
   if (id === "dashboard") {
-    animateStatCounters();
-    initTargetProgressBar();
+    triggerDashboardGSAP();
+  } else if (id === "jobs") {
+    animateJobsGSAP();
   }
 }
 
-// 4. STAT COUNTERS & TARGET GAUGE
-function animateStatCounters() {
-  document.querySelectorAll(".stat-number[data-target]").forEach((el) => {
-    const target = parseInt(el.getAttribute("data-target"), 10);
-    const suffix = el.getAttribute("data-suffix") || "";
-    let start = 0;
-    const steps = 40;
-    const inc = target / steps;
-    const timer = setInterval(() => {
-      start += inc;
-      if (start >= target) {
-        el.innerText = target + suffix;
-        clearInterval(timer);
-      } else {
-        el.innerText = Math.round(start) + suffix;
-      }
-    }, 20);
-  });
-}
-
-function initTargetProgressBar() {
-  updateTargetProgress(dailyAppliedCount, dailyTargetCount);
-}
-
-function updateTargetProgress(count, target) {
-  const pct = Math.round((count / target) * 100);
-  const scoreText = document.getElementById("gauge-score-text");
-  const bar = document.getElementById("target-progress-bar");
-  const sub = document.getElementById("target-gauge-sub");
-
-  if (scoreText) scoreText.innerText = `${count} / ${target} applied today`;
-  if (sub) sub.innerText = `${pct}% completed towards daily target`;
-  if (bar) {
-    bar.style.width = "0%";
-    setTimeout(() => {
-      bar.style.width = `${pct}%`;
-    }, 50);
-  }
-}
-
+// ============================================================================
 // 5. AGENT CONTROLS
+// ============================================================================
+
 function allowTodaysRun() {
   const btn = document.getElementById("btn-allow-run");
   if (!btn) return;
@@ -246,7 +420,7 @@ function allowTodaysRun() {
 
   setTimeout(() => {
     dailyAppliedCount = Math.min(dailyTargetCount, dailyAppliedCount + 1);
-    updateTargetProgress(dailyAppliedCount, dailyTargetCount);
+    updateTargetProgressGSAP(dailyAppliedCount, dailyTargetCount);
     btn.innerHTML = `
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <polygon points="5 3 19 12 5 21 5 3"></polygon>
@@ -267,8 +441,25 @@ function pauseAgent() {
 function skipTopJob() {
   const card = document.getElementById("top-pending-card");
   if (card) {
-    card.classList.add("skipping");
-    setTimeout(() => {
+    if (typeof gsap !== "undefined") {
+      gsap.to(card, {
+        x: 40,
+        opacity: 0,
+        duration: 0.25,
+        ease: "power2.in",
+        onComplete: () => {
+          card.innerHTML = `
+            <div class="top-card-header">
+              <span class="top-company-name">Queue Clear</span>
+              <span class="badge badge-verified mono">✓ COMPLETE</span>
+            </div>
+            <h3 class="top-role-title">All high-priority jobs reviewed</h3>
+            <div class="top-card-tags mono">Visit the Jobs section to discover new matches.</div>
+          `;
+          gsap.fromTo(card, { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.25 });
+        }
+      });
+    } else {
       card.innerHTML = `
         <div class="top-card-header">
           <span class="top-company-name">Queue Clear</span>
@@ -277,13 +468,15 @@ function skipTopJob() {
         <h3 class="top-role-title">All high-priority jobs reviewed</h3>
         <div class="top-card-tags mono">Visit the Jobs section to discover new matches.</div>
       `;
-      card.classList.remove("skipping");
-    }, 200);
+    }
   }
   showToast("Skipped top priority pending job.");
 }
 
-// 6. JOBS (OpenTrain Layout)
+// ============================================================================
+// 6. SCREEN 2: JOBS (OpenTrain Layout & Filter Bounce)
+// ============================================================================
+
 function filterJobs() {
   const search = (document.getElementById("jobs-search-input")?.value || "").toLowerCase();
 
@@ -310,6 +503,11 @@ function filterJobs() {
 }
 
 function setFilter(cat, val, btn) {
+  // Filter pill — scale bounce 0.08s on click
+  if (typeof gsap !== "undefined" && btn) {
+    gsap.fromTo(btn, { scale: 0.92 }, { scale: 1, duration: 0.12, ease: "back.out(2)" });
+  }
+
   if (cat === "type") {
     activeTypeFilter = val;
     document.querySelectorAll("#type-pills-row .filter-pill").forEach((b) => b.classList.remove("active"));
@@ -399,15 +597,26 @@ function renderJobsGrid() {
     .join("");
 }
 
+// Skip card — x:40 opacity:0 0.25s then remove
 function skipJob(company) {
   const cardId = `card-${company.replace(/\\s+/g, "")}`;
   const el = document.getElementById(cardId);
   if (el) {
-    el.classList.add("skipping");
-    setTimeout(() => {
+    if (typeof gsap !== "undefined") {
+      gsap.to(el, {
+        x: 40,
+        opacity: 0,
+        duration: 0.25,
+        ease: "power2.in",
+        onComplete: () => {
+          currentJobs = currentJobs.filter((j) => j.company !== company);
+          renderJobsGrid();
+        }
+      });
+    } else {
       currentJobs = currentJobs.filter((j) => j.company !== company);
       renderJobsGrid();
-    }, 200);
+    }
   }
   showToast(`Skipped ${company}`);
 }
@@ -424,7 +633,10 @@ function emailHRForJob(company) {
   showToast(`Drafted outreach email for ${company}`);
 }
 
-// 7. APPLICATIONS & 380px SLIDE PANEL
+// ============================================================================
+// 7. SCREEN 3: APPLICATIONS & SLIDE PANEL (fromTo x:400->0 0.3s power3.out)
+// ============================================================================
+
 function switchAppTab(status) {
   activeAppTab = status;
   ["Pending", "Applied", "Interview", "Rejected"].forEach((t) => {
@@ -489,6 +701,7 @@ function openSidePanel(company, role) {
   };
 
   const backdrop = document.getElementById("side-panel-backdrop");
+  const panel = document.getElementById("slide-panel");
   const roleEl = document.getElementById("panel-role-title");
   const compEl = document.getElementById("panel-company-name");
   const bulletsEl = document.getElementById("panel-cv-bullets");
@@ -524,11 +737,28 @@ LinkedIn: https://www.linkedin.com/in/twinkleghangare`;
 
   switchPanelTab("cv");
   if (backdrop) backdrop.classList.add("open");
+
+  // Panel open — fromTo x:400->0 0.3s power3.out
+  if (typeof gsap !== "undefined" && panel) {
+    gsap.fromTo(panel, { x: 400 }, { x: 0, duration: 0.3, ease: "power3.out" });
+  }
 }
 
 function closeSidePanel() {
-  const b = document.getElementById("side-panel-backdrop");
-  if (b) b.classList.remove("open");
+  const backdrop = document.getElementById("side-panel-backdrop");
+  const panel = document.getElementById("slide-panel");
+  if (typeof gsap !== "undefined" && panel) {
+    gsap.to(panel, {
+      x: 400,
+      duration: 0.25,
+      ease: "power3.in",
+      onComplete: () => {
+        if (backdrop) backdrop.classList.remove("open");
+      }
+    });
+  } else {
+    if (backdrop) backdrop.classList.remove("open");
+  }
 }
 
 function closeSidePanelOnBackdrop(e) {
@@ -552,7 +782,7 @@ function switchPanelTab(tabName) {
 function submitCurrentApplication() {
   closeSidePanel();
   dailyAppliedCount = Math.min(dailyTargetCount, dailyAppliedCount + 1);
-  updateTargetProgress(dailyAppliedCount, dailyTargetCount);
+  updateTargetProgressGSAP(dailyAppliedCount, dailyTargetCount);
 
   if (currentInspectingJob) {
     const existing = APPLICATIONS.find((a) => a.company === currentInspectingJob.company);
@@ -573,7 +803,10 @@ function submitCurrentApplication() {
   showToast(`✓ Applied to ${currentInspectingJob.company}! Daily total: ${dailyAppliedCount}/${dailyTargetCount}`);
 }
 
-// 8. HR OUTREACH
+// ============================================================================
+// 8. SCREEN 4: HR OUTREACH
+// ============================================================================
+
 function renderOutreachTable() {
   const tbody = document.getElementById("outreach-table-body");
   if (!tbody) return;
@@ -670,7 +903,10 @@ function markOutreachSent(company) {
   }
 }
 
-// 9. PROFILE & DROPZONE
+// ============================================================================
+// 9. SCREEN 5: PROFILE & DROPZONE
+// ============================================================================
+
 function updateSliderLabel(val) {
   const lbl = document.getElementById("slider-count-label");
   if (lbl) lbl.innerText = `${val} / day`;
@@ -722,7 +958,10 @@ function handleBellClick() {
   showToast("Notifications: 3 verified opportunities ready for review.");
 }
 
+// ============================================================================
 // 10. TOAST & KEYBOARD LISTENERS
+// ============================================================================
+
 function showToast(msg) {
   const shelf = document.getElementById("toast-shelf");
   if (!shelf) return;
@@ -744,7 +983,10 @@ function setupKeyboardListeners() {
   });
 }
 
+// ============================================================================
 // 11. LIVE BACKEND SYNC
+// ============================================================================
+
 async function fetchLiveBackendData() {
   try {
     const res = await fetch("/api/dashboard-stats");
@@ -757,16 +999,14 @@ async function fetchLiveBackendData() {
         const pendEl = document.getElementById("stat-pending");
         if (discEl && stats.total_jobs_discovered) {
           discEl.setAttribute("data-target", stats.total_jobs_discovered);
-          discEl.innerText = stats.total_jobs_discovered;
         }
         if (verEl && stats.verified_jobs) {
           verEl.setAttribute("data-target", stats.verified_jobs);
-          verEl.innerText = stats.verified_jobs;
         }
         if (pendEl && stats.pending_approvals) {
           pendEl.setAttribute("data-target", stats.pending_approvals);
-          pendEl.innerText = stats.pending_approvals;
         }
+        animateCountersGSAP();
       }
     }
   } catch (e) {}
