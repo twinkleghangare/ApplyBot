@@ -97,7 +97,7 @@ body::before {
 
 /* Container */
 .container {
-  max-width: 1280px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 0 24px;
   position: relative;
@@ -110,23 +110,23 @@ body::before {
 
 .navbar-wrapper {
   position: sticky;
-  top: 16px;
+  top: 14px;
   z-index: 100;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(11, 15, 25, 0.88);
+  background: rgba(11, 15, 25, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-full);
-  padding: 10px 20px;
-  box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.6);
-  gap: 16px;
+  padding: 8px 18px;
+  box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.65);
+  gap: 12px;
 }
 
 .brand-link {
@@ -157,14 +157,14 @@ body::before {
   align-items: center;
   background: rgba(255, 255, 255, 0.04);
   border-radius: var(--radius-full);
-  padding: 4px;
-  gap: 4px;
+  padding: 3px;
+  gap: 3px;
 }
 
 .nav-pill {
-  padding: 7px 16px;
+  padding: 6px 14px;
   border-radius: var(--radius-full);
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   font-weight: 600;
   color: var(--text-secondary);
   background: transparent;
@@ -173,7 +173,7 @@ body::before {
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   white-space: nowrap;
 }
 
@@ -192,8 +192,8 @@ body::before {
 .nav-pill-badge {
   background: rgba(255, 255, 255, 0.12);
   color: var(--text-primary);
-  font-size: 0.72rem;
-  padding: 1px 7px;
+  font-size: 0.7rem;
+  padding: 1px 6px;
   border-radius: var(--radius-full);
   font-family: var(--font-mono);
 }
@@ -201,15 +201,72 @@ body::before {
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
 /* ==========================================================================
-   Hero Section & Copilot Command Center (JobCopilot & Career-Ops Style)
+   Telemetry Ticker Bar (Live AI Event Stream)
+   ========================================================================== */
+
+.telemetry-ticker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(6, 182, 212, 0.04);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  border-radius: var(--radius-full);
+  padding: 6px 16px;
+  margin-bottom: 24px;
+  font-size: 0.8rem;
+  gap: 12px;
+}
+
+.telemetry-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.telemetry-badge {
+  background: rgba(6, 182, 212, 0.2);
+  color: var(--accent-cyan);
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.04em;
+  font-family: var(--font-mono);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.telemetry-text {
+  color: #CBD5E1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.telemetry-link {
+  color: var(--accent-cyan);
+  cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.telemetry-link:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   Hero Section & Copilot Command Center
    ========================================================================== */
 
 .hero-section {
-  padding: 16px 0 28px 0;
+  padding: 12px 0 24px 0;
   text-align: center;
 }
 
@@ -217,14 +274,14 @@ body::before {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 14px;
+  padding: 5px 14px;
   background: rgba(16, 185, 129, 0.1);
   border: 1px solid var(--border-emerald);
   border-radius: var(--radius-full);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: #34D399;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   box-shadow: 0 0 16px rgba(16, 185, 129, 0.15);
 }
 
@@ -243,12 +300,12 @@ body::before {
 }
 
 .hero-title {
-  font-size: clamp(2.3rem, 4.2vw, 3.6rem);
+  font-size: clamp(2.2rem, 4vw, 3.5rem);
   font-weight: 800;
   line-height: 1.12;
   letter-spacing: -0.035em;
   color: #fff;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   max-width: 920px;
   margin-left: auto;
   margin-right: auto;
@@ -261,30 +318,30 @@ body::before {
 }
 
 .hero-subtitle {
-  font-size: 1.05rem;
+  font-size: 1.02rem;
   color: var(--text-secondary);
-  max-width: 740px;
-  margin: 0 auto 28px auto;
+  max-width: 760px;
+  margin: 0 auto 24px auto;
   line-height: 1.55;
 }
 
 /* ==========================================================================
-   Command Center Card (Daily Quota Gauge & Batch Copilot Controls)
+   Command Center Card
    ========================================================================== */
 
 .command-card {
   background: var(--bg-card);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-xl);
-  padding: 24px 30px;
+  padding: 22px 28px;
   box-shadow: var(--shadow-card);
   display: grid;
-  grid-template-columns: 1.25fr 1.5fr 1.2fr;
+  grid-template-columns: 1.2fr 1.6fr 1.2fr;
   align-items: center;
   gap: 24px;
   position: relative;
   overflow: hidden;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 
 .command-card::before {
@@ -312,7 +369,7 @@ body::before {
 }
 
 .target-title {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -351,7 +408,7 @@ body::before {
 }
 
 .target-subtext {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: var(--accent-emerald);
   display: flex;
   align-items: center;
@@ -362,7 +419,7 @@ body::before {
 .command-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
+  gap: 12px;
   text-align: center;
   border-right: 1px solid var(--border-subtle);
   padding-right: 22px;
@@ -387,7 +444,7 @@ body::before {
 .stat-num.violet { color: #A78BFA; }
 
 .stat-label {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 700;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -408,7 +465,7 @@ body::before {
   border-radius: var(--radius-md);
   padding: 12px 18px;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -434,9 +491,9 @@ body::before {
   color: var(--text-secondary);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-md);
-  padding: 10px 16px;
+  padding: 9px 15px;
   font-weight: 600;
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -452,7 +509,7 @@ body::before {
 }
 
 /* ==========================================================================
-   Filter & Batch Bar (JobStream & LeezSpace Style)
+   Filter & Batch Bar
    ========================================================================== */
 
 .filter-bar {
@@ -461,7 +518,7 @@ body::before {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   padding: 14px 18px;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
@@ -501,7 +558,7 @@ body::before {
 }
 
 .filter-chip {
-  padding: 6px 13px;
+  padding: 5px 12px;
   border-radius: var(--radius-full);
   font-size: 0.78rem;
   font-weight: 600;
@@ -537,7 +594,7 @@ body::before {
 }
 
 /* ==========================================================================
-   Verified Job Cards (OpenTrain AI + FraudLens + Career-Ops Rubric)
+   Verified Job Cards (FraudLens + Career-Ops)
    ========================================================================== */
 
 .jobs-grid {
@@ -666,7 +723,7 @@ body::before {
   gap: 5px;
 }
 
-/* AI Match Box (Career-Ops Explainable Evaluation) */
+/* AI Match Box */
 .ai-match-box {
   background: rgba(6, 182, 212, 0.05);
   border: 1px solid rgba(6, 182, 212, 0.2);
@@ -699,7 +756,14 @@ body::before {
   color: #38BDF8;
 }
 
-/* Screening Answers Pill (JobHuntr Style) */
+/* Screening QA Pill & Feature Pills */
+.feature-quick-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .qa-preview-pill {
   display: inline-flex;
   align-items: center;
@@ -709,15 +773,35 @@ body::before {
   color: #A78BFA;
   background: rgba(139, 92, 246, 0.08);
   border: 1px solid rgba(139, 92, 246, 0.25);
-  padding: 3px 8px;
+  padding: 3px 9px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .qa-preview-pill:hover {
-  background: rgba(139, 92, 246, 0.15);
+  background: rgba(139, 92, 246, 0.18);
   color: #C4B5FD;
+}
+
+.rubric-preview-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #38BDF8;
+  background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  padding: 3px 9px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.rubric-preview-pill:hover {
+  background: rgba(6, 182, 212, 0.18);
+  color: #7DD3FC;
 }
 
 /* Skills tags */
@@ -795,7 +879,7 @@ body::before {
 }
 
 /* ==========================================================================
-   Slideout Drawer: Complete Copilot Application Pack (JobCopilot + JobHuntr)
+   Slideout Drawer: Complete Copilot Application Pack
    ========================================================================== */
 
 .drawer-backdrop {
@@ -983,7 +1067,7 @@ body::before {
   font-weight: 700;
 }
 
-/* Screening Q&A Cards (JobHuntr Style) */
+/* Screening Q&A Cards */
 .qa-card {
   background: rgba(0, 0, 0, 0.25);
   border: 1px solid var(--border-subtle);
@@ -1051,83 +1135,195 @@ body::before {
 }
 
 /* ==========================================================================
-   Outreach & Pipeline Cards
+   Interactive Kanban Pipeline Board (Career-Ops Pipeline)
    ========================================================================== */
 
-.outreach-grid {
+.kanban-board {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
   margin-bottom: 40px;
 }
 
-.outreach-card {
+.kanban-column {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  padding: 22px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  box-shadow: var(--shadow-card);
-  transition: all 0.2s ease;
+  gap: 14px;
+  min-height: 480px;
 }
 
-.outreach-card:hover {
-  border-color: rgba(139, 92, 246, 0.4);
-  transform: translateY(-2px);
+.kanban-col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 10px;
 }
 
-.email-preview-box {
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 14px;
+.kanban-col-title {
   font-size: 0.82rem;
-  color: #CBD5E1;
-  line-height: 1.5;
-  white-space: pre-line;
-  max-height: 140px;
-  overflow-y: auto;
-}
-
-/* Tracker Table */
-.tracker-container {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-card);
-  margin-bottom: 40px;
-}
-
-.tracker-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-
-.tracker-table th {
-  background: rgba(255, 255, 255, 0.03);
-  padding: 14px 18px;
-  font-size: 0.76rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-muted);
-  border-bottom: 1px solid var(--border-subtle);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.tracker-table td {
-  padding: 16px 18px;
-  font-size: 0.88rem;
+.kanban-col-badge {
+  background: rgba(255, 255, 255, 0.1);
   color: var(--text-primary);
-  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
 }
 
-.tracker-table tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
+.kanban-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  overflow-y: auto;
 }
+
+.kanban-item-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.kanban-item-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(6, 182, 212, 0.35);
+  transform: translateY(-1px);
+}
+
+.kanban-company {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.kanban-role {
+  font-size: 0.8rem;
+  color: var(--accent-cyan);
+}
+
+.kanban-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   Screening Q&A Studio Dedicated View
+   ========================================================================== */
+
+.studio-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.studio-job-list {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.studio-job-item {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.studio-job-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.studio-job-item.active {
+  background: rgba(6, 182, 212, 0.12);
+  border-color: rgba(6, 182, 212, 0.45);
+}
+
+.studio-qa-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ==========================================================================
+   Activity Telemetry Logs List
+   ========================================================================== */
+
+.logs-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 40px;
+  max-height: 560px;
+  overflow-y: auto;
+}
+
+.log-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-size: 0.84rem;
+}
+
+.log-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.log-badge.info { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); }
+.log-badge.success { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); }
+.log-badge.warning { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
 
 /* ==========================================================================
    Toast Notification
@@ -1171,19 +1367,31 @@ body::before {
 /* Utility / Responsive */
 .hidden { display: none !important; }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
+  .kanban-board {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .studio-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
   .command-card {
     grid-template-columns: 1fr;
     gap: 20px;
-    padding: 20px;
+    padding: 18px;
   }
   .command-target-box, .command-stats-grid {
     border-right: none;
     padding-right: 0;
     border-bottom: 1px solid var(--border-subtle);
-    padding-bottom: 20px;
+    padding-bottom: 18px;
   }
   .jobs-grid {
+    grid-template-columns: 1fr;
+  }
+  .kanban-board {
     grid-template-columns: 1fr;
   }
 }
