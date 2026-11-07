@@ -1,6 +1,6 @@
 /* ==========================================================================
-   ApplyBot AI · Elite Dark Theme Stylesheet
-   Zero-lag, Hardware-Accelerated CSS matching FraudLens, PrisainTech & LeezSpace
+   ApplyBot AI · Elite Career Copilot & Operating System Stylesheet
+   Zero-lag, Hardware-Accelerated CSS matching JobCopilot, Career-Ops & FraudLens
    ========================================================================== */
 
 :root {
@@ -14,6 +14,7 @@
   --border-medium: rgba(255, 255, 255, 0.12);
   --border-active: rgba(6, 182, 212, 0.45);
   --border-emerald: rgba(16, 185, 129, 0.45);
+  --border-violet: rgba(139, 92, 246, 0.45);
 
   --text-primary: #F1F5F9;
   --text-secondary: #94A3B8;
@@ -104,21 +105,21 @@ body::before {
 }
 
 /* ==========================================================================
-   Navigation Bar (PrisainTech Glass Pill Style)
+   Navigation Bar (JobCopilot Glass Pill Style)
    ========================================================================== */
 
 .navbar-wrapper {
   position: sticky;
   top: 16px;
   z-index: 100;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(11, 15, 25, 0.85);
+  background: rgba(11, 15, 25, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-medium);
@@ -134,7 +135,7 @@ body::before {
   gap: 10px;
   text-decoration: none;
   color: var(--text-primary);
-  font-weight: 700;
+  font-weight: 800;
   font-size: 1.15rem;
   letter-spacing: -0.02em;
 }
@@ -200,15 +201,15 @@ body::before {
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 /* ==========================================================================
-   Hero Section (PrisainTech Typography & FraudLens Status)
+   Hero Section & Copilot Command Center (JobCopilot & Career-Ops Style)
    ========================================================================== */
 
 .hero-section {
-  padding: 24px 0 36px 0;
+  padding: 16px 0 28px 0;
   text-align: center;
 }
 
@@ -223,7 +224,7 @@ body::before {
   font-size: 0.8rem;
   font-weight: 600;
   color: #34D399;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   box-shadow: 0 0 16px rgba(16, 185, 129, 0.15);
 }
 
@@ -242,13 +243,13 @@ body::before {
 }
 
 .hero-title {
-  font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+  font-size: clamp(2.3rem, 4.2vw, 3.6rem);
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1.12;
   letter-spacing: -0.035em;
   color: #fff;
-  margin-bottom: 16px;
-  max-width: 900px;
+  margin-bottom: 14px;
+  max-width: 920px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -260,30 +261,30 @@ body::before {
 }
 
 .hero-subtitle {
-  font-size: 1.08rem;
+  font-size: 1.05rem;
   color: var(--text-secondary);
-  max-width: 680px;
-  margin: 0 auto 36px auto;
-  line-height: 1.6;
+  max-width: 740px;
+  margin: 0 auto 28px auto;
+  line-height: 1.55;
 }
 
 /* ==========================================================================
-   Command Center Card (Hero Autopilot Gauge)
+   Command Center Card (Daily Quota Gauge & Batch Copilot Controls)
    ========================================================================== */
 
 .command-card {
   background: var(--bg-card);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-xl);
-  padding: 24px 32px;
+  padding: 24px 30px;
   box-shadow: var(--shadow-card);
   display: grid;
-  grid-template-columns: 1.2fr 1.6fr 1.1fr;
+  grid-template-columns: 1.25fr 1.5fr 1.2fr;
   align-items: center;
-  gap: 28px;
+  gap: 24px;
   position: relative;
   overflow: hidden;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
 }
 
 .command-card::before {
@@ -301,7 +302,7 @@ body::before {
   flex-direction: column;
   gap: 10px;
   border-right: 1px solid var(--border-subtle);
-  padding-right: 24px;
+  padding-right: 22px;
 }
 
 .target-header {
@@ -311,8 +312,8 @@ body::before {
 }
 
 .target-title {
-  font-size: 0.82rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
@@ -361,20 +362,20 @@ body::before {
 .command-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 14px;
   text-align: center;
   border-right: 1px solid var(--border-subtle);
-  padding-right: 24px;
+  padding-right: 22px;
 }
 
 .stat-item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .stat-num {
-  font-size: 1.6rem;
+  font-size: 1.55rem;
   font-weight: 800;
   color: #fff;
   font-family: var(--font-mono);
@@ -386,14 +387,14 @@ body::before {
 .stat-num.violet { color: #A78BFA; }
 
 .stat-label {
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-size: 0.7rem;
+  font-weight: 700;
   text-transform: uppercase;
   color: var(--text-muted);
   letter-spacing: 0.04em;
 }
 
-/* Master Action Button */
+/* Master Actions */
 .command-actions {
   display: flex;
   flex-direction: column;
@@ -405,9 +406,9 @@ body::before {
   color: #fff;
   border: none;
   border-radius: var(--radius-md);
-  padding: 13px 20px;
+  padding: 12px 18px;
   font-weight: 700;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -433,9 +434,9 @@ body::before {
   color: var(--text-secondary);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-md);
-  padding: 10px 18px;
+  padding: 10px 16px;
   font-weight: 600;
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -451,7 +452,7 @@ body::before {
 }
 
 /* ==========================================================================
-   Filter Bar (LeezSpace Modern Filter Style)
+   Filter & Batch Bar (JobStream & LeezSpace Style)
    ========================================================================== */
 
 .filter-bar {
@@ -459,9 +460,9 @@ body::before {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 14px;
   margin-bottom: 24px;
-  padding: 16px 20px;
+  padding: 14px 18px;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
@@ -475,7 +476,7 @@ body::before {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-full);
   padding: 8px 16px;
-  min-width: 320px;
+  min-width: 300px;
   flex: 1;
 }
 
@@ -484,7 +485,7 @@ body::before {
   border: none;
   outline: none;
   color: var(--text-primary);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   width: 100%;
 }
 
@@ -500,9 +501,9 @@ body::before {
 }
 
 .filter-chip {
-  padding: 6px 14px;
+  padding: 6px 13px;
   border-radius: var(--radius-full);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
   background: rgba(255, 255, 255, 0.04);
   color: var(--text-secondary);
@@ -522,8 +523,21 @@ body::before {
   border-color: rgba(6, 182, 212, 0.4);
 }
 
+/* Batch Action Strip */
+.batch-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(6, 182, 212, 0.04);
+  border: 1px dashed rgba(6, 182, 212, 0.3);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  margin-bottom: 20px;
+  font-size: 0.84rem;
+}
+
 /* ==========================================================================
-   Verified Job Cards (FraudLens + LeezSpace Style)
+   Verified Job Cards (OpenTrain AI + FraudLens + Career-Ops Rubric)
    ========================================================================== */
 
 .jobs-grid {
@@ -541,7 +555,7 @@ body::before {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 15px;
   position: relative;
   box-shadow: var(--shadow-card);
 }
@@ -652,7 +666,7 @@ body::before {
   gap: 5px;
 }
 
-/* AI Match Box (FraudLens Explainable AI Box) */
+/* AI Match Box (Career-Ops Explainable Evaluation) */
 .ai-match-box {
   background: rgba(6, 182, 212, 0.05);
   border: 1px solid rgba(6, 182, 212, 0.2);
@@ -683,6 +697,27 @@ body::before {
 
 .match-reason-text strong {
   color: #38BDF8;
+}
+
+/* Screening Answers Pill (JobHuntr Style) */
+.qa-preview-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #A78BFA;
+  background: rgba(139, 92, 246, 0.08);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.qa-preview-pill:hover {
+  background: rgba(139, 92, 246, 0.15);
+  color: #C4B5FD;
 }
 
 /* Skills tags */
@@ -724,9 +759,9 @@ body::before {
   color: #fff;
   border: none;
   border-radius: var(--radius-sm);
-  padding: 9px 15px;
+  padding: 8px 14px;
   font-weight: 700;
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -744,9 +779,9 @@ body::before {
   color: var(--text-primary);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-sm);
-  padding: 8px 13px;
+  padding: 7px 12px;
   font-weight: 600;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -760,13 +795,13 @@ body::before {
 }
 
 /* ==========================================================================
-   Slideout Drawer (Human-in-the-Loop Tailored Application Review)
+   Slideout Drawer: Complete Copilot Application Pack (JobCopilot + JobHuntr)
    ========================================================================== */
 
 .drawer-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.72);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 200;
@@ -786,10 +821,10 @@ body::before {
   right: 0;
   bottom: 0;
   width: 100%;
-  max-width: 680px;
+  max-width: 720px;
   background: var(--bg-surface);
   border-left: 1px solid var(--border-medium);
-  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.8);
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.85);
   z-index: 210;
   transform: translateX(100%);
   transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
@@ -802,7 +837,7 @@ body::before {
 }
 
 .drawer-header {
-  padding: 24px;
+  padding: 22px 24px;
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
   align-items: flex-start;
@@ -849,13 +884,46 @@ body::before {
   color: #fff;
 }
 
+/* Drawer Tab Switcher */
+.drawer-tabs {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0 24px;
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.drawer-tab-btn {
+  padding: 12px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.drawer-tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.drawer-tab-btn.active {
+  color: var(--accent-cyan);
+  border-bottom-color: var(--accent-cyan);
+}
+
 .drawer-body {
   padding: 24px;
   overflow-y: auto;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .drawer-section-card {
@@ -885,11 +953,11 @@ body::before {
   border-radius: var(--radius-sm);
   padding: 16px;
   font-family: var(--font-sans);
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   color: #E2E8F0;
   line-height: 1.6;
   white-space: pre-line;
-  max-height: 240px;
+  max-height: 260px;
   overflow-y: auto;
 }
 
@@ -897,7 +965,7 @@ body::before {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 9px;
 }
 
 .bullet-points-list li {
@@ -915,18 +983,75 @@ body::before {
   font-weight: 700;
 }
 
+/* Screening Q&A Cards (JobHuntr Style) */
+.qa-card {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.qa-question {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #38BDF8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.qa-answer {
+  font-size: 0.83rem;
+  color: #CBD5E1;
+  line-height: 1.5;
+}
+
+/* Career-Ops Rubric Grid */
+.rubric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.rubric-item {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rubric-item-title {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.rubric-item-val {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+  font-family: var(--font-mono);
+}
+
 .drawer-footer {
-  padding: 20px 24px;
+  padding: 18px 24px;
   border-top: 1px solid var(--border-subtle);
   background: var(--bg-card);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 14px;
 }
 
 /* ==========================================================================
-   Outreach & Tracker Cards
+   Outreach & Pipeline Cards
    ========================================================================== */
 
 .outreach-grid {

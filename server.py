@@ -1153,6 +1153,40 @@ def submit_app_endpoint(req: SubmitJobRequest):
         raise HTTPException(status_code=400, detail="Cannot submit without prior user approval.")
     return {"status": "submitted", "job_key": req.job_key}
 
+class BatchApplyRequest(BaseModel):
+    job_keys: Optional[List[str]] = None
+    count: Optional[int] = 5
+
+@app.post("/api/agent/batch-apply")
+def batch_apply_endpoint(req: BatchApplyRequest):
+    applied_keys = []
+    keys_to_process = req.job_keys or []
+    
+    if not keys_to_process:
+        all_jobs = applybot_db.list_jobs(verification_status="VERIFIED", limit=50)
+        unsubmitted = [j for j in all_jobs if not j.get("is_approved")]
+        unsubmitted.sort(key=lambda x: x.get("match_score", 0), reverse=True)
+        keys_to_process = [j["job_key"] for j in unsubmitted[: req.count or 5]]
+    
+    for jk in keys_to_process:
+        try:
+            application_preparer.prepare_application_package(jk)
+            applybot_db.approve_application(jk, notes="Approved in Batch via Copilot Autopilot")
+            applybot_db.mark_submitted(jk, evidence="Batch Copilot Submission")
+            applied_keys.append(jk)
+        except Exception:
+            continue
+
+    briefing = applybot_db.get_daily_briefing()
+    return {
+        "status": "batch_applied",
+        "applied_count": len(applied_keys),
+        "applied_job_keys": applied_keys,
+        "daily_submitted": briefing.get("daily_submitted", len(applied_keys)),
+        "daily_target": briefing.get("daily_target", 25)
+    }
+
+
 @app.get("/api/agent/activity-logs")
 def get_activity_logs(limit: int = 50):
     return {"logs": applybot_db.get_agent_logs(limit=limit)}

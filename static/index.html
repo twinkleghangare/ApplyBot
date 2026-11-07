@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ApplyBot · Autonomous AI Job Application Agent</title>
-  <meta name="description" content="AI Career Agent scanning genuine job portals, verifying real ATS vacancies, and preparing tailored applications.">
+  <title>ApplyBot · Autonomous AI Job Copilot & Career OS</title>
+  <meta name="description" content="Autonomous AI Career Copilot scanning genuine portals, verifying real ATS vacancies, scoring with Career-Ops rubric, and preparing tailored applications.">
   
   <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,11 +12,11 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Zero-lag Pre-compiled Stylesheet with Cache Buster -->
-  <link rel="stylesheet" href="/static/style.css?v=3.1.0">
+  <link rel="stylesheet" href="/static/style.css?v=3.2.0">
 </head>
 <body>
 
-  <!-- Top Navigation Pill (PrisainTech Glass Style) -->
+  <!-- Top Navigation Pill (JobCopilot Glass Style) -->
   <header class="container navbar-wrapper">
     <nav class="navbar">
       <a href="#" class="brand-link" onclick="switchNav('queue'); return false;">
@@ -25,7 +25,7 @@
             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
           </svg>
         </div>
-        <span>ApplyBot <span style="color: var(--accent-cyan);">AI</span></span>
+        <span>ApplyBot <span style="color: var(--accent-cyan);">Copilot</span></span>
       </a>
 
       <!-- Navigation Pills -->
@@ -35,7 +35,7 @@
             <circle cx="12" cy="12" r="10"></circle>
             <polyline points="12 6 12 12 16 14"></polyline>
           </svg>
-          <span>Today's Queue</span>
+          <span>Copilot Stream</span>
           <span class="nav-pill-badge" id="badge-queue-count">52</span>
         </button>
 
@@ -54,7 +54,7 @@
             <line x1="12" y1="20" x2="12" y2="4"></line>
             <line x1="6" y1="20" x2="6" y2="14"></line>
           </svg>
-          <span>Live Pipeline</span>
+          <span>Career Pipeline</span>
           <span class="nav-pill-badge" id="badge-tracker-count">14</span>
         </button>
 
@@ -63,7 +63,7 @@
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
             <circle cx="12" cy="7" r="4"></circle>
           </svg>
-          <span>Candidate Profile</span>
+          <span>Profile & Rubric</span>
         </button>
       </div>
 
@@ -71,7 +71,7 @@
       <div class="nav-actions">
         <div style="font-size: 0.8rem; text-align: right; line-height: 1.2;">
           <div style="font-weight: 700; color: #fff;">Aarav Sharma</div>
-          <div style="color: var(--accent-cyan); font-size: 0.72rem;">VTU B.Tech · ML Intern</div>
+          <div style="color: var(--accent-cyan); font-size: 0.72rem;">VTU B.Tech · ML Intern (8.75 CGPA)</div>
         </div>
       </div>
     </nav>
@@ -80,20 +80,20 @@
   <!-- Main Workspace Container -->
   <main class="container">
 
-    <!-- Hero Header (PrisainTech Style) -->
+    <!-- Hero Header (JobCopilot & Career-Ops Style) -->
     <section class="hero-section">
       <div class="hero-pill-badge">
         <div class="hero-pulse-dot"></div>
-        <span id="hero-status-pill">08:00 AM Daily Autopilot · Ready for Today's Run</span>
+        <span id="hero-status-pill">08:00 AM Daily Autopilot · 7 Verified Portals Connected</span>
       </div>
 
       <h1 class="hero-title">
-        Autonomous Job Applications.<br>
-        <span class="gradient-text">Verified Roles. Zero Spam.</span>
+        Autonomous AI Job Copilot.<br>
+        <span class="gradient-text">Verified Roles. Tailored Applications.</span>
       </h1>
 
       <p class="hero-subtitle">
-        ApplyBot continuously scans genuine job portals (Wellfound, Cutshort, Internshala, Naukri, LinkedIn, NCS Govt), verifies authentic ATS vacancies, crafts tailored applications using your real credentials, and queues them for 1-click human approval.
+        ApplyBot continuously scans genuine job portals (Wellfound, Cutshort, Internshala, Naukri, LinkedIn, NCS Govt), verifies authentic ATS vacancies, scores them against the Career-Ops evaluation rubric, and auto-generates tailored applications with screening answers.
       </p>
 
       <!-- Autopilot Command Center Card -->
@@ -128,29 +128,33 @@
           </div>
           <div class="stat-item">
             <div class="stat-num violet" id="stat-match">95.8%</div>
-            <div class="stat-label">Top Match</div>
+            <div class="stat-label">Top Fit</div>
           </div>
           <div class="stat-item">
             <div class="stat-num" id="stat-pending">12</div>
-            <div class="stat-label">Pending Approval</div>
+            <div class="stat-label">Pending Review</div>
           </div>
         </div>
 
         <!-- Master Agent Controls -->
         <div class="command-actions">
-          <button id="btn-run-agent" class="btn-primary" onclick="runDailyAgentCycle()">
+          <button id="btn-batch-apply" class="btn-primary" onclick="runBatchApply(5)">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
             </svg>
-            <span>Run Today's 8:00 AM Agent</span>
+            <span>Auto-Apply Top 5 Matches</span>
           </button>
-          <button id="btn-pause-agent" class="btn-secondary" onclick="pauseAgent()">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="6" y="4" width="4" height="16"></rect>
-              <rect x="14" y="4" width="4" height="16"></rect>
-            </svg>
-            <span>Pause Automation</span>
-          </button>
+          
+          <div style="display: flex; gap: 8px;">
+            <button id="btn-run-agent" class="btn-secondary" style="flex: 1;" onclick="runDailyAgentCycle()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <span>Scan Portals</span>
+            </button>
+            <button id="btn-pause-agent" class="btn-secondary" onclick="pauseAgent()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+              <span>Pause</span>
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -159,6 +163,17 @@
          SECTION 1: TODAY'S QUEUE (STREAM OF VERIFIED ROLES)
          ==================================================================== -->
     <section id="section-queue">
+      <!-- Batch Tip Strip -->
+      <div class="batch-strip">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: var(--accent-cyan); font-weight: 700;">⚡ Copilot Recommendation:</span>
+          <span style="color: #CBD5E1;">12 verified roles have scored &gt;90% match. You can review each or auto-apply to the top batch.</span>
+        </div>
+        <button class="btn-secondary" style="padding: 4px 12px; font-size: 0.78rem;" onclick="runBatchApply(3)">
+          Auto-Apply Top 3
+        </button>
+      </div>
+
       <!-- Filter Bar (LeezSpace Modern Filter Style) -->
       <div class="filter-bar">
         <div class="search-box">
@@ -195,11 +210,11 @@
     </section>
 
     <!-- ====================================================================
-         SECTION 2: DIRECT HR OUTREACH ENGINE
+         SECTION 2: DIRECT HR OUTREACH ENGINE (JobsCoPilot Style)
          ==================================================================== -->
     <section id="section-outreach" class="hidden">
       <div style="margin-bottom: 24px;">
-        <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 6px;">Direct HR Recruiter Outreach</h2>
+        <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 6px;">Direct HR Recruiter Outreach & Referral Radar</h2>
         <p style="color: var(--text-secondary); font-size: 0.9rem;">
           Verified recruiter contacts discovered for Bangalore and Remote AI/ML roles. Ready for 1-click personalized dispatch with zero hallucination.
         </p>
@@ -211,13 +226,13 @@
     </section>
 
     <!-- ====================================================================
-         SECTION 3: APPLICATIONS TRACKER (LIVE PIPELINE)
+         SECTION 3: CAREER-OPS PIPELINE TRACKER
          ==================================================================== -->
     <section id="section-tracker" class="hidden">
       <div style="margin-bottom: 24px;">
-        <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 6px;">Live Application Pipeline</h2>
+        <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 6px;">Career-Ops Application Pipeline</h2>
         <p style="color: var(--text-secondary); font-size: 0.9rem;">
-          Real-time tracking of applications submitted, review approvals, and interview rounds.
+          Real-time tracking of applications submitted by Copilot, human approvals, interview schedules, and offers.
         </p>
       </div>
 
@@ -227,9 +242,9 @@
             <tr>
               <th>Company & Role</th>
               <th>Portal Source</th>
-              <th>Date Prepared</th>
-              <th>Status</th>
-              <th>Match Score</th>
+              <th>Date Applied</th>
+              <th>Pipeline Status</th>
+              <th>Rubric Score</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -241,10 +256,10 @@
     </section>
 
     <!-- ====================================================================
-         SECTION 4: CANDIDATE PROFILE & VERIFICATION
+         SECTION 4: CANDIDATE PROFILE & EVALUATION RUBRIC (Career-Ops)
          ==================================================================== -->
     <section id="section-profile" class="hidden">
-      <div style="max-width: 800px; margin: 0 auto;">
+      <div style="max-width: 840px; margin: 0 auto;">
         <div style="background: var(--bg-card); border: 1px solid var(--border-medium); border-radius: var(--radius-xl); padding: 32px; box-shadow: var(--shadow-card);">
           <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px; margin-bottom: 24px;">
             <div>
@@ -253,7 +268,7 @@
             </div>
             <div class="badge-verified">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              <span>Verified Candidate Profile</span>
+              <span>Career-Ops Verified Profile</span>
             </div>
           </div>
 
@@ -290,7 +305,7 @@
               <span class="skill-tag">AI Engineer Intern</span>
               <span class="skill-tag">Data Science Intern</span>
               <span class="skill-tag">Python Developer</span>
-              <span class="skill-tag">Target: 25 Applications / Day</span>
+              <span class="skill-tag" style="background: rgba(16, 185, 129, 0.15); color: #34D399; font-weight: 700;">Target: 25 Applications / Day</span>
             </div>
           </div>
         </div>
@@ -300,7 +315,8 @@
   </main>
 
   <!-- ====================================================================
-       SLIDEOUT DRAWER: HUMAN-IN-THE-LOOP APPLICATION REVIEW
+       SLIDEOUT DRAWER: COMPLETE COPILOT APPLICATION PACK
+       (JobCopilot + JobHuntr + Career-Ops Rubric)
        ==================================================================== -->
   <div id="review-drawer-backdrop" class="drawer-backdrop" onclick="closeDrawer(event)">
     <aside class="drawer" onclick="event.stopPropagation()">
@@ -314,8 +330,17 @@
         </button>
       </div>
 
+      <!-- Drawer Tabs (JobCopilot & JobHuntr Inspector) -->
+      <div class="drawer-tabs">
+        <button id="dtab-btn-resume" class="drawer-tab-btn active" onclick="switchDrawerTab('resume')">📄 Tailored CV</button>
+        <button id="dtab-btn-cover" class="drawer-tab-btn" onclick="switchDrawerTab('cover')">✍️ Cover Letter</button>
+        <button id="dtab-btn-qa" class="drawer-tab-btn" onclick="switchDrawerTab('qa')">💬 Screening Q&amp;A</button>
+        <button id="dtab-btn-rubric" class="drawer-tab-btn" onclick="switchDrawerTab('rubric')">📊 Career-Ops Rubric</button>
+        <button id="dtab-btn-star" class="drawer-tab-btn" onclick="switchDrawerTab('star')">🎯 STAR Interview Prep</button>
+      </div>
+
       <div class="drawer-body">
-        <!-- AI Match Rationale -->
+        <!-- AI Match Rationale Summary Banner -->
         <div class="ai-match-box">
           <div class="match-score-badge" id="drawer-match-badge">96% MATCH</div>
           <div class="match-reason-text" id="drawer-match-reason">
@@ -323,8 +348,8 @@
           </div>
         </div>
 
-        <!-- Tailored Resume Highlights -->
-        <div class="drawer-section-card">
+        <!-- TAB 1: Tailored Resume Highlights -->
+        <div id="dtab-pane-resume" class="drawer-section-card">
           <div class="section-label">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
             <span>Tailored CV Bullets for this Role</span>
@@ -334,8 +359,8 @@
           </ul>
         </div>
 
-        <!-- Personalized Cover Letter -->
-        <div class="drawer-section-card">
+        <!-- TAB 2: Personalized Cover Letter -->
+        <div id="dtab-pane-cover" class="drawer-section-card hidden">
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <div class="section-label">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
@@ -348,8 +373,45 @@
           </div>
         </div>
 
-        <!-- STAR Interview Prep -->
-        <div class="drawer-section-card">
+        <!-- TAB 3: ATS Screening Questions & Answers (from JobHuntr) -->
+        <div id="dtab-pane-qa" class="drawer-section-card hidden">
+          <div class="section-label">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span>Pre-Filled ATS Screening Question Answers</span>
+          </div>
+          <div id="drawer-screening-container" style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- Injected dynamically -->
+          </div>
+        </div>
+
+        <!-- TAB 4: Career-Ops Rubric (from career-ops.org) -->
+        <div id="dtab-pane-rubric" class="drawer-section-card hidden">
+          <div class="section-label">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            <span>Career-Ops Evaluation Rubric (A–H)</span>
+          </div>
+          <div class="rubric-grid">
+            <div class="rubric-item">
+              <span class="rubric-item-title">Technical Skill Match</span>
+              <span class="rubric-item-val" style="color: var(--accent-cyan);" id="rubric-tech">96 / 100</span>
+            </div>
+            <div class="rubric-item">
+              <span class="rubric-item-title">Experience Level Fit</span>
+              <span class="rubric-item-val" style="color: var(--accent-emerald);" id="rubric-exp">92 / 100</span>
+            </div>
+            <div class="rubric-item">
+              <span class="rubric-item-title">Behavioral / Culture Fit</span>
+              <span class="rubric-item-val" style="color: #A78BFA;" id="rubric-beh">95 / 100</span>
+            </div>
+            <div class="rubric-item">
+              <span class="rubric-item-title">Ghost Job / Scam Risk</span>
+              <span class="rubric-item-val" style="color: #34D399;" id="rubric-risk">0.0% (Verified)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 5: STAR Interview Prep -->
+        <div id="dtab-pane-star" class="drawer-section-card hidden">
           <div class="section-label">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
             <span>STAR Interview Talking Points</span>
@@ -377,6 +439,6 @@
   <div class="toast-container" id="toast-container"></div>
 
   <!-- Zero-lag Controller with Cache Buster -->
-  <script src="/static/app.js?v=3.1.0"></script>
+  <script src="/static/app.js?v=3.2.0"></script>
 </body>
 </html>
