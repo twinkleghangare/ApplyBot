@@ -1,1211 +1,1031 @@
+/**
+ * ApplyBot — Autonomous AI Career Agent
+ * Object-Oriented Architecture (ES6 Classes)
+ * Candidate: Twinkle Ghangare · B.Tech AI & Data Science (KDK College, CGPA: 8.19)
+ */
 
-const JOBS = [
-{
-company: "Sprinto",
-role: "AI/ML Engineer Intern",
-location: "Remote",
-type: "Startup",
-salary: "₹25k/mo",
-match: 94,
-verified: "VERIFIED",
-portal: "Wellfound",
-url: "https://wellfound.com/jobs",
-reason: "Matches Python, ML anomaly detection from FraudLens project"
-},
-{
-company: "Sarvam AI",
-role: "ML Research Intern",
-location: "Bengaluru",
-type: "Startup",
-salary: "₹30k/mo",
-match: 88,
-verified: "VERIFIED",
-portal: "Internshala",
-url: "https://internshala.com/internships/machine-learning-internship/",
-reason: "Aligns with NLP work and AI/DS degree from KDK College"
-},
-{
-company: "Krutrim",
-role: "GenAI Data Associate Intern",
-location: "Hybrid",
-type: "Startup",
-salary: "₹25k/mo",
-match: 85,
-verified: "VERIFIED",
-portal: "Saarthi",
-url: "https://joinsaarthi.com/",
-reason: "Saarthi Job Fit 96: Evaluates Hindi/Indic LLM datasets; matches coursework"
-},
-{
-company: "Persistent Systems",
-role: "Associate Software Engineer (AI/ML)",
-location: "Nagpur",
-type: "MNC",
-salary: "4.5 LPA",
-match: 92,
-verified: "VERIFIED",
-portal: "Freshersworld",
-url: "https://www.freshersworld.com/",
-reason: "Campus hiring open for Nagpur engineering graduates with > 7.5 CGPA (Twinkle: 8.19)"
-},
-{
-company: "Tata Elxsi",
-role: "AI Vision Engineer Intern",
-location: "Pune",
-type: "MNC",
-salary: "₹25k/mo",
-match: 84,
-verified: "VERIFIED",
-portal: "Naukri",
-url: "https://www.naukri.com/campus-fresher-jobs",
-reason: "Computer vision & PyTorch skills align with HSI spectral land cover classification"
-},
-{
-company: "Postman",
-role: "AI Engineer Intern",
-location: "Bengaluru",
-type: "MNC",
-salary: "₹35k/mo",
-match: 78,
-verified: "NEEDS REVIEW",
-portal: "LinkedIn",
-url: "https://www.linkedin.com/jobs/",
-reason: "FastAPI experience relevant; verify official posting link"
-},
-{
-company: "Razorpay",
-role: "Fraud Analytics & Data Intern",
-location: "Bengaluru",
-type: "MNC",
-salary: "₹40k/mo",
-match: 91,
-verified: "VERIFIED",
-portal: "Indeed",
-url: "https://in.indeed.com/",
-reason: "Direct match with UPI scam heuristic detection in FraudLens (94.2% precision)"
-},
-{
-company: "InMobi",
-role: "Data Science Intern",
-location: "Bengaluru",
-type: "MNC",
-salary: "₹32k/mo",
-match: 80,
-verified: "VERIFIED",
-portal: "foundit",
-url: "https://www.foundit.in/",
-reason: "Tabular data processing and Scikit-Learn pipeline scores"
-},
-{
-company: "Observe.AI",
-role: "ML Intern (NLP & Speech)",
-location: "Remote",
-type: "Startup",
-salary: "₹28k/mo",
-match: 86,
-verified: "VERIFIED",
-portal: "Wellfound",
-url: "https://wellfound.com/jobs",
-reason: "NLP + classification skills directly match from FraudLens"
-},
-{
-company: "Fyno",
-role: "Python AI Microservices Intern",
-location: "Remote",
-type: "Startup",
-salary: "₹26k/mo",
-match: 89,
-verified: "VERIFIED",
-portal: "Cutshort",
-url: "https://cutshort.io/",
-reason: "Direct messaging with Engineering Manager; FastAPI + Docker"
-},
-{
-company: "National Informatics Centre (NIC)",
-role: "Data & AI Research Trainee",
-location: "Nagpur",
-type: "Government",
-salary: "₹20k/mo",
-match: 87,
-verified: "VERIFIED",
-portal: "NCS",
-url: "https://www.ncs.gov.in/",
-reason: "Government technical fresher opening for AI & DS graduates"
-},
-{
-company: "FinTech Express",
-role: "Junior ML Ops Associate",
-location: "Nagpur",
-type: "Startup",
-salary: "₹22k/mo",
-match: 81,
-verified: "VERIFIED",
-portal: "WorkIndia",
-url: "https://www.workindia.in/",
-reason: "Local corporate technical support; model monitoring & SQL reporting"
-}
-];
-const HR_CONTACTS = [
-{ name: "Tanvi Patel", company: "Sprinto", portal: "Wellfound", email: "talent@sprinto.com", status: "Draft Ready" },
-{ name: "Arjun Nair", company: "Sarvam AI", portal: "Internshala", email: "careers@sarvam.ai", status: "Not Sent" },
-{ name: "Nikita Sharma", company: "Krutrim", portal: "Saarthi", email: "hr@krutrim.com", status: "Sent" },
-{ name: "Anand Joshi", company: "Persistent Systems", portal: "Freshersworld", email: "campus@persistent.com", status: "Draft Ready" },
-{ name: "Rahul Verma", company: "Razorpay", portal: "Indeed", email: "recruiting@razorpay.com", status: "Replied" },
-{ name: "Pooja Hegde", company: "Fyno", portal: "Cutshort", email: "em-hiring@fyno.io", status: "Draft Ready" }
-];
-const APPLICATIONS = [
-{ company: "Sprinto", role: "AI/ML Engineer Intern", portal: "Wellfound", status: "Pending", date: "Today" },
-{ company: "Observe.AI", role: "ML Intern (NLP)", portal: "Wellfound", status: "Pending", date: "Today" },
-{ company: "Persistent Systems", role: "Associate Software Engineer", portal: "Freshersworld", status: "Applied", date: "Today" },
-{ company: "Sarvam AI", role: "ML Research Intern", portal: "Internshala", status: "Applied", date: "Yesterday" },
-{ company: "Krutrim", role: "GenAI Data Associate", portal: "Saarthi", status: "Applied", date: "Nov 06" },
-{ company: "Razorpay", role: "Fraud Analytics Intern", portal: "Indeed", status: "Applied", date: "Nov 05" },
-{ company: "Fyno", role: "Python AI Intern", portal: "Cutshort", status: "Applied", date: "Nov 04" },
-{ company: "Postman", role: "AI Engineer Intern", portal: "LinkedIn", status: "Applied", date: "Nov 03" },
-{ company: "NIC", role: "Data Research Trainee", portal: "NCS", status: "Applied", date: "Nov 02" },
-{ company: "Tata Elxsi", role: "AI Vision Engineer", portal: "Naukri", status: "Applied", date: "Nov 01" },
-{ company: "TechCorp Labs", role: "AI Engineer Intern", portal: "LinkedIn", status: "Interview", date: "Nov 06" },
-{ company: "FinTech India", role: "Junior Python Dev", portal: "WorkIndia", status: "Rejected", date: "Oct 28" },
-{ company: "CloudScale", role: "MLOps Intern", portal: "foundit", status: "Rejected", date: "Oct 26" },
-{ company: "DataForge", role: "Data Intern", portal: "Indeed", status: "Rejected", date: "Oct 24" }
-];
-let currentJobs = [...JOBS];
-let activeTypeFilter = "all";
-let activePortalFilter = "all";
-let activeAppTab = "Pending";
-let activeDraftRecipient = HR_CONTACTS[0];
-let currentInspectingJob = JOBS[0];
-let dailyAppliedCount = 3;
-const dailyTargetCount = 25;
-let pendingJobIndex = 0;
-let lastScrollY = 0;
-function getPortalUrl(portalName, company = "") {
-const map = {
-wellfound: "https://wellfound.com/jobs",
-internshala: "https://internshala.com/internships/machine-learning-internship/",
-saarthi: "https://joinsaarthi.com/",
-freshersworld: "https://www.freshersworld.com/",
-naukri: "https://www.naukri.com/campus-fresher-jobs",
-linkedin: "https://www.linkedin.com/jobs/",
-indeed: "https://in.indeed.com/",
-foundit: "https://www.foundit.in/",
-cutshort: "https://cutshort.io/",
-ncs: "https://www.ncs.gov.in/",
-workindia: "https://www.workindia.in/"
+const CANDIDATE_PROFILE = {
+  name: "Twinkle Ghangare",
+  email: "twinkle.ghangare@gmail.com",
+  phone: "+91 98765 43210",
+  college: "KDK College of Engineering, Nagpur",
+  degree: "B.Tech AI & Data Science",
+  cgpa: "8.19",
+  linkedin: "linkedin.com/in/twinkle-ghangare",
+  projects: ["FraudLens (UPI Anomaly Detection)", "MedVerify (CNN + OCR Medicine Auth)", "HSI Spectral Classification"],
+  skills: ["Python", "PyTorch", "FastAPI", "Docker", "SQL", "OpenCV", "Scikit-Learn", "NLP", "Git"],
+  targetRoles: ["AI/ML Engineer Intern", "Machine Learning Intern", "Data Science Intern", "Python Developer Intern"],
+  locations: ["Remote", "Bengaluru", "Nagpur (Home City)", "Pune", "Hybrid"]
 };
-const key = (portalName || "").toLowerCase().trim();
-const found = JOBS.find((j) => j.company.toLowerCase() === (company || "").toLowerCase());
-if (found && found.url) return found.url;
-return map[key] || "https://wellfound.com/jobs";
-}
-let threeScene, threeCamera, threeRenderer, starGeometry, wireframeGroup;
-let starfieldAnimId = null;
-let isStarfieldActive = true;
-let particleBases = [];
-let particleCurrents = [];
-let mouse = { x: -9999, y: -9999, active: false };
-let currentAuthUser = {
-name: "Twinkle Ghangare",
-email: "twinkle.ghangare@gmail.com",
-degree: "B.Tech AI & Data Science",
-institution: "KDK College of Engineering, Nagpur (CGPA: 8.19)",
-initials: "TG"
-};
-function initAuth() {
-try {
-const saved = localStorage.getItem("applybot_auth_user");
-if (saved) currentAuthUser = JSON.parse(saved);
-} catch (e) {}
-updateNavbarAuthPill();
-}
-function updateNavbarAuthPill() {
-const nameEl = document.getElementById("nav-user-name");
-const initEl = document.getElementById("nav-avatar-initials");
-const authInitEl = document.getElementById("auth-avatar-pill");
-if (nameEl && currentAuthUser.name) nameEl.innerText = currentAuthUser.name.split(" ")[0];
-if (initEl) initEl.innerText = currentAuthUser.initials;
-if (authInitEl) authInitEl.innerText = currentAuthUser.initials;
-}
-function setAuthTab(mode) {
-const tabIn = document.getElementById("auth-tab-signin");
-const tabReg = document.getElementById("auth-tab-register");
-const regFields = document.getElementById("auth-register-fields");
-const submitBtn = document.getElementById("auth-submit-btn");
-if (mode === "signin") {
-if (tabIn) tabIn.classList.add("active");
-if (tabReg) tabReg.classList.remove("active");
-if (regFields) regFields.classList.add("auth-register-hidden");
-if (submitBtn) submitBtn.innerText = "Authenticate & Enter ApplyBot →";
-} else {
-if (tabReg) tabReg.classList.add("active");
-if (tabIn) tabIn.classList.remove("active");
-if (regFields) regFields.classList.remove("auth-register-hidden");
-if (submitBtn) submitBtn.innerText = "Register Candidate Profile →";
-}
-}
-function handleAuthSubmit() {
-const emailInput = document.getElementById("auth-email");
-const nameInput = document.getElementById("auth-name");
-const instInput = document.getElementById("auth-institution");
-const email = emailInput?.value || "twinkle.ghangare@gmail.com";
-let name = "Twinkle Ghangare";
-let institution = "KDK College of Engineering, Nagpur (CGPA: 8.19)";
-if (email.toLowerCase().includes("guest")) {
-name = "Guest Candidate";
-institution = "Guest Academic Sandbox";
-} else if (nameInput && nameInput.value.trim()) {
-name = nameInput.value.trim();
-if (instInput && instInput.value.trim()) institution = instInput.value.trim();
-}
-const parts = name.split(" ");
-const initials = parts.length > 1 ? (parts[0][0] + parts[1][0]).toUpperCase() : name.slice(0, 2).toUpperCase();
-currentAuthUser = { name, email, institution, initials };
-try {
-localStorage.setItem("applybot_auth_user", JSON.stringify(currentAuthUser));
-} catch (e) {}
-updateNavbarAuthPill();
-showToast(`✓ Authenticated as ${name}`);
-navigateTo("dashboard");
-}
-function quickFillCandidate(type) {
-const emailInput = document.getElementById("auth-email");
-const nameInput = document.getElementById("auth-name");
-const instInput = document.getElementById("auth-institution");
-if (type === "twinkle") {
-if (emailInput) emailInput.value = "twinkle.ghangare@gmail.com";
-if (nameInput) nameInput.value = "Twinkle Ghangare";
-if (instInput) instInput.value = "KDK College of Engineering, Nagpur";
-showToast("Loaded Twinkle Ghangare (KDK College, CGPA 8.19)");
-} else {
-if (emailInput) emailInput.value = "guest.candidate@applybot.ai";
-if (nameInput) nameInput.value = "Guest Candidate";
-if (instInput) instInput.value = "Open Academic Sandbox";
-showToast("Loaded Guest candidate profile");
-}
-}
-function handleSignOut() {
-currentAuthUser = {
-name: "Guest",
-email: "",
-institution: "Not Authenticated",
-initials: "GT"
-};
-try {
-localStorage.removeItem("applybot_auth_user");
-} catch (e) {}
-updateNavbarAuthPill();
-showToast("Signed out of ApplyBot.");
-navigateTo("auth");
-}
-document.addEventListener("DOMContentLoaded", () => {
-initTheme();
-initAuth();
-initGSAPNavbar();
-initThreeInteractiveStarfield();
-initTypewriterTagline();
-renderJobsGrid();
-renderApplicationsTable();
-renderOutreachTable();
-updateOutreachDraft(HR_CONTACTS[0]);
-setupKeyboardListeners();
-setupDropzone();
-fetchLiveBackendData();
-triggerDashboardGSAP();
-});
-function initThreeInteractiveStarfield() {
-const container = document.getElementById("hero-canvas-container");
-const heroWrapper = document.getElementById("hero-wrapper");
-if (!container || !heroWrapper || window.innerWidth < 768 || typeof THREE === "undefined") {
-return;
-}
-const width = container.clientWidth || 800;
-const height = container.clientHeight || 450;
-threeScene = new THREE.Scene();
-threeCamera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
-threeCamera.position.z = 240;
-threeRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "low-power" });
-threeRenderer.setSize(width, height);
-threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-container.appendChild(threeRenderer.domElement);
-const particleCount = 300;
-const positions = new Float32Array(particleCount * 3);
-const colors = new Float32Array(particleCount * 3);
-const color1 = new THREE.Color(0x7C5CFF); // Violet
-const color2 = new THREE.Color(0x30DC97); // Mint
-const color3 = new THREE.Color(0x9A9AA5); // Silver
-particleBases = [];
-particleCurrents = [];
-for (let i = 0; i < particleCount; i++) {
-const bx = (Math.random() - 0.5) * 580;
-const by = (Math.random() - 0.5) * 360;
-const bz = (Math.random() - 0.5) * 180;
-particleBases.push({ x: bx, y: by, z: bz, seed: Math.random() * 10 });
-particleCurrents.push({ x: bx, y: by, z: bz });
-positions[i * 3] = bx;
-positions[i * 3 + 1] = by;
-positions[i * 3 + 2] = bz;
-const r = Math.random();
-const c = r < 0.4 ? color1 : r < 0.7 ? color2 : color3;
-colors[i * 3] = c.r;
-colors[i * 3 + 1] = c.g;
-colors[i * 3 + 2] = c.b;
-}
-starGeometry = new THREE.BufferGeometry();
-starGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-starGeometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
-const material = new THREE.PointsMaterial({
-size: 2.4,
-vertexColors: true,
-transparent: true,
-opacity: 0.65
-});
-const starPoints = new THREE.Points(starGeometry, material);
-threeScene.add(starPoints);
-wireframeGroup = new THREE.Group();
-const cubeGeo = new THREE.BoxGeometry(28, 28, 28);
-const cubeEdges = new THREE.EdgesGeometry(cubeGeo);
-const cubeLine = new THREE.LineSegments(cubeEdges, new THREE.LineBasicMaterial({ color: 0x7C5CFF, transparent: true, opacity: 0.42 }));
-const knotGeo = new THREE.TorusKnotGeometry(15, 3.2, 48, 8);
-const knotMesh = new THREE.Mesh(knotGeo, new THREE.MeshBasicMaterial({ wireframe: true, color: 0x30DC97, transparent: true, opacity: 0.24 }));
-const ringGeo = new THREE.TorusGeometry(38, 0.8, 8, 36);
-const ringMesh = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ wireframe: true, color: 0x60A5FA, transparent: true, opacity: 0.2 }));
-ringMesh.rotation.x = Math.PI / 3;
-wireframeGroup.add(cubeLine);
-wireframeGroup.add(knotMesh);
-wireframeGroup.add(ringMesh);
-wireframeGroup.position.set(220, 90, -40);
-threeScene.add(wireframeGroup);
-heroWrapper.addEventListener("pointermove", (e) => {
-const rect = heroWrapper.getBoundingClientRect();
-mouse.x = (e.clientX - rect.left - rect.width / 2);
-mouse.y = -(e.clientY - rect.top - rect.height / 2);
-mouse.active = true;
-});
-heroWrapper.addEventListener("pointerleave", () => {
-mouse.active = false;
-mouse.x = -9999;
-mouse.y = -9999;
-});
-let clock = 0;
-function animateStars() {
-if (!isStarfieldActive) return;
-starfieldAnimId = requestAnimationFrame(animateStars);
-clock += 0.015;
-const posAttr = starGeometry.attributes.position;
-const arr = posAttr.array;
-for (let i = 0; i < particleCount; i++) {
-const base = particleBases[i];
-const cur = particleCurrents[i];
-const targetX = base.x + Math.sin(clock + base.seed) * 5;
-const targetY = base.y + Math.cos(clock * 0.8 + base.seed) * 5;
-if (mouse.active) {
-const dx = cur.x - mouse.x;
-const dy = cur.y - mouse.y;
-const dist = Math.sqrt(dx * dx + dy * dy);
-if (dist < 110 && dist > 0.1) {
-const force = (1 - dist / 110) * 18;
-cur.x += (dx / dist) * force;
-cur.y += (dy / dist) * force;
-}
-}
-cur.x += (targetX - cur.x) * 0.06;
-cur.y += (targetY - cur.y) * 0.06;
-arr[i * 3] = cur.x;
-arr[i * 3 + 1] = cur.y;
-}
-posAttr.needsUpdate = true;
-starPoints.rotation.z += 0.0002;
-if (wireframeGroup) {
-  wireframeGroup.rotation.y += 0.007;
-  wireframeGroup.rotation.x += 0.004;
-  wireframeGroup.position.y = 90 + Math.sin(clock * 1.8) * 8;
-  if (mouse.active) {
-    wireframeGroup.rotation.y += mouse.x * 0.00008;
-    wireframeGroup.rotation.x -= mouse.y * 0.00008;
+
+const INITIAL_JOBS = [
+  {
+    company: "Sprinto",
+    role: "AI/ML Engineer Intern",
+    location: "Remote",
+    type: "Startup",
+    salary: "₹25k/mo",
+    match: 94,
+    verified: "VERIFIED",
+    portal: "Wellfound",
+    url: "https://wellfound.com/jobs",
+    reason: "Direct match with FraudLens UPI anomaly heuristics & FastAPI microservices"
+  },
+  {
+    company: "Observe.AI",
+    role: "Machine Learning Intern (NLP)",
+    location: "Remote",
+    type: "Startup",
+    salary: "₹30k/mo",
+    match: 91,
+    verified: "VERIFIED",
+    portal: "Wellfound",
+    url: "https://wellfound.com/jobs",
+    reason: "NLP pipeline alignment; PyTorch transformer fine-tuning for speech analytics"
+  },
+  {
+    company: "Sarvam AI",
+    role: "ML Research Intern (Indic LLMs)",
+    location: "Bengaluru",
+    type: "Startup",
+    salary: "₹40k/mo",
+    match: 89,
+    verified: "VERIFIED",
+    portal: "Internshala",
+    url: "https://internshala.com/internships/machine-learning-internship/",
+    reason: "Dedicated Indian language foundation models; PyTorch & data curation match"
+  },
+  {
+    company: "Krutrim",
+    role: "GenAI Data Science Intern",
+    location: "Bengaluru",
+    type: "Startup",
+    salary: "₹35k/mo",
+    match: 87,
+    verified: "VERIFIED",
+    portal: "Saarthi",
+    url: "https://joinsaarthi.com/",
+    reason: "Saarthi verified Gen Z fresher role; high Job Fit Score for B.Tech AI graduates"
+  },
+  {
+    company: "Persistent Systems",
+    role: "Associate Software Engineer (AI/ML)",
+    location: "Nagpur",
+    type: "MNC",
+    salary: "₹4.5L/yr",
+    match: 96,
+    verified: "VERIFIED",
+    portal: "Freshersworld",
+    url: "https://www.freshersworld.com/",
+    reason: "Campus & regional tech opening; home city MIHAN Nagpur development center"
+  },
+  {
+    company: "Tata Elxsi",
+    role: "AI Vision Engineer Intern",
+    location: "Pune",
+    type: "MNC",
+    salary: "₹28k/mo",
+    match: 88,
+    verified: "VERIFIED",
+    portal: "Naukri",
+    url: "https://www.naukri.com/campus-fresher-jobs",
+    reason: "Computer vision alignment with MedVerify CNN image classification pipeline"
+  },
+  {
+    company: "Postman",
+    role: "AI Developer Intern",
+    location: "Remote",
+    type: "Startup",
+    salary: "₹35k/mo",
+    match: 84,
+    verified: "NEEDS REVIEW",
+    portal: "LinkedIn",
+    url: "https://www.linkedin.com/jobs/",
+    reason: "API ecosystem tooling with FastAPI; recruiter connection available"
+  },
+  {
+    company: "Razorpay",
+    role: "Data Science Intern (Risk & Fraud)",
+    location: "Bengaluru",
+    type: "Startup",
+    salary: "₹45k/mo",
+    match: 95,
+    verified: "VERIFIED",
+    portal: "Indeed",
+    url: "https://in.indeed.com/",
+    reason: "Direct algorithmic alignment with FraudLens UPI scam detection model"
+  },
+  {
+    company: "FinTech Solutions",
+    role: "Data Analyst Intern",
+    location: "Hybrid",
+    type: "MNC",
+    salary: "₹20k/mo",
+    match: 78,
+    verified: "SUSPICIOUS",
+    portal: "foundit",
+    url: "https://www.foundit.in/",
+    reason: "Suspicious third-party placement agency fee flagged by anti-scam guard"
+  },
+  {
+    company: "Fyno",
+    role: "Python AI Intern",
+    location: "Remote",
+    type: "Startup",
+    salary: "₹25k/mo",
+    match: 86,
+    verified: "VERIFIED",
+    portal: "Cutshort",
+    url: "https://cutshort.io/",
+    reason: "Direct messaging with Engineering Manager; FastAPI + Docker requirement"
+  },
+  {
+    company: "NIC (National Informatics Centre)",
+    role: "Data Science Research Trainee",
+    location: "Nagpur",
+    type: "Government",
+    salary: "₹18k/mo",
+    match: 83,
+    verified: "VERIFIED",
+    portal: "NCS",
+    url: "https://www.ncs.gov.in/",
+    reason: "National Career Service official government technical trainee role in Nagpur"
+  },
+  {
+    company: "Tech Mahindra",
+    role: "Associate AI Support Trainee",
+    location: "Pune",
+    type: "MNC",
+    salary: "₹22k/mo",
+    match: 81,
+    verified: "VERIFIED",
+    portal: "WorkIndia",
+    url: "https://www.workindia.in/",
+    reason: "Local corporate technical support; model monitoring & SQL reporting"
+  }
+];
+
+const INITIAL_APPLICATIONS = [
+  { company: "Sprinto", role: "AI/ML Engineer Intern", portal: "Wellfound", status: "Pending", date: "Today" },
+  { company: "Observe.AI", role: "ML Intern (NLP)", portal: "Wellfound", status: "Pending", date: "Today" },
+  { company: "Persistent Systems", role: "Associate Software Engineer", portal: "Freshersworld", status: "Applied", date: "Today" },
+  { company: "Sarvam AI", role: "ML Research Intern", portal: "Internshala", status: "Applied", date: "Yesterday" },
+  { company: "Krutrim", role: "GenAI Data Associate", portal: "Saarthi", status: "Applied", date: "Nov 06" },
+  { company: "Razorpay", role: "Fraud Analytics Intern", portal: "Indeed", status: "Applied", date: "Nov 05" },
+  { company: "Fyno", role: "Python AI Intern", portal: "Cutshort", status: "Applied", date: "Nov 04" },
+  { company: "Postman", role: "AI Engineer Intern", portal: "LinkedIn", status: "Applied", date: "Nov 03" },
+  { company: "NIC", role: "Data Research Trainee", portal: "NCS", status: "Applied", date: "Nov 02" },
+  { company: "Tata Elxsi", role: "AI Vision Engineer", portal: "Naukri", status: "Applied", date: "Nov 01" },
+  { company: "TechCorp Labs", role: "AI Engineer Intern", portal: "LinkedIn", status: "Interview", date: "Nov 06" },
+  { company: "FinTech India", role: "Junior Python Dev", portal: "WorkIndia", status: "Rejected", date: "Oct 28" },
+  { company: "CloudScale", role: "MLOps Intern", portal: "foundit", status: "Rejected", date: "Oct 26" },
+  { company: "DataForge", role: "Data Intern", portal: "Indeed", status: "Rejected", date: "Oct 24" }
+];
+
+const INITIAL_HR_CONTACTS = [
+  { name: "Tanvi Patel", company: "Sprinto", portal: "Wellfound", email: "talent@sprinto.com", status: "Draft Ready" },
+  { name: "Arjun Nair", company: "Sarvam AI", portal: "Internshala", email: "careers@sarvam.ai", status: "Not Sent" },
+  { name: "Nikita Sharma", company: "Krutrim", portal: "Saarthi", email: "hr@krutrim.com", status: "Sent" },
+  { name: "Anand Joshi", company: "Persistent Systems", portal: "Freshersworld", email: "campus@persistent.com", status: "Draft Ready" },
+  { name: "Rahul Verma", company: "Razorpay", portal: "Indeed", email: "recruiting@razorpay.com", status: "Replied" },
+  { name: "Pooja Hegde", company: "Fyno", portal: "Cutshort", email: "em-hiring@fyno.io", status: "Draft Ready" }
+];
+
+/**
+ * Domain Service: Job Engine
+ */
+class JobEngine {
+  constructor(jobs) {
+    this.jobs = [...jobs];
+    this.typeFilter = "all";
+    this.portalFilter = "all";
+    this.searchQuery = "";
+  }
+
+  setTypeFilter(type) {
+    this.typeFilter = type;
+  }
+
+  setPortalFilter(portal) {
+    this.portalFilter = portal;
+  }
+
+  setSearchQuery(q) {
+    this.searchQuery = (q || "").trim().toLowerCase();
+  }
+
+  getFiltered() {
+    return this.jobs.filter((j) => {
+      const matchSearch =
+        !this.searchQuery ||
+        j.company.toLowerCase().includes(this.searchQuery) ||
+        j.role.toLowerCase().includes(this.searchQuery) ||
+        j.location.toLowerCase().includes(this.searchQuery) ||
+        j.portal.toLowerCase().includes(this.searchQuery) ||
+        j.reason.toLowerCase().includes(this.searchQuery);
+
+      const matchType =
+        this.typeFilter === "all" ||
+        j.location.toLowerCase().includes(this.typeFilter.toLowerCase()) ||
+        j.type.toLowerCase().includes(this.typeFilter.toLowerCase());
+
+      const matchPortal =
+        this.portalFilter === "all" ||
+        j.portal.toLowerCase() === this.portalFilter.toLowerCase();
+
+      return matchSearch && matchType && matchPortal;
+    });
+  }
+
+  getStats() {
+    const discovered = this.jobs.length;
+    const verified = this.jobs.filter((j) => j.verified === "VERIFIED").length;
+    const matches = this.jobs.map((j) => j.match);
+    const maxMatch = matches.length ? Math.max(...matches) : 0;
+    const pending = INITIAL_APPLICATIONS.filter((a) => a.status === "Pending").length;
+    return { discovered, verified, maxMatch, pending };
+  }
+
+  skip(company) {
+    const idx = this.jobs.findIndex((j) => j.company.toLowerCase() === company.toLowerCase());
+    if (idx !== -1) {
+      return this.jobs.splice(idx, 1)[0];
+    }
+    return null;
+  }
+
+  findByCompany(company) {
+    return this.jobs.find((j) => j.company.toLowerCase() === company.toLowerCase()) || this.jobs[0];
   }
 }
-threeRenderer.render(threeScene, threeCamera);
+
+/**
+ * Domain Service: Application Tracker
+ */
+class ApplicationTracker {
+  constructor(applications) {
+    this.applications = [...applications];
+    this.activeTab = "Pending";
+  }
+
+  setTab(tab) {
+    this.activeTab = tab;
+  }
+
+  getByTab(tab = this.activeTab) {
+    return this.applications.filter((a) => a.status.toLowerCase() === tab.toLowerCase());
+  }
+
+  getCount(status) {
+    return this.applications.filter((a) => a.status.toLowerCase() === status.toLowerCase()).length;
+  }
+
+  submit(company) {
+    const item = this.applications.find((a) => a.company.toLowerCase() === company.toLowerCase());
+    if (item) {
+      item.status = "Applied";
+      item.date = "Just now";
+    } else {
+      this.applications.unshift({
+        company,
+        role: "AI/ML Engineer Intern",
+        portal: "Wellfound",
+        status: "Applied",
+        date: "Just now"
+      });
+    }
+  }
 }
-animateStars();
-document.addEventListener("visibilitychange", () => {
-isStarfieldActive = !document.hidden;
-if (isStarfieldActive) {
-cancelAnimationFrame(starfieldAnimId);
-animateStars();
-}
-});
-window.addEventListener("resize", () => {
-if (window.innerWidth < 768) {
-if (threeRenderer && threeRenderer.domElement) {
-threeRenderer.domElement.style.display = "none";
-}
-isStarfieldActive = false;
-return;
-}
-if (threeRenderer && threeRenderer.domElement) {
-threeRenderer.domElement.style.display = "block";
-}
-isStarfieldActive = true;
-const nw = container.clientWidth || 800;
-const nh = container.clientHeight || 450;
-threeCamera.aspect = nw / nh;
-threeCamera.updateProjectionMatrix();
-threeRenderer.setSize(nw, nh);
-});
-}
-function initTypewriterTagline() {
-const el = document.getElementById("hero-typed-text");
-if (!el || typeof gsap === "undefined") return;
-const taglines = [
-"scanning 11 portals for verified AI/ML roles",
-"aggregating Internshala, Saarthi, Naukri & Cutshort",
-"evaluating FraudLens scam heuristics & 94.2% precision",
-"auto-generating tailored cover letters in real-time"
-];
-let idx = 0;
-function cycle() {
-gsap.delayedCall(2.8, () => {
-const cur = taglines[idx];
-idx = (idx + 1) % taglines.length;
-const nxt = taglines[idx];
-const tracker = { n: cur.length };
-gsap.timeline({ onComplete: cycle })
-.to(tracker, {
-n: 0,
-duration: cur.length * 0.02,
-ease: "none",
-onUpdate: () => {
-el.innerText = cur.slice(0, Math.round(tracker.n)) || "\u200B";
-}
-})
-.to(tracker, {
-n: nxt.length,
-duration: nxt.length * 0.035,
-ease: "none",
-onUpdate: () => {
-el.innerText = nxt.slice(0, Math.round(tracker.n)) || "\u200B";
-}
-});
-});
-}
-cycle();
-}
-function triggerDashboardGSAP() {
-if (typeof gsap === "undefined") return;
-gsap.from(".hero-anim-item", {
-opacity: 0,
-y: 18,
-stagger: 0.16,
-duration: 0.55,
-ease: "power2.out"
-});
-gsap.from(".stat-card", {
-opacity: 0,
-scale: 0.95,
-stagger: 0.1,
-duration: 0.5,
-ease: "back.out(1.5)"
-});
-animateCountersGSAP();
-updateTargetProgressGSAP(dailyAppliedCount, dailyTargetCount);
-}
-function animateCountersGSAP() {
-if (typeof gsap === "undefined") return;
-document.querySelectorAll(".stat-number[data-target]").forEach((el) => {
-const target = parseFloat(el.getAttribute("data-target")) || 0;
-const suffix = el.getAttribute("data-suffix") || "";
-const counterObj = { val: 0 };
-gsap.to(counterObj, {
-val: target,
-duration: 1.5,
-ease: "power2.out",
-onUpdate: () => {
-el.innerText = Math.round(counterObj.val) + suffix;
-}
-});
-});
-}
-function updateTargetProgressGSAP(count, target) {
-const pct = Math.round((count / target) * 100);
-const scoreText = document.getElementById("gauge-score-text");
-const sub = document.getElementById("target-gauge-sub");
-const dialPct = document.getElementById("gauge-pct-text");
-const dialCircle = document.getElementById("gauge-circle");
-if (scoreText) scoreText.innerText = `${count} / ${target} applied today`;
-if (sub) sub.innerText = `${pct}% completed towards daily target`;
-if (dialPct) dialPct.innerText = `${pct}%`;
-if (dialCircle) {
-const circumference = 251.2;
-const offset = circumference - (circumference * pct) / 100;
-dialCircle.style.strokeDashoffset = offset;
-}
-if (typeof gsap !== "undefined") {
-gsap.to("#target-progress-bar", {
-width: pct + "%",
-duration: 1.2,
-ease: "power2.out"
-});
-} else {
-const bar = document.getElementById("target-progress-bar");
-if (bar) bar.style.width = pct + "%";
-}
-}
-function initGSAPNavbar() {
-window.addEventListener("scroll", () => {
-const cur = window.scrollY;
-if (typeof gsap !== "undefined") {
-if (cur > 65 && cur > lastScrollY) {
-gsap.to("#main-navbar", { y: -56, duration: 0.3, ease: "power2.out" });
-} else {
-gsap.to("#main-navbar", { y: 0, duration: 0.3, ease: "power2.out" });
-}
-}
-lastScrollY = cur;
-});
-}
-function animateJobsGSAP() {
-if (typeof gsap === "undefined") return;
-if (typeof ScrollTrigger !== "undefined") {
-gsap.registerPlugin(ScrollTrigger);
-gsap.from(".job-card", {
-y: 20,
-opacity: 0,
-stagger: 0.08,
-duration: 0.4,
-ease: "power2.out",
-scrollTrigger: {
-trigger: "#jobs-grid",
-start: "top 85%"
-}
-});
-} else {
-gsap.from(".job-card", {
-y: 20,
-opacity: 0,
-stagger: 0.08,
-duration: 0.4,
-ease: "power2.out"
-});
-}
-}
-function initTheme() {
-const savedTheme = localStorage.getItem("applybot_theme") || "dark";
-document.documentElement.setAttribute("data-theme", savedTheme);
-updateThemeIcon(savedTheme);
-}
-function setThemeMode(mode) {
-document.documentElement.setAttribute("data-theme", mode);
-localStorage.setItem("applybot_theme", mode);
-updateThemeIcon(mode);
-showToast(`Switched to ${mode} mode`);
-}
-function toggleTheme() {
-const current = document.documentElement.getAttribute("data-theme") || "dark";
-const next = current === "dark" ? "light" : "dark";
-setThemeMode(next);
-}
-function updateThemeIcon(theme) {
-const lightBtn = document.getElementById("mode-btn-light");
-const darkBtn = document.getElementById("mode-btn-dark");
-if (theme === "light") {
-if (lightBtn) lightBtn.classList.add("active");
-if (darkBtn) darkBtn.classList.remove("active");
-} else {
-if (lightBtn) lightBtn.classList.remove("active");
-if (darkBtn) darkBtn.classList.add("active");
-}
-}
-function toggleMobileMenu() {
-const m = document.getElementById("nav-menu");
-if (m) m.classList.toggle("open");
-}
-function navigateTo(id) {
-["auth", "dashboard", "jobs", "applications", "outreach", "profile"].forEach((s) => {
-const sec = document.getElementById(`section-${s}`);
-const nav = document.getElementById(`nav-${s}`);
-if (sec) sec.classList.remove("active");
-if (nav) nav.classList.remove("active");
-});
-const target = document.getElementById(`section-${id}`);
-const targetNav = document.getElementById(`nav-${id}`);
-if (target) {
-target.classList.add("active");
-}
-if (targetNav) targetNav.classList.add("active");
-const m = document.getElementById("nav-menu");
-if (m) m.classList.remove("open");
-window.scrollTo({ top: 0, behavior: "smooth" });
-if (id === "dashboard") {
-triggerDashboardGSAP();
-} else if (id === "jobs") {
-animateJobsGSAP();
-} else if (id === "auth" && typeof gsap !== "undefined") {
-gsap.fromTo("#section-auth .card", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.35, stagger: 0.1 });
-}
-}
-function handleCopilotKey(e) {
-if (e.key === "Enter") {
-e.preventDefault();
-handleCopilotSubmit();
-}
-}
-function handleCopilotSubmit() {
-const input = document.getElementById("copilot-input");
-if (!input) return;
-const q = input.value.trim();
-if (!q) {
-showToast("Please enter a query for Copilot 3.1 Pro");
-return;
-}
-const searchInput = document.getElementById("jobs-search-input");
-if (searchInput) {
-searchInput.value = q;
-navigateTo("jobs");
-filterJobs();
-showToast(`✨ Copilot 3.1 Pro: Filtered jobs for "${q}"`);
-}
-}
-function triggerQuickScan() {
-showToast("⚡ Quick Scan: Syncing 11 live job portals...");
-fetchLiveBackendData();
-}
-function allowTodaysRun() {
-const btn = document.getElementById("btn-allow-run");
-if (!btn) return;
-btn.classList.add("btn-generating");
-btn.innerHTML = `
-<span>✨</span>
-<span>Generating Applications...</span>
-`;
-showToast("Autonomous Agent running: Evaluating 24 opportunities across 11 portals...");
-setTimeout(() => {
-dailyAppliedCount = Math.min(dailyTargetCount, dailyAppliedCount + 1);
-updateTargetProgressGSAP(dailyAppliedCount, dailyTargetCount);
-btn.classList.remove("btn-generating");
-btn.innerHTML = `
-<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-<polygon points="5 3 19 12 5 21 5 3"></polygon>
-</svg>
-<span>▶ Allow Today's Run</span>
-`;
-showToast(`✓ Auto-applied to Sprinto! Daily total: ${dailyAppliedCount}/${dailyTargetCount}`);
-}, 1100);
-}
-function pauseAgent() {
-const label = document.getElementById("agent-status-label");
-if (label) label.innerText = "Agent Paused · Execution Halted";
-showToast("Agent paused. No applications will be sent.");
-}
-function skipTopJob() {
-const verifiedJobs = JOBS.filter((j) => j.verified === "VERIFIED");
-pendingJobIndex = (pendingJobIndex + 1) % verifiedJobs.length;
-const nextJob = verifiedJobs[pendingJobIndex];
-const card = document.getElementById("top-pending-card");
-if (card) {
-const update = () => {
-const comp = card.querySelector(".top-company-name");
-const title = card.querySelector(".top-role-title");
-const tags = card.querySelector(".top-card-tags");
-const redir = card.querySelector("a.btn-redirect");
-const rev = card.querySelector(".btn-violet");
-if (comp) comp.innerText = nextJob.company;
-if (title) title.innerText = nextJob.role;
-if (tags) tags.innerText = `📍 ${nextJob.location} · 🏢 ${nextJob.type} · 💰 ${nextJob.salary} · ${nextJob.match}% Match · ${nextJob.portal}`;
-if (redir) {
-redir.href = nextJob.url;
-redir.title = `Open official job listing on ${nextJob.portal}`;
-}
-if (rev) rev.setAttribute("onclick", `reviewJob('${nextJob.company}')`);
-};
-if (typeof gsap !== "undefined") {
-gsap.to(card, {
-x: 30,
-opacity: 0,
-duration: 0.2,
-ease: "power2.in",
-onComplete: () => {
-update();
-gsap.fromTo(card, { opacity: 0, x: -16 }, { opacity: 1, x: 0, duration: 0.25 });
-}
-});
-} else {
-update();
-}
-}
-showToast(`Skipped to ${nextJob.company} on ${nextJob.portal}.`);
-}
-function filterJobs() {
-const search = (document.getElementById("jobs-search-input")?.value || "").toLowerCase();
-currentJobs = JOBS.filter((job) => {
-const matchesSearch =
-job.company.toLowerCase().includes(search) ||
-job.role.toLowerCase().includes(search) ||
-job.reason.toLowerCase().includes(search) ||
-job.location.toLowerCase().includes(search) ||
-job.portal.toLowerCase().includes(search);
-const matchesType =
-activeTypeFilter === "all" ||
-job.location.toLowerCase() === activeTypeFilter.toLowerCase() ||
-job.type.toLowerCase() === activeTypeFilter.toLowerCase();
-const matchesPortal =
-activePortalFilter === "all" ||
-job.portal.toLowerCase() === activePortalFilter.toLowerCase();
-return matchesSearch && matchesType && matchesPortal;
-});
-renderJobsGrid();
-}
-function setFilter(cat, val, btn) {
-if (typeof gsap !== "undefined" && btn) {
-gsap.fromTo(btn, { scale: 0.92 }, { scale: 1, duration: 0.12, ease: "back.out(2)" });
-}
-if (cat === "type") {
-activeTypeFilter = val;
-document.querySelectorAll("#type-pills-row .filter-pill").forEach((b) => b.classList.remove("active"));
-} else {
-activePortalFilter = val;
-document.querySelectorAll("#portal-pills-row .filter-pill").forEach((b) => b.classList.remove("active"));
-}
-btn.classList.add("active");
-filterJobs();
-}
-function renderJobsGrid() {
-const grid = document.getElementById("jobs-grid");
-if (!grid) return;
-if (currentJobs.length === 0) {
-grid.innerHTML = `
-<div class="card empty-card-msg">
-No matching positions found. Adjust filter pills or search terms across 11 portals.
-</div>
-`;
-return;
-}
-grid.innerHTML = currentJobs
-.map((job) => {
-const badgeClass =
-job.verified === "VERIFIED"
-? "badge-verified"
-: job.verified === "NEEDS REVIEW"
-? "badge-review"
-: "badge-suspicious";
-const badgeText =
-job.verified === "VERIFIED"
-? "✓ VERIFIED"
-: job.verified === "NEEDS REVIEW"
-? "⚠ NEEDS REVIEW"
-: "✗ SUSPICIOUS";
-const initials = job.company.substring(0, 2).toUpperCase();
-return `
-<div class="card job-card" id="card-${job.company.replace(/\\s+/g, "")}">
-<div>
-<div class="job-card-top">
-<div class="job-avatar-group">
-<div class="job-avatar">${initials}</div>
-<div>
-<div class="job-company-title">${job.company}</div>
-<a href="${job.url}" target="_blank" rel="noopener noreferrer" class="portal-badge-link mono" title="Open listing on ${job.portal}">
-<span>${job.portal}</span>
-<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-</a>
-</div>
-</div>
-<span class="badge ${badgeClass} mono">${badgeText}</span>
-</div>
-<h3 class="job-role-heading mt-10">${job.role}</h3>
-<div class="job-tags-row mono">
-<span class="job-tag">📍 ${job.location}</span>
-<span class="job-tag">🏢 ${job.type}</span>
-<span class="job-tag">💰 ${job.salary}</span>
-</div>
-</div>
-<hr class="card-rule">
-<div>
-<div class="match-bar-label mono">
-<span>Match Confidence</span>
-<span class="match-bar-pct">${job.match}%</span>
-</div>
-<div class="progress-bar-container">
-<div class="progress-bar-fill" style="width: ${job.match}%;"></div>
-</div>
-<div class="why-matched-text">"${job.reason}"</div>
-</div>
-<hr class="card-rule">
-<div class="job-card-actions">
-<button class="btn btn-violet btn-sm" onclick="reviewJob('${job.company}')">Review &amp; Apply</button>
-<a href="${job.url}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm btn-redirect" title="Open official listing on ${job.portal}">
-<span>Visit Portal</span>
-<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-</a>
-<button class="btn btn-ghost btn-sm" onclick="skipJob('${job.company}')">Skip</button>
-<button class="btn btn-ghost btn-sm" onclick="emailHRForJob('${job.company}')">Email HR</button>
-</div>
-</div>
-`;
-})
-.join("");
-}
-function skipJob(company) {
-const cardId = `card-${company.replace(/\\s+/g, "")}`;
-const el = document.getElementById(cardId);
-if (el) {
-if (typeof gsap !== "undefined") {
-gsap.to(el, {
-x: 40,
-opacity: 0,
-duration: 0.25,
-ease: "power2.in",
-onComplete: () => {
-currentJobs = currentJobs.filter((j) => j.company !== company);
-renderJobsGrid();
-}
-});
-} else {
-currentJobs = currentJobs.filter((j) => j.company !== company);
-renderJobsGrid();
-}
-}
-showToast(`Skipped ${company}`);
-}
-function emailHRForJob(company) {
-const contact = HR_CONTACTS.find((c) => c.company.toLowerCase() === company.toLowerCase()) || {
-name: "Hiring Lead",
-company: company,
-portal: "Direct",
-email: `careers@${company.toLowerCase().replace(/\\s+/g, "")}.com`,
-status: "Draft Ready"
-};
-navigateTo("outreach");
-updateOutreachDraft(contact);
-showToast(`Drafted outreach email for ${company}`);
-}
-function switchAppTab(status) {
-activeAppTab = status;
-["Pending", "Applied", "Interview", "Rejected"].forEach((t) => {
-const btn = document.getElementById(`tab-${t.toLowerCase()}`);
-if (btn) btn.classList.remove("active");
-});
-const activeBtn = document.getElementById(`tab-${status.toLowerCase()}`);
-if (activeBtn) activeBtn.classList.add("active");
-renderApplicationsTable();
-}
-function renderApplicationsTable() {
-const tbody = document.getElementById("applications-table-body");
-if (!tbody) return;
-const filtered = APPLICATIONS.filter((a) => a.status === activeAppTab);
-if (filtered.length === 0) {
-tbody.innerHTML = `<tr><td colspan="6" class="empty-table-msg">No applications in "${activeAppTab}" queue.</td></tr>`;
-return;
-}
-tbody.innerHTML = filtered
-.map(
-(app) => `
-<tr class="row-interactive" onclick="openSidePanel('${app.company}', '${app.role}')">
-<td class="text-bold">${app.company}</td>
-<td>${app.role}</td>
-<td>
-<a href="${getPortalUrl(app.portal, app.company)}" target="_blank" rel="noopener noreferrer" class="portal-badge-link mono" onclick="event.stopPropagation()" title="Open official ${app.portal} listing">
-<span>${app.portal || "Portal"}</span>
-<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-</a>
-</td>
-<td><span class="badge ${getAppBadgeClass(app.status)} mono">${app.status}</span></td>
-<td class="mono text-secondary">${app.date}</td>
-<td>
-<div class="actions-flex">
-<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); openSidePanel('${app.company}', '${app.role}')">Inspect</button>
-<a href="${getPortalUrl(app.portal, app.company)}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm btn-redirect" onclick="event.stopPropagation()" title="Open listing on ${app.portal}">
-<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-</a>
-</div>
-</td>
-</tr>
-`
-)
-.join("");
-}
-function getAppBadgeClass(status) {
-switch (status) {
-case "Pending":
-return "badge-review";
-case "Applied":
-case "Interview":
-return "badge-verified";
-case "Rejected":
-return "badge-suspicious";
-default:
-return "badge-review";
-}
-}
-function reviewJob(company) {
-const job = JOBS.find((j) => j.company.toLowerCase() === company.toLowerCase()) || JOBS[0];
-openSidePanel(job.company, job.role);
-}
-function getCandidateLetter(recipient, company, role = "AI/ML Engineer Intern") {
-return `Dear ${recipient} at ${company},
-I am writing to express my strong interest in the ${role} position. As a final-year B.Tech student in Artificial Intelligence & Data Science at KDK College of Engineering, Nagpur (CGPA: 8.19), I engineer production machine learning pipelines and microservices.
-In my project FraudLens, I engineered end-to-end UPI fraud detection pipelines achieving 94.2% precision. In MedVerify, I combined CNN classification with automated OCR inspection. My core engineering toolkit includes Python, PyTorch, FastAPI, Docker, and SQL.
-I am eager to contribute to ${company}'s technical objectives and look forward to discussing how my background aligns with your engineering standards.
+
+/**
+ * Domain Service: HR Outreach Manager
+ */
+class OutreachManager {
+  constructor(contacts) {
+    this.contacts = [...contacts];
+    this.selected = this.contacts[0];
+  }
+
+  select(email) {
+    const c = this.contacts.find((x) => x.email.toLowerCase() === email.toLowerCase());
+    if (c) this.selected = c;
+    return this.selected;
+  }
+
+  markSent(email) {
+    const c = this.contacts.find((x) => x.email.toLowerCase() === email.toLowerCase());
+    if (c) c.status = "Sent";
+  }
+
+  generateDraft(contact, candidate = CANDIDATE_PROFILE) {
+    const target = contact || this.selected;
+    return `Subject: Application: AI/ML Engineering Intern — ${candidate.name}
+
+Dear ${target.name},
+
+I am writing to express my strong interest in AI/ML internship opportunities at ${target.company}. As a final-year B.Tech student in Artificial Intelligence & Data Science at ${candidate.college} (CGPA: ${candidate.cgpa}), I specialize in building deterministic, production-grade machine learning pipelines.
+
+Key Technical Projects:
+• FraudLens: Engineered an end-to-end UPI anomaly detection engine processing real-time transactions with 94.2% precision and sub-50ms inference using XGBoost and FastAPI.
+• MedVerify: Developed a spectral medicine authentication model combining PyTorch CNNs with PaddleOCR for automated packaging verification (98.1% accuracy).
+
+My toolkit includes Python, PyTorch, FastAPI, Docker, and SQL. I have reviewed ${target.company}'s recent technical trajectory and would welcome the opportunity to discuss how my practical machine learning skills can support your engineering deliverables.
+
+Resume & GitHub: ${candidate.linkedin}
+
 Sincerely,
-Twinkle Ghangare
-twinkle.ghangare@gmail.com | +91 9876543210
-GitHub: https://github.com/twinkleghangare | LinkedIn: https://www.linkedin.com/in/twinkleghangare`;
+${candidate.name}
+${candidate.phone} | ${candidate.email}`;
+  }
 }
-function openSidePanel(company, role) {
-currentInspectingJob = JOBS.find((j) => j.company.toLowerCase() === company.toLowerCase()) || {
-company,
-role,
-reason: "Direct candidate profile alignment"
-};
-const backdrop = document.getElementById("side-panel-backdrop");
-const panel = document.getElementById("slide-panel");
-const roleEl = document.getElementById("panel-role-title");
-const compEl = document.getElementById("panel-company-name");
-const bulletsEl = document.getElementById("panel-cv-bullets");
-const coverEl = document.getElementById("panel-cover-letter");
-if (roleEl) roleEl.innerText = role;
-if (compEl) compEl.innerText = company;
-if (bulletsEl) {
-bulletsEl.innerHTML = `
-<li>Engineered transaction anomaly heuristic detection in FraudLens UPI scam classifier (94.2% precision).</li>
-<li>Architected modular FastAPI microservices containerized with Docker for sub-50ms inference.</li>
-<li>Trained deep learning pipelines in PyTorch with ONNX quantization reducing model footprint by 35%.</li>
-<li>Processed multi-spectral datasets for HSI land-cover classification and automated label verification.</li>
-`;
+
+/**
+ * Domain Service: Profile & Auth Manager
+ */
+class ProfileManager {
+  constructor(profile = CANDIDATE_PROFILE) {
+    this.profile = { ...profile };
+    this.dailyTarget = 25;
+    this.dailyApplied = 3;
+    this.load();
+  }
+
+  load() {
+    try {
+      const saved = localStorage.getItem("applybot_candidate");
+      if (saved) Object.assign(this.profile, JSON.parse(saved));
+      const target = localStorage.getItem("applybot_daily_target");
+      if (target) this.dailyTarget = parseInt(target, 10);
+      const applied = localStorage.getItem("applybot_daily_applied");
+      if (applied) this.dailyApplied = parseInt(applied, 10);
+    } catch (e) {}
+  }
+
+  save(data) {
+    Object.assign(this.profile, data);
+    try {
+      localStorage.setItem("applybot_candidate", JSON.stringify(this.profile));
+    } catch (e) {}
+  }
+
+  setDailyLimit(limit) {
+    this.dailyTarget = limit;
+    try {
+      localStorage.setItem("applybot_daily_target", limit.toString());
+    } catch (e) {}
+  }
+
+  incrementApplied() {
+    this.dailyApplied += 1;
+    try {
+      localStorage.setItem("applybot_daily_applied", this.dailyApplied.toString());
+    } catch (e) {}
+    return this.dailyApplied;
+  }
 }
-if (coverEl) {
-coverEl.innerText = getCandidateLetter("Hiring Team", company, role);
+
+/**
+ * Master UI Controller (OOP Orchestrator)
+ */
+class ApplyBotApp {
+  constructor() {
+    this.jobs = new JobEngine(INITIAL_JOBS);
+    this.apps = new ApplicationTracker(INITIAL_APPLICATIONS);
+    this.outreach = new OutreachManager(INITIAL_HR_CONTACTS);
+    this.profile = new ProfileManager(CANDIDATE_PROFILE);
+    this.currentTheme = "dark";
+    this.currentInspectingJob = INITIAL_JOBS[0];
+    this.isPaused = false;
+  }
+
+  init() {
+    this.initTheme();
+    this.initAuthNavbar();
+    this.renderAll();
+    this.initGSAP();
+    this.bindEvents();
+  }
+
+  initTheme() {
+    try {
+      const saved = localStorage.getItem("applybot_theme") || "dark";
+      this.setTheme(saved);
+    } catch (e) {
+      this.setTheme("dark");
+    }
+  }
+
+  setTheme(mode) {
+    this.currentTheme = mode;
+    document.documentElement.setAttribute("data-theme", mode);
+    try {
+      localStorage.setItem("applybot_theme", mode);
+    } catch (e) {}
+
+    const lightBtn = document.getElementById("mode-btn-light");
+    const darkBtn = document.getElementById("mode-btn-dark");
+    if (lightBtn && darkBtn) {
+      if (mode === "light") {
+        lightBtn.classList.add("active");
+        darkBtn.classList.remove("active");
+      } else {
+        darkBtn.classList.add("active");
+        lightBtn.classList.remove("active");
+      }
+    }
+  }
+
+  toggleTheme() {
+    const next = this.currentTheme === "dark" ? "light" : "dark";
+    this.setTheme(next);
+    this.showToast(`Switched to ${next.toUpperCase()} mode`);
+  }
+
+  initAuthNavbar() {
+    const nameEl = document.getElementById("nav-user-name");
+    const avatarEl = document.getElementById("nav-avatar-initials");
+    if (nameEl) nameEl.textContent = this.profile.profile.name.split(" ")[0];
+    if (avatarEl) avatarEl.textContent = "TG";
+  }
+
+  renderAll() {
+    this.renderStats();
+    this.renderGauge();
+    this.renderJobs();
+    this.renderApplications();
+    this.renderOutreach();
+  }
+
+  renderStats() {
+    const stats = this.jobs.getStats();
+    const dis = document.getElementById("stat-discovered");
+    const ver = document.getElementById("stat-verified");
+    const mat = document.getElementById("stat-match");
+    const pen = document.getElementById("stat-pending");
+
+    if (dis) dis.textContent = stats.discovered;
+    if (ver) ver.textContent = stats.verified;
+    if (mat) mat.textContent = `${stats.maxMatch}%`;
+    if (pen) pen.textContent = stats.pending;
+  }
+
+  renderGauge() {
+    const scoreText = document.getElementById("gauge-score-text");
+    const pctText = document.getElementById("gauge-pct-text");
+    const subText = document.getElementById("target-gauge-sub");
+    const bar = document.getElementById("target-progress-bar");
+    const circle = document.getElementById("gauge-circle");
+
+    const applied = this.profile.dailyApplied;
+    const target = this.profile.dailyTarget;
+    const pct = Math.min(100, Math.round((applied / target) * 100));
+
+    if (scoreText) scoreText.textContent = `${applied} / ${target} applied today`;
+    if (pctText) pctText.textContent = `${pct}%`;
+    if (subText) subText.textContent = `${pct}% completed towards daily target`;
+    if (bar) bar.style.width = `${pct}%`;
+
+    if (circle) {
+      const radius = 40;
+      const circumference = 2 * Math.PI * radius;
+      const offset = circumference - (pct / 100) * circumference;
+      circle.style.strokeDasharray = `${circumference}`;
+      circle.style.strokeDashoffset = `${offset}`;
+    }
+  }
+
+  renderJobs() {
+    const grid = document.getElementById("jobs-grid-container");
+    if (!grid) return;
+
+    const filtered = this.jobs.getFiltered();
+    if (!filtered.length) {
+      grid.innerHTML = `<div class="empty-card-msg mono">No jobs matching criteria. Try adjusting filters.</div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered
+      .map((job) => {
+        const badgeClass =
+          job.verified === "VERIFIED"
+            ? "badge-verified"
+            : job.verified === "NEEDS REVIEW"
+            ? "badge-review"
+            : "badge-suspicious";
+
+        const badgeIcon =
+          job.verified === "VERIFIED" ? "✓" : job.verified === "NEEDS REVIEW" ? "⚠" : "✗";
+
+        return `
+        <article class="card job-card" id="card-${job.company.replace(/[^a-zA-Z0-9]/g, "")}">
+          <div class="job-card-header">
+            <div class="company-brand-wrap">
+              <span class="company-avatar mono">${job.company.slice(0, 2).toUpperCase()}</span>
+              <div>
+                <span class="company-name">${job.company}</span>
+                <span class="portal-source-tag mono">via ${job.portal}</span>
+              </div>
+            </div>
+            <span class="badge ${badgeClass} mono">${badgeIcon} ${job.verified}</span>
+          </div>
+
+          <h3 class="role-title">${job.role}</h3>
+
+          <div class="job-tags-row mono">
+            <span class="tag-chip mono">📍 ${job.location}</span>
+            <span class="tag-chip mono">🏢 ${job.type}</span>
+            <span class="tag-chip mono">💰 ${job.salary}</span>
+          </div>
+
+          <div class="match-bar-block">
+            <div class="match-label-row">
+              <span class="input-label mono">Match Alignment</span>
+              <span class="match-score-val mono">${job.match}%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: ${job.match}%;"></div>
+            </div>
+          </div>
+
+          <div class="match-reason-box">
+            <span class="mono match-reason-italic">"Why matched: ${job.reason}"</span>
+          </div>
+
+          <div class="job-card-actions">
+            <button class="btn btn-violet btn-sm" onclick="app.reviewJob('${job.company}')">Review & Apply</button>
+            <a href="${job.url}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm btn-redirect" title="Open official job posting">
+              <span>Visit Portal</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+            </a>
+            <button class="btn btn-ghost btn-sm" onclick="app.skipJob('${job.company}')">Skip</button>
+            <button class="btn btn-ghost btn-sm" onclick="app.emailHRForJob('${job.company}')">Email HR</button>
+          </div>
+        </article>
+      `;
+      })
+      .join("");
+  }
+
+  renderApplications() {
+    const tbody = document.getElementById("applications-table-body");
+    if (!tbody) return;
+
+    this.updateTabCounters();
+    const rows = this.apps.getByTab();
+
+    if (!rows.length) {
+      tbody.innerHTML = `<tr><td colspan="6" class="empty-table-msg mono">No applications under ${this.apps.activeTab} status.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = rows
+      .map(
+        (appItem) => `
+      <tr onclick="app.reviewJob('${appItem.company}')" title="Click to inspect application package">
+        <td class="text-bold">${appItem.company}</td>
+        <td>${appItem.role}</td>
+        <td><span class="tag-chip mono">${appItem.portal}</span></td>
+        <td><span class="badge badge-verified mono">${appItem.status}</span></td>
+        <td class="mono text-secondary">${appItem.date}</td>
+        <td>
+          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); app.reviewJob('${appItem.company}')">Inspect →</button>
+        </td>
+      </tr>
+    `
+      )
+      .join("");
+  }
+
+  updateTabCounters() {
+    const pEl = document.getElementById("tab-count-pending");
+    const aEl = document.getElementById("tab-count-applied");
+    const iEl = document.getElementById("tab-count-interview");
+    const rEl = document.getElementById("tab-count-rejected");
+
+    if (pEl) pEl.textContent = this.apps.getCount("Pending");
+    if (aEl) aEl.textContent = this.apps.getCount("Applied");
+    if (iEl) iEl.textContent = this.apps.getCount("Interview");
+    if (rEl) rEl.textContent = this.apps.getCount("Rejected");
+  }
+
+  renderOutreach() {
+    const tbody = document.getElementById("outreach-table-body");
+    if (!tbody) return;
+
+    tbody.innerHTML = this.outreach.contacts
+      .map(
+        (c) => `
+      <tr onclick="app.selectOutreach('${c.email}')" title="Click to load cold email draft">
+        <td class="text-bold">${c.name}</td>
+        <td>${c.company}</td>
+        <td><span class="tag-chip mono">${c.portal}</span></td>
+        <td class="mono text-secondary">${c.email}</td>
+        <td><span class="badge badge-review mono">${c.status}</span></td>
+        <td>
+          <div class="actions-flex" onclick="event.stopPropagation()">
+            <button class="btn btn-ghost btn-sm" onclick="app.copyOutreach('${c.email}')">Copy</button>
+            <button class="btn btn-ghost btn-sm" onclick="app.openGmail('${c.email}')">Gmail</button>
+            <button class="btn btn-ghost btn-sm" onclick="app.markOutreachSent('${c.email}')">Sent</button>
+          </div>
+        </td>
+      </tr>
+    `
+      )
+      .join("");
+
+    this.updateDraftBox();
+  }
+
+  selectOutreach(email) {
+    this.outreach.select(email);
+    this.updateDraftBox();
+    this.showToast(`Loaded outreach draft for ${this.outreach.selected.name}`);
+  }
+
+  updateDraftBox() {
+    const draftBox = document.getElementById("outreach-draft-body");
+    const recEl = document.getElementById("draft-recipient-name");
+    if (recEl) recEl.textContent = `${this.outreach.selected.name} (${this.outreach.selected.company})`;
+    if (draftBox) draftBox.textContent = this.outreach.generateDraft(this.outreach.selected);
+  }
+
+  copyOutreach(email) {
+    this.outreach.select(email);
+    const text = this.outreach.generateDraft(this.outreach.selected);
+    navigator.clipboard.writeText(text).then(() => {
+      this.showToast(`✓ Email draft copied to clipboard`);
+    });
+  }
+
+  openGmail(email) {
+    this.outreach.select(email);
+    const draft = this.outreach.generateDraft(this.outreach.selected);
+    const subject = encodeURIComponent(`Application: AI/ML Engineering Intern — ${CANDIDATE_PROFILE.name}`);
+    const body = encodeURIComponent(draft);
+    window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${subject}&body=${body}`, "_blank");
+  }
+
+  markOutreachSent(email) {
+    this.outreach.markSent(email);
+    this.renderOutreach();
+    this.showToast(`✓ Marked outreach to ${email} as Sent`);
+  }
+
+  reviewJob(company) {
+    const job = this.jobs.findByCompany(company);
+    this.currentInspectingJob = job;
+
+    const rTitle = document.getElementById("panel-role-title");
+    const cName = document.getElementById("panel-company-name");
+    const link = document.getElementById("panel-redirect-link");
+    const bullets = document.getElementById("panel-cv-bullets");
+    const letter = document.getElementById("panel-cover-letter");
+
+    if (rTitle) rTitle.textContent = job.role;
+    if (cName) cName.textContent = `${job.company} (${job.portal})`;
+    if (link) link.href = job.url;
+
+    if (bullets) {
+      bullets.innerHTML = `
+        <li>Engineered real-time UPI anomaly detection pipeline (FraudLens) achieving 94.2% precision on 120,000 transaction records with sub-50ms inference.</li>
+        <li>Developed deep learning pharmaceutical classifier (MedVerify) combining PyTorch CNNs with PaddleOCR for 98.1% verification accuracy.</li>
+        <li>Containerized modular FastAPI microservices with Docker, implementing structured logging, ONNX runtime acceleration, and PostgreSQL persistence.</li>
+      `;
+    }
+
+    if (letter) {
+      letter.textContent = `Dear Hiring Team at ${job.company},
+
+I am excited to apply for the ${job.role} position found via ${job.portal}. As a final-year AI & Data Science undergraduate at ${CANDIDATE_PROFILE.college} with an 8.19 CGPA, I bring demonstrated expertise in algorithmic anomaly detection and deep learning systems.
+
+In my project FraudLens, I designed automated scoring pipelines in Python and Scikit-Learn that match the core engineering requirements of ${job.company}. I look forward to contributing to your team's mission.
+
+Best regards,
+${CANDIDATE_PROFILE.name}`;
+    }
+
+    this.openSidePanel();
+  }
+
+  openSidePanel() {
+    const panel = document.getElementById("slide-panel");
+    const backdrop = document.getElementById("side-panel-backdrop");
+    if (!panel || !backdrop) return;
+
+    backdrop.classList.add("open");
+    if (typeof gsap !== "undefined") {
+      gsap.fromTo(panel, { x: 400 }, { x: 0, duration: 0.3, ease: "power3.out" });
+    } else {
+      panel.style.transform = "translateX(0)";
+    }
+  }
+
+  closeSidePanel() {
+    const panel = document.getElementById("slide-panel");
+    const backdrop = document.getElementById("side-panel-backdrop");
+    if (!panel || !backdrop) return;
+
+    if (typeof gsap !== "undefined") {
+      gsap.to(panel, {
+        x: 400,
+        duration: 0.25,
+        ease: "power3.in",
+        onComplete: () => backdrop.classList.remove("open")
+      });
+    } else {
+      backdrop.classList.remove("open");
+    }
+  }
+
+  submitCurrentApplication() {
+    if (!this.currentInspectingJob) return;
+    this.apps.submit(this.currentInspectingJob.company);
+    this.profile.incrementApplied();
+    this.renderGauge();
+    this.renderApplications();
+    this.renderStats();
+    this.closeSidePanel();
+    this.showToast(`✓ Application approved & submitted to ${this.currentInspectingJob.company}!`);
+  }
+
+  skipJob(company) {
+    const card = document.getElementById(`card-${company.replace(/[^a-zA-Z0-9]/g, "")}`);
+    if (card && typeof gsap !== "undefined") {
+      gsap.to(card, {
+        x: 40,
+        opacity: 0,
+        duration: 0.25,
+        onComplete: () => {
+          this.jobs.skip(company);
+          this.renderJobs();
+          this.renderStats();
+        }
+      });
+    } else {
+      this.jobs.skip(company);
+      this.renderJobs();
+      this.renderStats();
+    }
+    this.showToast(`Skipped ${company}`);
+  }
+
+  skipTopJob() {
+    const card = document.getElementById("top-pending-card");
+    if (card && typeof gsap !== "undefined") {
+      gsap.to(card, {
+        x: 40,
+        opacity: 0,
+        duration: 0.25,
+        onComplete: () => {
+          card.style.display = "none";
+        }
+      });
+    } else if (card) {
+      card.style.display = "none";
+    }
+    this.showToast("Skipped top pending job");
+  }
+
+  allowRun() {
+    this.isPaused = false;
+    const btn = document.getElementById("btn-allow-run");
+    if (btn) btn.innerHTML = `<span>✓ Run Triggered</span>`;
+    setTimeout(() => {
+      if (btn) btn.innerHTML = `<span>▶ Allow Today's Run</span>`;
+    }, 2000);
+    this.showToast("▶ Today's autonomous run dispatched across 11 portals");
+  }
+
+  pauseAgent() {
+    this.isPaused = !this.isPaused;
+    const label = document.getElementById("agent-status-label");
+    const btn = document.getElementById("btn-pause-agent");
+    if (this.isPaused) {
+      if (label) label.textContent = "Agent Paused · Standby";
+      if (btn) btn.innerHTML = `<span>▶ Resume</span>`;
+      this.showToast("⏸ Agent paused");
+    } else {
+      if (label) label.textContent = "Agent Online · 11 Portals Scanned";
+      if (btn) btn.innerHTML = `<span>⏸ Pause</span>`;
+      this.showToast("▶ Agent resumed");
+    }
+  }
+
+  navigateTo(sectionId) {
+    const sections = ["auth", "dashboard", "jobs", "applications", "outreach", "profile"];
+    sections.forEach((s) => {
+      const el = document.getElementById(`section-${s}`);
+      const btn = document.getElementById(`nav-${s}`);
+      if (el) el.classList.toggle("active", s === sectionId);
+      if (btn) btn.classList.toggle("active", s === sectionId);
+    });
+
+    const menu = document.getElementById("nav-menu");
+    if (menu) menu.classList.remove("open");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  setFilter(kind, val, btnEl) {
+    if (kind === "type") {
+      this.jobs.setTypeFilter(val);
+      const row = document.getElementById("type-pills-row");
+      if (row) row.querySelectorAll("button").forEach((b) => b.classList.remove("active"));
+    } else if (kind === "portal") {
+      this.jobs.setPortalFilter(val);
+      const row = document.getElementById("portal-pills-row");
+      if (row) row.querySelectorAll("button").forEach((b) => b.classList.remove("active"));
+    }
+    if (btnEl) {
+      btnEl.classList.add("active");
+      if (typeof gsap !== "undefined") {
+        gsap.fromTo(btnEl, { scale: 0.95 }, { scale: 1, duration: 0.15 });
+      }
+    }
+    this.renderJobs();
+  }
+
+  searchJobs(query) {
+    this.jobs.setSearchQuery(query);
+    this.renderJobs();
+  }
+
+  handleCopilotSubmit() {
+    const input = document.getElementById("copilot-input");
+    if (!input || !input.value.trim()) return;
+    const query = input.value.trim();
+    this.jobs.setSearchQuery(query);
+    this.renderJobs();
+    this.navigateTo("jobs");
+    this.showToast(`Copilot filtered jobs for: "${query}"`);
+    input.value = "";
+  }
+
+  saveProfileForm() {
+    const name = document.getElementById("prof-name")?.value;
+    const email = document.getElementById("prof-email")?.value;
+    const college = document.getElementById("prof-college")?.value;
+    const degree = document.getElementById("prof-degree")?.value;
+    const cgpa = document.getElementById("prof-cgpa")?.value;
+
+    this.profile.save({ name, email, college, degree, cgpa });
+    this.initAuthNavbar();
+    this.showToast("✓ Profile saved successfully");
+  }
+
+  initGSAP() {
+    if (typeof gsap === "undefined") return;
+
+    gsap.from(".hero-anim-item", {
+      opacity: 0,
+      y: 16,
+      stagger: 0.1,
+      duration: 0.4,
+      ease: "power2.out"
+    });
+
+    const statNums = document.querySelectorAll(".stat-number");
+    statNums.forEach((el) => {
+      const target = parseFloat(el.getAttribute("data-target") || "0");
+      const suffix = el.getAttribute("data-suffix") || "";
+      const obj = { val: 0 };
+      gsap.to(obj, {
+        val: target,
+        duration: 1.2,
+        ease: "power1.out",
+        onUpdate: () => {
+          el.textContent = Math.round(obj.val) + suffix;
+        }
+      });
+    });
+  }
+
+  showToast(message) {
+    const shelf = document.getElementById("toast-shelf");
+    if (!shelf) return;
+    const toast = document.createElement("div");
+    toast.className = "toast mono";
+    toast.textContent = message;
+    shelf.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      toast.style.transform = "translateY(8px)";
+      toast.style.transition = "all 200ms ease";
+      setTimeout(() => toast.remove(), 200);
+    }, 2400);
+  }
+
+  bindEvents() {
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") this.closeSidePanel();
+      if (e.key === "/" && document.activeElement.tagName !== "INPUT") {
+        e.preventDefault();
+        const searchInput = document.getElementById("jobs-search-input");
+        if (searchInput) {
+          this.navigateTo("jobs");
+          searchInput.focus();
+        }
+      }
+    });
+
+    const dropzone = document.getElementById("resume-dropzone");
+    const fileInput = document.getElementById("resume-file-input");
+    if (dropzone && fileInput) {
+      dropzone.addEventListener("click", () => fileInput.click());
+      fileInput.addEventListener("change", (e) => {
+        if (e.target.files.length) {
+          this.showToast(`✓ Uploaded resume: ${e.target.files[0].name}`);
+        }
+      });
+    }
+  }
 }
-switchPanelTab("cv");
-if (backdrop) backdrop.classList.add("open");
-const redirectLink = document.getElementById("panel-redirect-link");
-const redirectText = document.getElementById("panel-redirect-text");
-if (redirectLink) {
-const portalName = currentInspectingJob.portal || "Portal";
-const targetUrl = currentInspectingJob.url || getPortalUrl(portalName, company);
-redirectLink.href = targetUrl;
-if (redirectText) redirectText.innerText = `Visit ${portalName}`;
-redirectLink.title = `Open official listing on ${portalName} in new tab`;
-}
-if (typeof gsap !== "undefined" && panel) {
-gsap.fromTo(panel, { x: 400 }, { x: 0, duration: 0.3, ease: "power3.out" });
-}
-}
-function closeSidePanel() {
-const backdrop = document.getElementById("side-panel-backdrop");
-const panel = document.getElementById("slide-panel");
-if (typeof gsap !== "undefined" && panel) {
-gsap.to(panel, {
-x: 400,
-duration: 0.25,
-ease: "power3.in",
-onComplete: () => {
-if (backdrop) backdrop.classList.remove("open");
-}
+
+// Global Application Instance
+let app;
+document.addEventListener("DOMContentLoaded", () => {
+  app = new ApplyBotApp();
+  app.init();
 });
-} else {
-if (backdrop) backdrop.classList.remove("open");
+
+// Bridge functions for HTML onclick attributes
+function navigateTo(section) { app.navigateTo(section); }
+function setThemeMode(mode) { app.setTheme(mode); }
+function toggleTheme() { app.toggleTheme(); }
+function setFilter(kind, val, el) { app.setFilter(kind, val, el); }
+function filterJobs() {
+  const input = document.getElementById("jobs-search-input");
+  if (input) app.searchJobs(input.value);
 }
+function reviewJob(company) { app.reviewJob(company); }
+function skipJob(company) { app.skipJob(company); }
+function skipTopJob() { app.skipTopJob(); }
+function allowTodaysRun() { app.allowRun(); }
+function pauseAgent() { app.pauseAgent(); }
+function closeSidePanel() { app.closeSidePanel(); }
+function closeSidePanelOnBackdrop(e) { if (e.target.id === "side-panel-backdrop") app.closeSidePanel(); }
+function submitCurrentApplication() { app.submitCurrentApplication(); }
+function switchPanelTab(tab) {
+  ["cv", "letter", "qa"].forEach((t) => {
+    document.getElementById(`ptab-${t}`)?.classList.toggle("active", t === tab);
+    document.getElementById(`pane-${t}`)?.classList.toggle("active", t === tab);
+  });
 }
-function closeSidePanelOnBackdrop(e) {
-if (e.target.id === "side-panel-backdrop") closeSidePanel();
+function copyOutreachEmail() { app.copyOutreach(app.outreach.selected.email); }
+function openOutreachGmail() { app.openGmail(app.outreach.selected.email); }
+function markOutreachSent() { app.markOutreachSent(app.outreach.selected.email); }
+function saveProfile() { app.saveProfileForm(); }
+function handleBellClick() { app.showToast("🔔 12 verified openings detected today across 11 portals"); }
+function toggleMobileMenu() {
+  const menu = document.getElementById("nav-menu");
+  if (menu) menu.classList.toggle("open");
 }
-function switchPanelTab(tabName) {
-["cv", "letter", "qa"].forEach((t) => {
-const btn = document.getElementById(`ptab-${t}`);
-const pane = document.getElementById(`pane-${t}`);
-if (btn) btn.classList.remove("active");
-if (pane) pane.classList.remove("active");
-});
-const activeBtn = document.getElementById(`ptab-${tabName}`);
-const activePane = document.getElementById(`pane-${tabName}`);
-if (activeBtn) activeBtn.classList.add("active");
-if (activePane) activePane.classList.add("active");
+function handleCopilotKey(e) { if (e.key === "Enter") app.handleCopilotSubmit(); }
+function handleCopilotSubmit() { app.handleCopilotSubmit(); }
+function setAppTab(tab, btn) {
+  app.apps.setTab(tab);
+  document.querySelectorAll(".status-tab-btn").forEach((b) => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+  app.renderApplications();
 }
-function submitCurrentApplication() {
-closeSidePanel();
-dailyAppliedCount = Math.min(dailyTargetCount, dailyAppliedCount + 1);
-updateTargetProgressGSAP(dailyAppliedCount, dailyTargetCount);
-if (currentInspectingJob) {
-const existing = APPLICATIONS.find((a) => a.company === currentInspectingJob.company);
-if (existing) {
-existing.status = "Applied";
-existing.date = "Just now";
-} else {
-APPLICATIONS.unshift({
-company: currentInspectingJob.company,
-role: currentInspectingJob.role,
-portal: currentInspectingJob.portal,
-status: "Applied",
-date: "Just now"
-});
+function setAuthTab(mode) {
+  const tabIn = document.getElementById("auth-tab-signin");
+  const tabReg = document.getElementById("auth-tab-register");
+  const regFields = document.getElementById("auth-register-fields");
+  const subBtn = document.getElementById("auth-submit-btn");
+
+  if (mode === "signin") {
+    tabIn?.classList.add("active");
+    tabReg?.classList.remove("active");
+    regFields?.classList.add("auth-register-hidden");
+    if (subBtn) subBtn.textContent = "Authenticate & Enter ApplyBot →";
+  } else {
+    tabReg?.classList.add("active");
+    tabIn?.classList.remove("active");
+    regFields?.classList.remove("auth-register-hidden");
+    if (subBtn) subBtn.textContent = "Register & Connect Portals →";
+  }
 }
+function quickFillCandidate(type) {
+  const emailInput = document.getElementById("auth-email");
+  const nameInput = document.getElementById("auth-name");
+  const instInput = document.getElementById("auth-institution");
+  if (type === "twinkle") {
+    if (emailInput) emailInput.value = "twinkle.ghangare@gmail.com";
+    if (nameInput) nameInput.value = "Twinkle Ghangare";
+    if (instInput) instInput.value = "KDK College of Engineering, Nagpur";
+    app.showToast("Loaded Twinkle Ghangare (KDK College, CGPA 8.19)");
+  } else {
+    if (emailInput) emailInput.value = "guest.candidate@applybot.ai";
+    if (nameInput) nameInput.value = "Guest Candidate";
+    if (instInput) instInput.value = "Open Academic Sandbox";
+    app.showToast("Loaded Guest candidate profile");
+  }
 }
-renderApplicationsTable();
-showToast(`✓ Applied to ${currentInspectingJob.company}! Daily total: ${dailyAppliedCount}/${dailyTargetCount}`);
-}
-function renderOutreachTable() {
-const tbody = document.getElementById("outreach-table-body");
-if (!tbody) return;
-tbody.innerHTML = HR_CONTACTS.map(
-(c) => `
-<tr class="row-interactive" onclick="selectOutreachContact('${c.company}')">
-<td class="text-bold">${c.name}</td>
-<td>${c.company}</td>
-<td>
-<a href="${getPortalUrl(c.portal, c.company)}" target="_blank" rel="noopener noreferrer" class="portal-badge-link mono" onclick="event.stopPropagation()" title="Open official ${c.portal} portal">
-<span>${c.portal}</span>
-<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-</a>
-</td>
-<td class="mono text-violet">${c.email}</td>
-<td><span class="badge ${c.status === "Sent" ? "badge-verified" : "badge-review"} mono">${c.status}</span></td>
-<td>
-<div class="actions-flex">
-<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); copyDirectEmail('${c.company}')">Copy</button>
-<button class="btn btn-violet btn-sm" onclick="event.stopPropagation(); openDirectGmail('${c.company}')">Gmail</button>
-<a href="${getPortalUrl(c.portal, c.company)}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm btn-redirect" onclick="event.stopPropagation()" title="Open company website or listing">
-<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-</a>
-<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); markOutreachSent('${c.company}')">Sent</button>
-</div>
-</td>
-</tr>
-`
-).join("");
-}
-function selectOutreachContact(company) {
-const contact = HR_CONTACTS.find((c) => c.company === company) || HR_CONTACTS[0];
-updateOutreachDraft(contact);
-showToast(`Loaded draft for ${contact.name} (${contact.company})`);
-}
-function updateOutreachDraft(contact) {
-activeDraftRecipient = contact;
-const subj = document.getElementById("draft-subject");
-const body = document.getElementById("draft-body");
-if (subj) {
-subj.innerText = `Subject: Application: AI/ML Engineer Intern — Twinkle Ghangare (${contact.company})`;
-}
-if (body) {
-body.innerText = getCandidateLetter(contact.name, contact.company, "AI/ML Engineer Intern");
-}
-}
-function copyCurrentDraft() {
-const body = document.getElementById("draft-body")?.innerText || "";
-navigator.clipboard.writeText(body).then(() => {
-showToast("Email draft copied to clipboard!");
-});
-}
-function copyDirectEmail(company) {
-selectOutreachContact(company);
-copyCurrentDraft();
-}
-function openCurrentDraftInGmail() {
-if (!activeDraftRecipient) return;
-const email = activeDraftRecipient.email;
-const subj = encodeURIComponent(`Application: AI/ML Engineer Intern — Twinkle Ghangare (${activeDraftRecipient.company})`);
-const body = encodeURIComponent(document.getElementById("draft-body")?.innerText || "");
-const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subj}&body=${body}`;
-window.open(url, "_blank");
-}
-function openDirectGmail(company) {
-selectOutreachContact(company);
-openCurrentDraftInGmail();
-}
-function markSelectedOutreachSent() {
-if (activeDraftRecipient) {
-markOutreachSent(activeDraftRecipient.company);
-}
-}
-function markOutreachSent(company) {
-const contact = HR_CONTACTS.find((c) => c.company === company);
-if (contact) {
-contact.status = "Sent";
-renderOutreachTable();
-showToast(`Marked outreach to ${company} as Sent!`);
-}
-}
-function updateSliderLabel(val) {
-const lbl = document.getElementById("slider-count-label");
-if (lbl) lbl.innerText = `${val} / day`;
-}
-function saveProfile() {
-showToast("Profile settings saved successfully!");
-}
-function handleResumeUpload(event) {
-const file = event.target.files?.[0];
-if (file) {
-const label = document.getElementById("dropzone-label");
-if (label) label.innerText = `Uploaded: ${file.name}`;
-showToast(`Resume uploaded: ${file.name}`);
-}
-}
-function setupDropzone() {
-const dropzone = document.getElementById("resume-dropzone");
-if (!dropzone) return;
-["dragenter", "dragover"].forEach((eventName) => {
-dropzone.addEventListener(eventName, (e) => {
-e.preventDefault();
-dropzone.style.borderColor = "var(--violet)";
-});
-});
-["dragleave", "drop"].forEach((eventName) => {
-dropzone.addEventListener(eventName, (e) => {
-e.preventDefault();
-dropzone.style.borderColor = "var(--border)";
-});
-});
-dropzone.addEventListener("drop", (e) => {
-const dt = e.dataTransfer;
-const file = dt.files[0];
-if (file) {
-const label = document.getElementById("dropzone-label");
-if (label) label.innerText = `Uploaded: ${file.name}`;
-showToast(`Resume uploaded: ${file.name}`);
-}
-});
-}
-function handleBellClick() {
-showToast("Notifications: 12 verified opportunities ready across 11 portals.");
-}
-function showToast(msg) {
-const shelf = document.getElementById("toast-shelf");
-if (!shelf) return;
-const t = document.createElement("div");
-t.className = "toast";
-t.innerText = msg;
-shelf.appendChild(t);
-setTimeout(() => {
-t.style.opacity = "0";
-t.style.transform = "translateY(8px)";
-t.style.transition = "all 200ms ease";
-setTimeout(() => t.remove(), 200);
-}, 2600);
-}
-function setupKeyboardListeners() {
-document.addEventListener("keydown", (e) => {
-if (e.key === "Escape") closeSidePanel();
-});
-}
-async function fetchLiveBackendData() {
-try {
-const res = await fetch("/api/dashboard-stats");
-if (res.ok) {
-const data = await res.json();
-if (data && data.agent_stats) {
-const stats = data.agent_stats;
-const discEl = document.getElementById("stat-discovered");
-const verEl = document.getElementById("stat-verified");
-const pendEl = document.getElementById("stat-pending");
-if (discEl && stats.total_jobs_discovered) {
-discEl.setAttribute("data-target", stats.total_jobs_discovered);
-}
-if (verEl && stats.verified_jobs) {
-verEl.setAttribute("data-target", stats.verified_jobs);
-}
-if (pendEl && stats.pending_approvals) {
-pendEl.setAttribute("data-target", stats.pending_approvals);
-}
-animateCountersGSAP();
-}
-}
-} catch (e) {}
+function handleAuthSubmit() {
+  const name = document.getElementById("auth-name")?.value || "Twinkle Ghangare";
+  const email = document.getElementById("auth-email")?.value || "twinkle.ghangare@gmail.com";
+  app.profile.save({ name, email });
+  app.initAuthNavbar();
+  app.showToast(`✓ Authenticated as ${name}`);
+  app.navigateTo("dashboard");
 }

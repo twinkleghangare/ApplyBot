@@ -158,10 +158,6 @@
 <div class="section-label">01 — DASHBOARD</div>
 <hr class="section-divider">
 <div class="hero-container" id="hero-wrapper">
-<div class="spotlight-beam" aria-hidden="true"></div>
-<div class="hero-canvas-wrap" id="hero-canvas-container" aria-hidden="true"></div>
-<div class="comet-track comet-1" aria-hidden="true"></div>
-<div class="comet-track comet-2" aria-hidden="true"></div>
 <div class="hero-split-grid">
 <div class="hero-left-col">
 <div class="status-indicator-row hero-anim-item">
@@ -258,96 +254,6 @@ Agent is <span class="typed-text" id="hero-typed-text">scanning 11 portals for v
 </a>
 <button class="btn btn-ghost btn-sm" onclick="skipTopJob()">Skip</button>
 </div>
-</div>
-</div>
-</div>
-</div>
-<div class="telemetry-bento-grid hero-anim-item">
-<div class="card telemetry-card" onclick="setFilter('portal', 'Wellfound', document.querySelector('#portal-pills-row button:nth-child(9)')); navigateTo('jobs')" title="Filter jobs matching FraudLens">
-<div class="telemetry-card-top">
-<div class="telemetry-icon-box amber-glow">
-<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFAA2C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-<path d="M9 12l2 2 4-4"></path>
-</svg>
-</div>
-<div class="telemetry-header-meta">
-<div class="telemetry-title">FraudLens Core</div>
-<span class="telemetry-badge-amber mono">UPI ANOMALY HEURISTICS</span>
-</div>
-</div>
-<p class="telemetry-desc">Real-time fraud classification engine on 120k UPI transactions with sub-50ms inference latency.</p>
-<div class="telemetry-metrics-row">
-<div class="telemetry-metric-item">
-<span class="telemetry-metric-label mono">LATENCY</span>
-<span class="telemetry-metric-val mono">42ms</span>
-</div>
-<div class="telemetry-metric-item">
-<span class="telemetry-metric-label mono">PRECISION</span>
-<span class="telemetry-metric-val mono text-mint">94.2%</span>
-</div>
-<div class="telemetry-metric-item">
-<span class="telemetry-metric-label mono">TESTBED</span>
-<span class="telemetry-metric-val mono">MIHAN Nagpur</span>
-</div>
-</div>
-</div>
-<div class="card telemetry-card" onclick="setFilter('portal', 'Internshala', document.querySelector('#portal-pills-row button:nth-child(2)')); navigateTo('jobs')" title="Filter jobs matching MedVerify">
-<div class="telemetry-card-top">
-<div class="telemetry-icon-box mint-glow">
-<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#30DC97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-<circle cx="12" cy="12" r="10"></circle>
-<circle cx="12" cy="12" r="6"></circle>
-<circle cx="12" cy="12" r="2"></circle>
-</svg>
-</div>
-<div class="telemetry-header-meta">
-<div class="telemetry-title">MedVerify Vision</div>
-<span class="telemetry-badge-mint mono">CNN + OCR AUTHENTICATION</span>
-</div>
-</div>
-<p class="telemetry-desc">Deep learning spectral medicine authentication using PyTorch CNN with PaddleOCR verification.</p>
-<div class="telemetry-metrics-row">
-<div class="telemetry-metric-item">
-<span class="telemetry-metric-label mono">ARCHITECTURE</span>
-<span class="telemetry-metric-val mono">PyTorch</span>
-</div>
-<div class="telemetry-metric-item">
-<span class="telemetry-metric-label mono">ACCURACY</span>
-<span class="telemetry-metric-val mono text-mint">98.1%</span>
-</div>
-<div class="telemetry-metric-item">
-<span class="telemetry-metric-label mono">SPECTRAL</span>
-<span class="telemetry-metric-val mono">HSI Bands</span>
-</div>
-</div>
-</div>
-<div class="card telemetry-card" onclick="navigateTo('jobs')" title="Inspect all 11 active portals">
-<div class="telemetry-card-top">
-<div class="telemetry-icon-box violet-glow">
-<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7C5CFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-<circle cx="12" cy="12" r="3"></circle>
-<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-</svg>
-</div>
-<div class="telemetry-header-meta">
-<div class="telemetry-title">Multi-Portal Swarm</div>
-<span class="telemetry-badge-violet mono">11 ACTIVE PLATFORMS</span>
-</div>
-</div>
-<p class="telemetry-desc">Autonomous crawler aggregating verified fresher openings across 11 Indian tech job platforms.</p>
-<div class="telemetry-metrics-row">
-<div class="telemetry-metric-item">
-<span class="telemetry-metric-label mono">PORTALS</span>
-<span class="telemetry-metric-val mono text-violet">11 Online</span>
-</div>
-<div class="telemetry-metric-item">
-<span class="telemetry-metric-label mono">DISCOVERED</span>
-<span class="telemetry-metric-val mono">64 Roles</span>
-</div>
-<div class="telemetry-metric-item">
-<span class="telemetry-metric-label mono">DISPATCH</span>
-<span class="telemetry-metric-val mono text-mint">Automated</span>
 </div>
 </div>
 </div>
@@ -583,7 +489,6 @@ Agent is <span class="typed-text" id="hero-typed-text">scanning 11 portals for v
 </aside>
 </div>
 <div class="toast-shelf" id="toast-shelf"></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="app.js"></script>
