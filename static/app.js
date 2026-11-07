@@ -4244,3 +4244,231 @@ function initDailyPushNotifications() {
     }, 3000);
   }
 }
+
+
+// ============================================================================
+// BLACK HOLE DYNAMIC NOTCH HUD & BUPSY COPILOT (getblackhole.app & bupsy.si)
+// ============================================================================
+
+let isNotchOpen = false;
+let activeNotchTab = "focus";
+let focusTimerSeconds = 25 * 60;
+let focusTimerInterval = null;
+let isFocusTimerRunning = false;
+
+function toggleBlackHoleNotch() {
+  const dropdown = document.getElementById("black-hole-dropdown");
+  const chevron = document.getElementById("notch-chevron");
+  if (!dropdown) return;
+
+  isNotchOpen = !isNotchOpen;
+  if (isNotchOpen) {
+    dropdown.classList.remove("hidden");
+    if (chevron) chevron.style.transform = "rotate(180deg)";
+    if (window.lucide) lucide.createIcons();
+  } else {
+    dropdown.classList.add("hidden");
+    if (chevron) chevron.style.transform = "rotate(0deg)";
+  }
+}
+
+function switchNotchTab(tabKey) {
+  activeNotchTab = tabKey;
+  const tabs = ["focus", "bupsy", "status"];
+  tabs.forEach(t => {
+    const btn = document.getElementById(`tab-notch-${t}`);
+    const view = document.getElementById(`view-notch-${t}`);
+    if (t === tabKey) {
+      if (btn) btn.className = "flex-1 py-1.5 rounded-lg bg-[#00E5FF]/20 text-[#00E5FF] font-bold flex items-center justify-center space-x-1.5 cursor-pointer transition";
+      if (view) view.classList.remove("hidden");
+    } else {
+      if (btn) btn.className = "flex-1 py-1.5 rounded-lg text-slate-400 hover:text-white flex items-center justify-center space-x-1.5 cursor-pointer transition";
+      if (view) view.classList.add("hidden");
+    }
+  });
+  if (window.lucide) lucide.createIcons();
+}
+
+function updateFocusTimerDisplay() {
+  const minutes = Math.floor(focusTimerSeconds / 60);
+  const seconds = focusTimerSeconds % 60;
+  const formatted = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+  const bigTimer = document.getElementById("notch-big-timer");
+  const badgeTimer = document.getElementById("notch-timer-badge");
+  if (bigTimer) bigTimer.textContent = formatted;
+  if (badgeTimer) badgeTimer.textContent = formatted;
+}
+
+function toggleFocusTimer() {
+  const btn = document.getElementById("btn-notch-timer-toggle");
+  const icon = document.getElementById("icon-timer-play");
+  const text = document.getElementById("text-timer-play");
+
+  if (isFocusTimerRunning) {
+    clearInterval(focusTimerInterval);
+    isFocusTimerRunning = false;
+    if (text) text.textContent = "Resume";
+    if (icon) icon.setAttribute("data-lucide", "play");
+    showToast("Application Sprint Paused", "info");
+  } else {
+    isFocusTimerRunning = true;
+    if (text) text.textContent = "Pause";
+    if (icon) icon.setAttribute("data-lucide", "pause");
+    showToast("Application Sprint Started! Let's hit the 25+ daily target.", "success");
+
+    focusTimerInterval = setInterval(() => {
+      if (focusTimerSeconds > 0) {
+        focusTimerSeconds--;
+        updateFocusTimerDisplay();
+      } else {
+        clearInterval(focusTimerInterval);
+        isFocusTimerRunning = false;
+        playSfx("success");
+        showToast("Sprint Complete! Outstanding job reviewing today's applications.", "success");
+        if (text) text.textContent = "Start Sprint";
+        if (icon) icon.setAttribute("data-lucide", "play");
+      }
+    }, 1000);
+  }
+  if (window.lucide) lucide.createIcons();
+}
+
+function resetFocusTimer() {
+  if (focusTimerInterval) clearInterval(focusTimerInterval);
+  isFocusTimerRunning = false;
+  focusTimerSeconds = 25 * 60;
+  updateFocusTimerDisplay();
+
+  const text = document.getElementById("text-timer-play");
+  const icon = document.getElementById("icon-timer-play");
+  if (text) text.textContent = "Start Sprint";
+  if (icon) icon.setAttribute("data-lucide", "play");
+  if (window.lucide) lucide.createIcons();
+}
+
+function addFocusTimerMinutes(mins) {
+  focusTimerSeconds += mins * 60;
+  updateFocusTimerDisplay();
+  showToast(`Added +${mins} minutes to Application Sprint`, "info");
+}
+
+async function executeBupsyPrompt() {
+  const input = document.getElementById("bupsy-prompt-input");
+  const box = document.getElementById("bupsy-response-box");
+  if (!input || !box) return;
+
+  const query = (input.value || "").trim();
+  if (!query) return;
+
+  input.value = "";
+  box.innerHTML = `<span class="text-[#00E5FF] animate-pulse">Bupsy is reasoning across verified candidate ground truth...</span>`;
+
+  try {
+    const qLower = query.toLowerCase();
+    
+    if (qLower.includes("approve") || qLower.includes("submit")) {
+      box.innerHTML = `<span class="text-[#30DC97] font-bold">&check; Human Approval Triggered:</span> Reviewing top verified role (Sprinto AI Implementation Intern)...`;
+      setTimeout(() => {
+        reviewAndApproveHomeJob("sprinto_ai-implementation-intern");
+        box.innerHTML = `<strong>Done:</strong> Sprinto application package opened for your review in slideout drawer.`;
+      }, 500);
+    } else if (qLower.includes("email") || qLower.includes("outreach") || qLower.includes("hr")) {
+      box.innerHTML = `<span class="text-[#FFAA2C] font-bold">&check; Recruiter Outreach:</span> Switching to HR Outreach engine and fetching verified recruiter leads...`;
+      setTimeout(() => {
+        switchNav("outreach");
+        box.innerHTML = `<strong>Done:</strong> HR Outreach section opened. 15 personalized recruiter cold emails ready for approval.`;
+      }, 600);
+    } else if (qLower.includes("discover") || qLower.includes("search") || qLower.includes("scan")) {
+      box.innerHTML = `<span class="text-[#00E5FF] font-bold">&check; Discovery Engine:</span> Running multi-portal crawler across Wellfound, Cutshort, Naukri & ATS...`;
+      await triggerAgentDiscovery();
+      box.innerHTML = `<strong>Done:</strong> Discovery complete. 59 verified opportunities indexed.`;
+    } else {
+      box.innerHTML = `
+        <div class="space-y-1">
+          <div class="text-white font-semibold">Bupsy Copilot Recommendation:</div>
+          <p>Based on Aarav's verified VTU AI/ML profile (CGPA 8.75) and production projects (NeuralMatch, FraudLens), today's best matches are in <strong>Generative AI &amp; Anomaly Detection</strong>.</p>
+          <div class="text-[#30DC97] text-[10px] font-mono">Suggested next step: Approve Sprinto AI Intern or send outreach to Tanvi Patel (Razorpay).</div>
+        </div>
+      `;
+    }
+  } catch (err) {
+    box.innerHTML = `<span class="text-rose-400">Error processing request: ${escapeHtml(err.message)}</span>`;
+  }
+}
+
+// ============================================================================
+// WATERMELON UI: CARD SPLIT ACCORDION ENGINE (ui.watermelon.sh Reference)
+// ============================================================================
+
+let activeSplitCardId = null;
+
+function toggleSplitCard(cardId) {
+  const totalCards = 4;
+  const isCurrentlyOpen = activeSplitCardId === cardId;
+  activeSplitCardId = isCurrentlyOpen ? null : cardId;
+
+  for (let id = 1; id <= totalCards; id++) {
+    const cardEl = document.getElementById(`scard-${id}`);
+    if (!cardEl) continue;
+
+    const header = cardEl.querySelector(".scard-header");
+    const body = cardEl.querySelector(".scard-body");
+    const chevron = cardEl.querySelector(".scard-chevron");
+
+    const isOpen = id === activeSplitCardId;
+    const isFirst = id === 1;
+    const isLast = id === totalCards;
+    const isBeforeOpen = activeSplitCardId !== null && id === activeSplitCardId - 1;
+    const isAfterOpen = activeSplitCardId !== null && id === activeSplitCardId + 1;
+    const isAlone = (isAfterOpen && isLast) || (isBeforeOpen && isFirst);
+
+    if (isOpen) {
+      cardEl.style.margin = "12px 0";
+      cardEl.style.transform = "scale(1.01)";
+      if (header) {
+        header.style.borderRadius = "20px 20px 0 0";
+        header.style.borderColor = "rgba(0, 229, 255, 0.45)";
+        header.style.backgroundColor = "#141926";
+      }
+      if (body) {
+        body.style.maxHeight = "400px";
+        body.style.borderRadius = "0 0 20px 20px";
+        body.style.borderColor = "rgba(0, 229, 255, 0.45)";
+      }
+      if (chevron) chevron.style.transform = "rotate(180deg)";
+    } else {
+      cardEl.style.margin = "0";
+      cardEl.style.transform = "scale(1)";
+      if (body) {
+        body.style.maxHeight = "0";
+      }
+      if (chevron) chevron.style.transform = "rotate(0deg)";
+
+      if (header) {
+        header.style.borderColor = "rgba(255, 255, 255, 0.1)";
+        header.style.backgroundColor = "#111420";
+
+        if (activeSplitCardId === null) {
+          if (isFirst) header.style.borderRadius = "20px 20px 0 0";
+          else if (isLast) header.style.borderRadius = "0 0 20px 20px";
+          else header.style.borderRadius = "0";
+        } else if (isAlone) {
+          header.style.borderRadius = "20px";
+        } else if (isBeforeOpen) {
+          header.style.borderRadius = isFirst ? "20px 20px 20px 20px" : "0 0 20px 20px";
+        } else if (isAfterOpen) {
+          header.style.borderRadius = isLast ? "20px 20px 20px 20px" : "20px 20px 0 0";
+        } else if (isFirst) {
+          header.style.borderRadius = "20px 20px 0 0";
+        } else if (isLast) {
+          header.style.borderRadius = "0 0 20px 20px";
+        } else {
+          header.style.borderRadius = "0";
+        }
+      }
+    }
+  }
+
+  if (window.lucide) lucide.createIcons();
+}

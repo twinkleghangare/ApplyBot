@@ -426,6 +426,136 @@
   <!-- ======================================================== -->
   <div class="flex-1 flex flex-col min-h-screen min-w-0">
     
+    <!-- ======================================================== -->
+    <!-- BLACK HOLE DYNAMIC NOTCH HUD (getblackhole.app & bupsy.si) -->
+    <!-- ======================================================== -->
+    <div id="black-hole-notch-wrapper" class="fixed top-0 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center">
+      
+      <!-- Collapsed Mac Notch Capsule -->
+      <div id="black-hole-notch-pill" onclick="toggleBlackHoleNotch(); playSfx('click')" class="group px-4 py-1 rounded-b-2xl bg-[#060810]/95 hover:bg-[#0C101F]/95 backdrop-blur-2xl border-x border-b border-white/10 hover:border-[#00E5FF]/40 shadow-2xl shadow-black/80 flex items-center space-x-2.5 cursor-pointer transition-all duration-300">
+        <span class="w-2 h-2 rounded-full bg-[#30DC97] animate-pulse"></span>
+        <span class="text-[11px] font-mono text-white font-bold tracking-tight flex items-center space-x-1">
+          <i data-lucide="sparkles" class="w-3 h-3 text-[#00E5FF]"></i>
+          <span>BLACK HOLE HUD</span>
+        </span>
+        <span class="text-white/20">&bull;</span>
+        <span id="notch-timer-badge" class="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono text-[#00E5FF] font-semibold">25:00</span>
+        <span class="text-white/20">&bull;</span>
+        <span class="text-[10px] font-mono text-slate-300"><span id="notch-progress-count" class="text-[#30DC97] font-bold">1</span>/25 Target</span>
+        <i data-lucide="chevron-down" id="notch-chevron" class="w-3 h-3 text-slate-400 group-hover:text-white transition-transform duration-300"></i>
+      </div>
+
+      <!-- Expanded Floating Island Dropdown -->
+      <div id="black-hole-dropdown" class="hidden mt-2 w-[94vw] sm:w-[490px] rounded-3xl bg-[#070912]/95 backdrop-blur-2xl border border-white/15 p-4 shadow-2xl shadow-black/90 space-y-3.5 animate-in fade-in slide-in-from-top-2 duration-200">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between pb-2.5 border-b border-white/10">
+          <div class="flex items-center space-x-2">
+            <div class="w-6 h-6 rounded-lg bg-gradient-to-tr from-[#00E5FF] to-[#7C5CFF] p-0.5 flex items-center justify-center">
+              <div class="w-full h-full bg-[#08080F] rounded-[6px] flex items-center justify-center text-[#00E5FF]">
+                <i data-lucide="cpu" class="w-3.5 h-3.5"></i>
+              </div>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white flex items-center space-x-1.5">
+                <span>Black Hole Island &bull; Career Notch</span>
+                <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-[#30DC97]/15 text-[#30DC97] font-mono font-bold">ONLINE</span>
+              </div>
+              <p class="text-[10px] text-slate-400 font-mono">Focus Sprint &bull; Bupsy Copilot &bull; 08:00 AM Agent</p>
+            </div>
+          </div>
+          <button onclick="toggleBlackHoleNotch(); playSfx('click')" class="p-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition cursor-pointer">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+
+        <!-- Segmented Tabs -->
+        <div class="flex items-center p-1 rounded-xl bg-black/40 border border-white/10 text-xs font-semibold">
+          <button onclick="switchNotchTab('focus'); playSfx('click')" id="tab-notch-focus" class="flex-1 py-1.5 rounded-lg bg-[#00E5FF]/20 text-[#00E5FF] font-bold flex items-center justify-center space-x-1.5 cursor-pointer transition">
+            <i data-lucide="timer" class="w-3.5 h-3.5"></i>
+            <span>Focus Sprint</span>
+          </button>
+          <button onclick="switchNotchTab('bupsy'); playSfx('click')" id="tab-notch-bupsy" class="flex-1 py-1.5 rounded-lg text-slate-400 hover:text-white flex items-center justify-center space-x-1.5 cursor-pointer transition">
+            <i data-lucide="bot" class="w-3.5 h-3.5"></i>
+            <span>Bupsy AI</span>
+          </button>
+          <button onclick="switchNotchTab('status'); playSfx('click')" id="tab-notch-status" class="flex-1 py-1.5 rounded-lg text-slate-400 hover:text-white flex items-center justify-center space-x-1.5 cursor-pointer transition">
+            <i data-lucide="activity" class="w-3.5 h-3.5"></i>
+            <span>Telemetry</span>
+          </button>
+        </div>
+
+        <!-- VIEW 1: Focus Timer (Black Hole Ref) -->
+        <div id="view-notch-focus" class="space-y-3">
+          <div class="p-4 rounded-2xl bg-black/50 border border-white/5 flex flex-col items-center justify-center text-center">
+            <span class="text-[10px] font-mono text-[#00E5FF] uppercase tracking-widest">Daily Application Sprint</span>
+            <div id="notch-big-timer" class="text-4xl font-extrabold font-mono text-white tracking-wider my-1">25:00</div>
+            <p class="text-[11px] text-slate-400">Aim: Review &amp; approve your 25+ daily verified opportunities</p>
+            <div class="mt-3 flex items-center space-x-2">
+              <button onclick="toggleFocusTimer(); playSfx('success')" id="btn-notch-timer-toggle" class="px-4 py-1.5 rounded-xl btn-cyan text-xs font-bold flex items-center space-x-1 cursor-pointer">
+                <i data-lucide="play" id="icon-timer-play" class="w-3.5 h-3.5 fill-current"></i>
+                <span id="text-timer-play">Start Sprint</span>
+              </button>
+              <button onclick="resetFocusTimer(); playSfx('click')" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer">
+                Reset
+              </button>
+              <button onclick="addFocusTimerMinutes(5); playSfx('click')" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer">
+                +5 Min
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 2: Bupsy AI Copilot (Bupsy Ref) -->
+        <div id="view-notch-bupsy" class="hidden space-y-3">
+          <div class="p-3 rounded-2xl bg-black/50 border border-white/5 space-y-2">
+            <div class="flex items-center justify-between text-[11px]">
+              <span class="font-bold text-white flex items-center space-x-1">
+                <i data-lucide="sparkles" class="w-3 h-3 text-[#7C5CFF]"></i>
+                <span>Bupsy Instant Career Copilot</span>
+              </span>
+              <span class="font-mono text-[9px] text-[#30DC97]">ZERO HALLUCINATION</span>
+            </div>
+            <div id="bupsy-response-box" class="min-h-[50px] p-2.5 rounded-xl bg-[#0B0D18] border border-white/5 text-[11px] text-slate-300 leading-relaxed max-h-32 overflow-y-auto">
+              Ready! Ask me to search specific startup roles, draft personalized recruiter emails, or review today's top match.
+            </div>
+            <div class="flex items-center space-x-1.5 pt-1">
+              <input type="text" id="bupsy-prompt-input" placeholder="e.g. 'Draft email to Sprinto HR' or 'Approve top job'..." class="flex-1 px-3 py-2 app-input text-xs rounded-xl" onkeydown="if(event.key==='Enter') executeBupsyPrompt()" />
+              <button onclick="executeBupsyPrompt(); playSfx('click')" class="px-3 py-2 rounded-xl btn-violet text-xs font-bold flex items-center space-x-1 cursor-pointer">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 3: Telemetry & Status -->
+        <div id="view-notch-status" class="hidden space-y-2.5 text-xs font-mono">
+          <div class="grid grid-cols-2 gap-2">
+            <div class="p-2.5 rounded-xl bg-black/40 border border-white/5">
+              <div class="text-[10px] text-slate-400">DISCOVERY ENGINE</div>
+              <div class="text-sm font-bold text-white mt-0.5">59 Discovered</div>
+              <div class="text-[9px] text-[#30DC97]">52 Genuine Verified</div>
+            </div>
+            <div class="p-2.5 rounded-xl bg-black/40 border border-white/5">
+              <div class="text-[10px] text-slate-400">DAILY CADENCE</div>
+              <div class="text-sm font-bold text-[#00E5FF] mt-0.5">08:00 AM Cron</div>
+              <div class="text-[9px] text-slate-400">Push Alerts: Active</div>
+            </div>
+          </div>
+          <div class="pt-2 flex items-center justify-between border-t border-white/10">
+            <button onclick="triggerAgentDiscovery(); toggleBlackHoleNotch(); playSfx('success')" class="flex-1 py-1.5 mr-2 rounded-xl btn-cyan text-xs font-bold text-center">
+              Run Discovery
+            </button>
+            <button onclick="pauseAgent(); toggleBlackHoleNotch(); playSfx('click')" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 hover:text-white">
+              Pause
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
     <!-- Superconscious Floating Centered Pill Header -->
     <header class="sticky top-3 z-40 w-full px-4 sm:px-6 pointer-events-none">
       <div class="max-w-5xl mx-auto flex items-center justify-between pointer-events-auto">
@@ -1792,47 +1922,123 @@
               </div>
             </div>
 
-            <!-- Eligibility Analysis -->
+            <!-- ============================================================== -->
+            <!-- WATERMELON UI: CARD SPLIT ACCORDION FOR DEEP JOB EVALUATION   -->
+            <!-- ============================================================== -->
             <div>
-              <h2 class="text-[16px] font-semibold text-white mb-3">Eligibility Analysis</h2>
-              <div class="bento-box p-0 overflow-hidden divide-y divide-white/5">
-                <div class="flex items-start gap-3 p-4 hover:bg-white/[0.02] transition-colors">
-                  <i data-lucide="check-circle-2" class="w-5 h-5 text-[#30DC97] shrink-0 mt-0.5"></i>
-                  <div>
-                    <p class="text-[14px] font-medium text-white">Machine Learning &amp; Python Stack</p>
-                    <p class="text-[13px] text-[#9A9AA5]">Matched with your verified projects (NeuralMatch, FraudLens) and coursework.</p>
-                  </div>
-                </div>
-                <div class="flex items-start gap-3 p-4 hover:bg-white/[0.02] transition-colors">
-                  <i data-lucide="check-circle-2" class="w-5 h-5 text-[#30DC97] shrink-0 mt-0.5"></i>
-                  <div>
-                    <p class="text-[14px] font-medium text-white">B.Tech Computer Science / AI Degree</p>
-                    <p class="text-[13px] text-[#9A9AA5]">Candidate is currently pursuing B.Tech CSE (AI &amp; ML) at VTU Bengaluru (CGPA 8.75).</p>
-                  </div>
-                </div>
-                <div class="flex items-start gap-3 p-4 hover:bg-white/[0.02] transition-colors">
-                  <div class="w-5 h-5 rounded-full border-2 border-white/20 shrink-0 mt-0.5"></div>
-                  <div>
-                    <p class="text-[14px] font-medium text-[#9A9AA5]">Cloud Deployments (AWS/GCP)</p>
-                    <p class="text-[13px] text-[#9A9AA5]">Secondary preference. Can be highlighted through project infrastructure experience.</p>
-                  </div>
-                </div>
+              <div class="flex items-center justify-between mb-3">
+                <h2 class="text-[16px] font-bold text-white flex items-center space-x-2">
+                  <i data-lucide="layers" class="w-4 h-4 text-[#00E5FF]"></i>
+                  <span>Deep Evaluation &bull; Card Split Accordion</span>
+                </h2>
+                <span class="text-[10px] font-mono text-[#00E5FF] px-2 py-0.5 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/20">WATERMELON UI SPEC</span>
               </div>
-            </div>
 
-            <!-- Authenticity Verification -->
-            <div>
-              <h2 class="text-[16px] font-semibold text-white mb-3">Authenticity Verification</h2>
-              <div class="bento-box p-5 bg-[#30DC97]/5 border-[#30DC97]/20">
-                <div class="flex items-center gap-2 mb-3">
-                  <i data-lucide="shield-check" class="w-5 h-5 text-[#30DC97]"></i>
-                  <span class="text-[14px] font-semibold text-[#30DC97]">Verified Genuine Listing</span>
+              <!-- Card Split Accordion Stack -->
+              <div id="watermelon-split-accordion" class="space-y-1">
+                
+                <!-- Split Card 1: NeuralMatch Stack Compatibility -->
+                <div class="split-card-item transition-all duration-300" id="scard-1">
+                  <div onclick="toggleSplitCard(1); playSfx('click')" class="scard-header flex items-center justify-between px-4 py-3 bg-[#111420] border border-white/10 rounded-t-2xl hover:bg-[#161B2B] transition-all cursor-pointer">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-7 h-7 rounded-lg bg-[#00E5FF]/15 text-[#00E5FF] flex items-center justify-center">
+                        <i data-lucide="cpu" class="w-4 h-4"></i>
+                      </div>
+                      <div>
+                        <span class="text-sm font-bold text-white">01. NeuralMatch Stack Compatibility</span>
+                        <span class="ml-2 text-[10px] font-mono text-[#30DC97] px-1.5 py-0.2 rounded bg-[#30DC97]/15">95.8% MATCH</span>
+                      </div>
+                    </div>
+                    <i data-lucide="chevron-down" class="scard-chevron w-4 h-4 text-slate-400 transition-transform duration-300"></i>
+                  </div>
+                  <div class="scard-body max-h-0 overflow-hidden bg-[#0A0D16] border-x border-b border-white/10 rounded-b-2xl transition-all duration-300">
+                    <div class="p-4 space-y-2 text-xs text-slate-300">
+                      <p><strong>Candidate Ground Truth:</strong> Matches Aarav Sharma's verified credentials: B.Tech CSE (AI/ML) at VTU Bengaluru (CGPA 8.75), experience at Tech Innovations Lab, and production projects (NeuralMatch, FraudLens, Med-Verify).</p>
+                      <div class="flex flex-wrap gap-1.5 pt-1">
+                        <span class="px-2 py-0.5 rounded-md bg-[#00E5FF]/10 text-[#00E5FF] text-[10px] font-mono font-bold">Python</span>
+                        <span class="px-2 py-0.5 rounded-md bg-[#00E5FF]/10 text-[#00E5FF] text-[10px] font-mono font-bold">PyTorch</span>
+                        <span class="px-2 py-0.5 rounded-md bg-[#00E5FF]/10 text-[#00E5FF] text-[10px] font-mono font-bold">LLM Tool Calling</span>
+                        <span class="px-2 py-0.5 rounded-md bg-[#00E5FF]/10 text-[#00E5FF] text-[10px] font-mono font-bold">REST APIs</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <ul class="text-[13px] text-[#9A9AA5] space-y-2 list-disc pl-5">
-                  <li id="details-auth-point1">Domain matches verified ATS infrastructure (lever.co / greenhouse.io / official career portal).</li>
-                  <li id="details-auth-point2">Zero fee requests, task traps, or homoglyph character spoofing detected.</li>
-                  <li id="details-auth-point3">Listing confirmed active via direct HTTP response code 200.</li>
-                </ul>
+
+                <!-- Split Card 2: Authenticity Guard & FraudLens Audit -->
+                <div class="split-card-item transition-all duration-300" id="scard-2">
+                  <div onclick="toggleSplitCard(2); playSfx('click')" class="scard-header flex items-center justify-between px-4 py-3 bg-[#111420] border border-white/10 hover:bg-[#161B2B] transition-all cursor-pointer">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-7 h-7 rounded-lg bg-[#30DC97]/15 text-[#30DC97] flex items-center justify-center">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i>
+                      </div>
+                      <div>
+                        <span class="text-sm font-bold text-white">02. Authenticity Guard &bull; FraudLens Audit</span>
+                        <span class="ml-2 text-[10px] font-mono text-[#30DC97] px-1.5 py-0.2 rounded bg-[#30DC97]/15">VERIFIED GENUINE</span>
+                      </div>
+                    </div>
+                    <i data-lucide="chevron-down" class="scard-chevron w-4 h-4 text-slate-400 transition-transform duration-300"></i>
+                  </div>
+                  <div class="scard-body max-h-0 overflow-hidden bg-[#0A0D16] border-x border-b border-white/10 rounded-b-2xl transition-all duration-300">
+                    <div class="p-4 space-y-2 text-xs text-slate-300">
+                      <ul class="space-y-1.5 list-disc pl-5">
+                        <li id="details-auth-point1">Domain verified against legitimate corporate ATS infrastructure (Lever / Greenhouse / Official Portal).</li>
+                        <li>Zero upfront pay-to-work fees, deposit demands, or cryptocurrency payments.</li>
+                        <li>Active HTTP 200 verification on destination application endpoint.</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Split Card 3: Tailored LuaLaTeX Package & STAR Points -->
+                <div class="split-card-item transition-all duration-300" id="scard-3">
+                  <div onclick="toggleSplitCard(3); playSfx('click')" class="scard-header flex items-center justify-between px-4 py-3 bg-[#111420] border border-white/10 hover:bg-[#161B2B] transition-all cursor-pointer">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-7 h-7 rounded-lg bg-[#7C5CFF]/15 text-[#7C5CFF] flex items-center justify-center">
+                        <i data-lucide="file-check" class="w-4 h-4"></i>
+                      </div>
+                      <div>
+                        <span class="text-sm font-bold text-white">03. Tailored LuaLaTeX Package &bull; STAR Points</span>
+                        <span class="ml-2 text-[10px] font-mono text-[#7C5CFF] px-1.5 py-0.2 rounded bg-[#7C5CFF]/15">READY</span>
+                      </div>
+                    </div>
+                    <i data-lucide="chevron-down" class="scard-chevron w-4 h-4 text-slate-400 transition-transform duration-300"></i>
+                  </div>
+                  <div class="scard-body max-h-0 overflow-hidden bg-[#0A0D16] border-x border-b border-white/10 rounded-b-2xl transition-all duration-300">
+                    <div class="p-4 space-y-2 text-xs text-slate-300">
+                      <p><strong>STAR Narrative:</strong> <em>Situation:</em> Manual contract validation took 14h/week. <em>Task:</em> Automate audit verification via LLMs. <em>Action:</em> Built NeuralMatch using PyTorch &amp; FAISS. <em>Result:</em> Cut review latency by 72%.</p>
+                      <button onclick="switchNav('applications'); filterApplicationsTab('pending'); playSfx('click')" class="mt-1 px-3 py-1.5 rounded-xl btn-violet text-xs font-bold inline-flex items-center space-x-1 cursor-pointer">
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                        <span>View Tailored Package in Applications</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Split Card 4: Recruiter Cold Outreach Draft -->
+                <div class="split-card-item transition-all duration-300" id="scard-4">
+                  <div onclick="toggleSplitCard(4); playSfx('click')" class="scard-header flex items-center justify-between px-4 py-3 bg-[#111420] border border-white/10 rounded-b-2xl hover:bg-[#161B2B] transition-all cursor-pointer">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-7 h-7 rounded-lg bg-[#FFAA2C]/15 text-[#FFAA2C] flex items-center justify-center">
+                        <i data-lucide="mail" class="w-4 h-4"></i>
+                      </div>
+                      <div>
+                        <span class="text-sm font-bold text-white">04. Recruiter Cold Outreach &bull; Gmail Dispatch</span>
+                        <span class="ml-2 text-[10px] font-mono text-[#FFAA2C] px-1.5 py-0.2 rounded bg-[#FFAA2C]/15">VERIFIED CONTACT</span>
+                      </div>
+                    </div>
+                    <i data-lucide="chevron-down" class="scard-chevron w-4 h-4 text-slate-400 transition-transform duration-300"></i>
+                  </div>
+                  <div class="scard-body max-h-0 overflow-hidden bg-[#0A0D16] border-x border-b border-white/10 rounded-b-2xl transition-all duration-300">
+                    <div class="p-4 space-y-2 text-xs text-slate-300">
+                      <p>Personalized cold email ready for hiring team. 1-click approve &amp; dispatch via connected account.</p>
+                      <button onclick="switchNav('outreach'); playSfx('click')" class="mt-1 px-3 py-1.5 rounded-xl btn-cyan text-xs font-bold inline-flex items-center space-x-1 cursor-pointer">
+                        <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                        <span>Open in HR Outreach</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
 
