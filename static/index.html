@@ -1,663 +1,382 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ApplyBot · Autonomous AI Job Application Agent</title>
+  <meta name="description" content="AI Career Agent scanning genuine job portals, verifying real ATS vacancies, and preparing tailored applications.">
   
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Google Fonts: Inter & Plus Jakarta Sans & JetBrains Mono -->
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            app: {
-              bg: '#07070A',
-              card: '#0D0F18',
-              surface: '#121522',
-              border: 'rgba(255, 255, 255, 0.08)',
-              borderHover: 'rgba(255, 255, 255, 0.22)',
-              cyan: '#00E5FF',
-              emerald: '#30DC97',
-              violet: '#7C5CFF',
-              amber: '#FFAA2C',
-              rose: '#FF4D6D'
-            }
-          },
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', '"Inter"', 'system-ui', 'sans-serif'],
-            mono: ['"JetBrains Mono"', 'monospace']
-          }
-        }
-      }
-    }
-  </script>
-
-  <style>
-    /* Zero-lag custom styles */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #07070A;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #1C2030;
-      border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #00E5FF;
-    }
-
-    body {
-      font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
-      background-color: #07070A;
-      background-image: 
-        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 229, 255, 0.09) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 90% 20%, rgba(124, 92, 255, 0.06) 0%, transparent 50%),
-        radial-gradient(ellipse 60% 40% at 10% 40%, rgba(48, 220, 151, 0.05) 0%, transparent 50%);
-      background-attachment: fixed;
-      color: #F1F3F9;
-      min-height: 100vh;
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-      letter-spacing: -0.015em;
-    }
-
-    .glass-card {
-      background-color: rgba(13, 15, 24, 0.75);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 20px;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .glass-card:hover {
-      border-color: rgba(255, 255, 255, 0.18);
-      transform: translateY(-2px);
-      box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.7);
-    }
-
-    .btn-cyan {
-      background: linear-gradient(135deg, #00E5FF 0%, #00B4D8 100%);
-      color: #05070D;
-      font-weight: 700;
-      border-radius: 12px;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 16px -2px rgba(0, 229, 255, 0.35);
-    }
-    .btn-cyan:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px -2px rgba(0, 229, 255, 0.55);
-    }
-
-    .btn-violet {
-      background: linear-gradient(135deg, #7C5CFF 0%, #6340FF 100%);
-      color: #FFFFFF;
-      font-weight: 700;
-      border-radius: 12px;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 16px -2px rgba(124, 92, 255, 0.35);
-    }
-    .btn-violet:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px -2px rgba(124, 92, 255, 0.55);
-    }
-
-    .btn-ghost {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: #D1D5DB;
-      border-radius: 12px;
-      transition: all 0.2s ease;
-    }
-    .btn-ghost:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #FFFFFF;
-      border-color: rgba(255, 255, 255, 0.16);
-    }
-
-    .nav-pill {
-      transition: all 0.18s ease;
-    }
-    .nav-pill.active {
-      background: rgba(0, 229, 255, 0.15);
-      border-color: rgba(0, 229, 255, 0.35);
-      color: #00E5FF;
-      font-weight: 700;
-    }
-
-    .app-input {
-      background: #0D0F18;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      color: #F1F3F9;
-      transition: all 0.2s ease;
-    }
-    .app-input:focus {
-      outline: none;
-      border-color: #00E5FF;
-      box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.15);
-    }
-  </style>
+  <!-- Zero-lag Pre-compiled Stylesheet with Cache Buster -->
+  <link rel="stylesheet" href="/static/style.css?v=3.1.0">
 </head>
-<body class="antialiased">
+<body>
 
-  <!-- ============================================================ -->
-  <!-- TOP STICKY NAVIGATION BAR (Clean & Premium like FraudLens)   -->
-  <!-- ============================================================ -->
-  <header class="sticky top-0 z-40 w-full bg-[#07070A]/90 backdrop-blur-xl border-b border-white/10 px-4 sm:px-8 py-3.5">
-    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
-      
-      <!-- Brand & Agent Status -->
-      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchNav('stream')">
-        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#00E5FF] via-[#7C5CFF] to-[#30DC97] p-0.5 flex items-center justify-center shadow-md shadow-[#00E5FF]/20">
-          <div class="w-full h-full bg-[#07070A] rounded-[10px] flex items-center justify-center text-[#00E5FF]">
-            <i data-lucide="bot" class="w-4 h-4"></i>
-          </div>
+  <!-- Top Navigation Pill (PrisainTech Glass Style) -->
+  <header class="container navbar-wrapper">
+    <nav class="navbar">
+      <a href="#" class="brand-link" onclick="switchNav('queue'); return false;">
+        <div class="brand-icon-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
         </div>
-        <div>
-          <div class="flex items-center space-x-2">
-            <span class="text-base font-extrabold tracking-tight text-white">ApplyBot</span>
-            <span class="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded-md bg-[#00E5FF]/15 text-[#00E5FF] border border-[#00E5FF]/30">AI AGENT</span>
-          </div>
-          <div class="flex items-center space-x-1.5 text-[10px] font-mono text-[#30DC97]">
-            <span class="w-1.5 h-1.5 rounded-full bg-[#30DC97] animate-pulse"></span>
-            <span>08:00 AM Daily Autopilot &bull; Active</span>
-          </div>
-        </div>
-      </div>
+        <span>ApplyBot <span style="color: var(--accent-cyan);">AI</span></span>
+      </a>
 
-      <!-- 4 Clean Navigation Tabs -->
-      <nav class="hidden md:flex items-center space-x-1.5 p-1 rounded-2xl bg-white/5 border border-white/10 text-xs font-semibold">
-        <button onclick="switchNav('stream')" id="nav-btn-stream" class="nav-pill active px-4 py-2 rounded-xl flex items-center space-x-1.5 cursor-pointer">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-          <span>Agent Stream</span>
-          <span id="badge-stream-count" class="ml-1 text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-[#00E5FF]/20 text-[#00E5FF]">59</span>
+      <!-- Navigation Pills -->
+      <div class="nav-pills">
+        <button id="nav-btn-queue" class="nav-pill active" onclick="switchNav('queue')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span>Today's Queue</span>
+          <span class="nav-pill-badge" id="badge-queue-count">52</span>
         </button>
-        <button onclick="switchNav('outreach')" id="nav-btn-outreach" class="nav-pill px-4 py-2 rounded-xl text-slate-300 hover:text-white flex items-center space-x-1.5 cursor-pointer">
-          <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+
+        <button id="nav-btn-outreach" class="nav-pill" onclick="switchNav('outreach')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
           <span>HR Outreach</span>
-          <span id="badge-outreach-count" class="ml-1 text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-[#7C5CFF]/20 text-[#7C5CFF]">15</span>
+          <span class="nav-pill-badge" id="badge-outreach-count">15</span>
         </button>
-        <button onclick="switchNav('tracker')" id="nav-btn-tracker" class="nav-pill px-4 py-2 rounded-xl text-slate-300 hover:text-white flex items-center space-x-1.5 cursor-pointer">
-          <i data-lucide="kanban" class="w-3.5 h-3.5"></i>
-          <span>Applications</span>
-          <span id="badge-pending-indicator" class="w-2 h-2 rounded-full bg-[#FFAA2C] animate-pulse"></span>
+
+        <button id="nav-btn-tracker" class="nav-pill" onclick="switchNav('tracker')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          <span>Live Pipeline</span>
+          <span class="nav-pill-badge" id="badge-tracker-count">14</span>
         </button>
-        <button onclick="switchNav('profile')" id="nav-btn-profile" class="nav-pill px-4 py-2 rounded-xl text-slate-300 hover:text-white flex items-center space-x-1.5 cursor-pointer">
-          <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
-          <span>My Profile</span>
+
+        <button id="nav-btn-profile" class="nav-pill" onclick="switchNav('profile')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span>Candidate Profile</span>
         </button>
-      </nav>
+      </div>
 
       <!-- Right Action & Profile -->
-      <div class="flex items-center space-x-3">
-        <!-- 1-Click Agent Trigger -->
-        <button onclick="activateDailyAgent()" id="btn-top-run-agent" class="px-4 py-2 rounded-xl btn-cyan text-xs font-bold flex items-center space-x-1.5 cursor-pointer">
-          <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
-          <span class="hidden sm:inline">Run Agent Scan</span>
-        </button>
-
-        <!-- Candidate Avatar Pill -->
-        <div onclick="switchNav('profile')" class="flex items-center space-x-2 p-1.5 pr-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 cursor-pointer transition">
-          <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#7C5CFF] to-[#30DC97] flex items-center justify-center text-xs font-bold text-white">
-            A
-          </div>
-          <div class="text-left hidden lg:block">
-            <div class="text-xs font-bold text-white leading-tight">Aarav Sharma</div>
-            <div class="text-[9px] font-mono text-[#30DC97]">VTU Bengaluru &bull; 8.75 CGPA</div>
-          </div>
+      <div class="nav-actions">
+        <div style="font-size: 0.8rem; text-align: right; line-height: 1.2;">
+          <div style="font-weight: 700; color: #fff;">Aarav Sharma</div>
+          <div style="color: var(--accent-cyan); font-size: 0.72rem;">VTU B.Tech · ML Intern</div>
         </div>
       </div>
-
-    </div>
+    </nav>
   </header>
 
-  <!-- ============================================================ -->
-  <!-- MAIN CONTAINER                                               -->
-  <!-- ============================================================ -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-8 py-6 space-y-6">
+  <!-- Main Workspace Container -->
+  <main class="container">
 
-    <!-- ========================================================== -->
-    <!-- SECTION 1: AGENT STREAM (Dashboard, Jobs & 1-Click Action)  -->
-    <!-- ========================================================== -->
-    <div id="sec-stream" class="space-y-6">
+    <!-- Hero Header (PrisainTech Style) -->
+    <section class="hero-section">
+      <div class="hero-pill-badge">
+        <div class="hero-pulse-dot"></div>
+        <span id="hero-status-pill">08:00 AM Daily Autopilot · Ready for Today's Run</span>
+      </div>
 
-      <!-- HERO: AI Career Agent Autopilot Banner -->
-      <div class="glass-card p-6 sm:p-8 bg-gradient-to-br from-[#0F1424] via-[#090C16] to-[#07070A] border border-white/10 rounded-3xl relative overflow-hidden">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-          
-          <!-- Left: Value Prop & Mission -->
-          <div class="space-y-3 max-w-2xl">
-            <div class="flex items-center space-x-2.5">
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-[#30DC97]/15 text-[#30DC97] border border-[#30DC97]/30 flex items-center space-x-1.5">
-                <span class="w-1.5 h-1.5 rounded-full bg-[#30DC97] animate-pulse"></span>
-                <span>Autonomous Agent Online</span>
-              </span>
-              <span class="text-xs font-mono text-[#00E5FF] font-semibold" id="hero-date-header">08:00 AM DAILY CYCLE</span>
+      <h1 class="hero-title">
+        Autonomous Job Applications.<br>
+        <span class="gradient-text">Verified Roles. Zero Spam.</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        ApplyBot continuously scans genuine job portals (Wellfound, Cutshort, Internshala, Naukri, LinkedIn, NCS Govt), verifies authentic ATS vacancies, crafts tailored applications using your real credentials, and queues them for 1-click human approval.
+      </p>
+
+      <!-- Autopilot Command Center Card -->
+      <div class="command-card">
+        <!-- Target Gauge -->
+        <div class="command-target-box">
+          <div class="target-header">
+            <span class="target-title">Daily Application Target</span>
+            <div class="target-count" id="target-count-display">14 <span>/ 25</span></div>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="target-progress-fill" style="width: 56%;"></div>
+          </div>
+          <div class="target-subtext">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <span id="target-status-caption">56% of daily 25+ target completed today</span>
+          </div>
+        </div>
+
+        <!-- Real-Time Metrics Quartet -->
+        <div class="command-stats-grid">
+          <div class="stat-item">
+            <div class="stat-num cyan" id="stat-discovered">59</div>
+            <div class="stat-label">Discovered</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num emerald" id="stat-verified">52</div>
+            <div class="stat-label">100% Genuine</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num violet" id="stat-match">95.8%</div>
+            <div class="stat-label">Top Match</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num" id="stat-pending">12</div>
+            <div class="stat-label">Pending Approval</div>
+          </div>
+        </div>
+
+        <!-- Master Agent Controls -->
+        <div class="command-actions">
+          <button id="btn-run-agent" class="btn-primary" onclick="runDailyAgentCycle()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            <span>Run Today's 8:00 AM Agent</span>
+          </button>
+          <button id="btn-pause-agent" class="btn-secondary" onclick="pauseAgent()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+            <span>Pause Automation</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SECTION 1: TODAY'S QUEUE (STREAM OF VERIFIED ROLES)
+         ==================================================================== -->
+    <section id="section-queue">
+      <!-- Filter Bar (LeezSpace Modern Filter Style) -->
+      <div class="filter-bar">
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="search-input" placeholder="Search role, skills, company (e.g. PyTorch, Bengaluru, Wellfound)..." oninput="applyFilters()">
+        </div>
+
+        <!-- Portal Filter Chips -->
+        <div class="filter-pills-group" id="portal-filters">
+          <button class="filter-chip active" onclick="setPortalFilter('all')">All Portals</button>
+          <button class="filter-chip" onclick="setPortalFilter('wellfound')">Wellfound</button>
+          <button class="filter-chip" onclick="setPortalFilter('cutshort')">Cutshort</button>
+          <button class="filter-chip" onclick="setPortalFilter('internshala')">Internshala</button>
+          <button class="filter-chip" onclick="setPortalFilter('naukri')">Naukri</button>
+          <button class="filter-chip" onclick="setPortalFilter('linkedin')">LinkedIn</button>
+          <button class="filter-chip" onclick="setPortalFilter('ncs')">NCS Govt</button>
+        </div>
+
+        <!-- Work Mode Chips -->
+        <div class="filter-pills-group" id="mode-filters">
+          <button class="filter-chip active" onclick="setModeFilter('all')">Any Location</button>
+          <button class="filter-chip" onclick="setModeFilter('remote')">Remote</button>
+          <button class="filter-chip" onclick="setModeFilter('bengaluru')">Bengaluru</button>
+        </div>
+      </div>
+
+      <!-- Jobs Grid -->
+      <div class="jobs-grid" id="jobs-container">
+        <!-- Rendered dynamically via app.js -->
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SECTION 2: DIRECT HR OUTREACH ENGINE
+         ==================================================================== -->
+    <section id="section-outreach" class="hidden">
+      <div style="margin-bottom: 24px;">
+        <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 6px;">Direct HR Recruiter Outreach</h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+          Verified recruiter contacts discovered for Bangalore and Remote AI/ML roles. Ready for 1-click personalized dispatch with zero hallucination.
+        </p>
+      </div>
+
+      <div class="outreach-grid" id="outreach-container">
+        <!-- Rendered dynamically via app.js -->
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SECTION 3: APPLICATIONS TRACKER (LIVE PIPELINE)
+         ==================================================================== -->
+    <section id="section-tracker" class="hidden">
+      <div style="margin-bottom: 24px;">
+        <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 6px;">Live Application Pipeline</h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+          Real-time tracking of applications submitted, review approvals, and interview rounds.
+        </p>
+      </div>
+
+      <div class="tracker-container">
+        <table class="tracker-table">
+          <thead>
+            <tr>
+              <th>Company & Role</th>
+              <th>Portal Source</th>
+              <th>Date Prepared</th>
+              <th>Status</th>
+              <th>Match Score</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="tracker-table-body">
+            <!-- Rendered dynamically via app.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SECTION 4: CANDIDATE PROFILE & VERIFICATION
+         ==================================================================== -->
+    <section id="section-profile" class="hidden">
+      <div style="max-width: 800px; margin: 0 auto;">
+        <div style="background: var(--bg-card); border: 1px solid var(--border-medium); border-radius: var(--radius-xl); padding: 32px; box-shadow: var(--shadow-card);">
+          <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px; margin-bottom: 24px;">
+            <div>
+              <h2 style="font-size: 1.6rem; font-weight: 800; color: #fff;">Aarav Sharma</h2>
+              <div style="color: var(--accent-cyan); font-weight: 600; font-size: 0.92rem;">VTU Bengaluru · B.Tech Computer Science (AI & ML)</div>
             </div>
+            <div class="badge-verified">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Verified Candidate Profile</span>
+            </div>
+          </div>
 
-            <h1 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
-              Your career. <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00E5FF] via-[#7C5CFF] to-[#30DC97]">On autopilot.</span>
-            </h1>
-
-            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Every morning at 08:00 AM, ApplyBot scans 8 genuine job platforms (Naukri, Wellfound, Cutshort, ATS), validates company authenticity to protect against scam postings, and prepares tailored applications for your 1-click approval.
-            </p>
-
-            <!-- 25+ Daily Application Target Bar -->
-            <div class="pt-2">
-              <div class="flex items-center justify-between text-xs font-mono mb-1.5">
-                <span class="text-slate-300 flex items-center space-x-1.5">
-                  <i data-lucide="target" class="w-3.5 h-3.5 text-[#00E5FF]"></i>
-                  <span>Daily Application Goal: <strong class="text-white">25+ Target</strong></span>
-                </span>
-                <span class="text-[#30DC97] font-bold" id="hero-target-text">1 / 25 Submitted Today</span>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px;">
+            <div>
+              <div class="section-label">Academic Credentials</div>
+              <div style="font-size: 0.92rem; color: #CBD5E1; margin-top: 6px;">
+                <strong>CGPA: 8.75 / 10.0</strong><br>
+                Visvesvaraya Technological University (VTU), Bengaluru
               </div>
-              <div class="w-full h-2 rounded-full bg-white/10 overflow-hidden">
-                <div id="hero-target-progress" class="h-full bg-gradient-to-r from-[#00E5FF] to-[#30DC97] rounded-full transition-all duration-500" style="width: 4%;"></div>
+            </div>
+            <div>
+              <div class="section-label">Industry Internship</div>
+              <div style="font-size: 0.92rem; color: #CBD5E1; margin-top: 6px;">
+                <strong>Machine Learning Intern (6 Months)</strong><br>
+                Tech Innovations Lab · Computer Vision & NLP Pipeline
               </div>
             </div>
           </div>
 
-          <!-- Right: Direct Control Actions -->
-          <div class="flex flex-col sm:flex-row lg:flex-col items-stretch lg:items-end gap-3 min-w-[240px]">
-            <button onclick="activateDailyAgent()" id="btn-hero-allow-agent" class="px-6 py-3.5 rounded-xl btn-cyan text-xs font-bold flex items-center justify-center space-x-2 shadow-lg shadow-[#00E5FF]/25 cursor-pointer">
-              <i data-lucide="play" class="w-4 h-4 fill-current"></i>
-              <span>Allow Today's Agent Run</span>
-            </button>
-            <div class="flex items-center space-x-2">
-              <button onclick="pauseAgent()" class="flex-1 px-4 py-2.5 rounded-xl btn-ghost text-xs font-semibold flex items-center justify-center space-x-1.5 cursor-pointer" title="Emergency Pause">
-                <i data-lucide="pause" class="w-3.5 h-3.5"></i>
-                <span>Pause</span>
-              </button>
-              <button onclick="switchNav('tracker')" class="flex-1 px-4 py-2.5 rounded-xl btn-ghost text-xs font-semibold text-[#FFAA2C] hover:text-white flex items-center justify-center space-x-1.5 cursor-pointer">
-                <i data-lucide="inbox" class="w-3.5 h-3.5"></i>
-                <span>Review (12)</span>
-              </button>
+          <div style="margin-bottom: 24px;">
+            <div class="section-label">Verified Projects</div>
+            <div class="bullet-points-list" style="margin-top: 8px;">
+              <li><strong>NeuralMatch:</strong> Semantic Job & Resume Alignment Engine using BERT & FAISS Vector Search.</li>
+              <li><strong>FraudLens:</strong> AI-powered UPI scam detection & risk analysis system (NLP + Heuristics).</li>
+              <li><strong>Med-Verify:</strong> Medicine authenticity classification engine using CNNs and OpenCV.</li>
             </div>
-            <p class="text-[10px] text-slate-400 font-mono text-center lg:text-right">
-              &check; Human-in-the-Loop &bull; No application sent without permission
-            </p>
           </div>
 
-        </div>
-      </div>
-
-      <!-- 4 CORE METRIC CARDS (Simple, Clean, FraudLens-style) -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
-        
-        <!-- Card 1: Jobs Discovered -->
-        <div class="glass-card p-4 sm:p-5 rounded-2xl">
-          <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-1">
-            <span>DISCOVERED</span>
-            <i data-lucide="compass" class="w-4 h-4 text-[#00E5FF]"></i>
-          </div>
-          <div class="flex items-baseline space-x-2">
-            <span id="metric-discovered" class="text-2xl sm:text-3xl font-extrabold text-white">59</span>
-            <span class="text-[11px] font-bold text-[#30DC97]">+14 new</span>
-          </div>
-          <p class="text-[11px] text-slate-400 mt-1">Across 8 genuine tech platforms</p>
-        </div>
-
-        <!-- Card 2: Verified Genuine -->
-        <div class="glass-card p-4 sm:p-5 rounded-2xl">
-          <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-1">
-            <span>VERIFIED GENUINE</span>
-            <i data-lucide="shield-check" class="w-4 h-4 text-[#30DC97]"></i>
-          </div>
-          <div class="flex items-baseline space-x-2">
-            <span id="metric-verified" class="text-2xl sm:text-3xl font-extrabold text-[#30DC97]">52</span>
-            <span class="text-[11px] font-bold text-[#30DC97]">0 scams</span>
-          </div>
-          <p class="text-[11px] text-slate-400 mt-1">Official career portals confirmed</p>
-        </div>
-
-        <!-- Card 3: Top Resume Match -->
-        <div class="glass-card p-4 sm:p-5 rounded-2xl">
-          <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-1">
-            <span>TOP MATCH SCORE</span>
-            <i data-lucide="zap" class="w-4 h-4 text-[#7C5CFF]"></i>
-          </div>
-          <div class="flex items-baseline space-x-2">
-            <span id="metric-match" class="text-2xl sm:text-3xl font-extrabold text-[#7C5CFF]">95.8%</span>
-            <span class="text-[11px] font-bold text-[#7C5CFF]">AI/ML Fit</span>
-          </div>
-          <p class="text-[11px] text-slate-400 mt-1">NeuralMatch vector similarity</p>
-        </div>
-
-        <!-- Card 4: Awaiting Approval -->
-        <div onclick="switchNav('tracker')" class="glass-card p-4 sm:p-5 rounded-2xl border border-[#FFAA2C]/30 hover:border-[#FFAA2C] cursor-pointer transition">
-          <div class="flex items-center justify-between text-xs font-mono text-[#FFAA2C] mb-1">
-            <span>AWAITING APPROVAL</span>
-            <span class="w-2 h-2 rounded-full bg-[#FFAA2C] animate-ping"></span>
-          </div>
-          <div class="flex items-baseline space-x-2">
-            <span id="metric-pending" class="text-2xl sm:text-3xl font-extrabold text-[#FFAA2C]">12</span>
-            <span class="text-[11px] font-bold text-[#FFAA2C]">Decide now &rarr;</span>
-          </div>
-          <p class="text-[11px] text-slate-400 mt-1">Ready for your 1-click approval</p>
-        </div>
-
-      </div>
-
-      <!-- STREAM FILTER & SEARCH BAR -->
-      <div class="glass-card p-4 rounded-2xl space-y-3">
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-          <!-- Search Input -->
-          <div class="relative flex-1">
-            <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-            <input type="text" id="stream-search-input" placeholder="Search by role, company, or skill (e.g. PyTorch, Sprinto, Remote)..." class="w-full pl-10 pr-4 py-2.5 app-input text-xs sm:text-sm" oninput="filterStreamJobs()" />
-          </div>
-
-          <!-- Work Mode Quick Filter -->
-          <div class="flex items-center space-x-1.5 p-1 rounded-xl bg-white/5 border border-white/10 text-xs font-semibold">
-            <button onclick="filterByWorkMode('all')" id="btn-mode-all" class="px-3 py-1.5 rounded-lg bg-[#00E5FF]/20 text-[#00E5FF] font-bold cursor-pointer">All</button>
-            <button onclick="filterByWorkMode('remote')" id="btn-mode-remote" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white cursor-pointer">Remote</button>
-            <button onclick="filterByWorkMode('hybrid')" id="btn-mode-hybrid" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white cursor-pointer">Hybrid</button>
-            <button onclick="filterByWorkMode('onsite')" id="btn-mode-onsite" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white cursor-pointer">Onsite</button>
-          </div>
-        </div>
-
-        <!-- Portal Pills Bar -->
-        <div class="flex items-center space-x-2 overflow-x-auto pb-1 text-xs">
-          <span class="text-slate-400 font-mono text-[11px] shrink-0">Portals:</span>
-          <button onclick="filterByPortal('all')" id="pill-all" class="px-2.5 py-1 rounded-lg bg-[#00E5FF]/20 text-[#00E5FF] font-bold shrink-0 cursor-pointer">All (8 Sources)</button>
-          <button onclick="filterByPortal('wellfound')" id="pill-wellfound" class="px-2.5 py-1 rounded-lg btn-ghost shrink-0 cursor-pointer">Wellfound (Startups)</button>
-          <button onclick="filterByPortal('cutshort')" id="pill-cutshort" class="px-2.5 py-1 rounded-lg btn-ghost shrink-0 cursor-pointer">Cutshort / Hirist</button>
-          <button onclick="filterByPortal('internshala')" id="pill-internshala" class="px-2.5 py-1 rounded-lg btn-ghost shrink-0 cursor-pointer">Internshala</button>
-          <button onclick="filterByPortal('naukri')" id="pill-naukri" class="px-2.5 py-1 rounded-lg btn-ghost shrink-0 cursor-pointer">Naukri</button>
-          <button onclick="filterByPortal('linkedin')" id="pill-linkedin" class="px-2.5 py-1 rounded-lg btn-ghost shrink-0 cursor-pointer">LinkedIn</button>
-          <button onclick="filterByPortal('ncs')" id="pill-ncs" class="px-2.5 py-1 rounded-lg btn-ghost shrink-0 cursor-pointer">NCS Govt (Zero Fee)</button>
-          <button onclick="filterByPortal('indeed')" id="pill-indeed" class="px-2.5 py-1 rounded-lg btn-ghost shrink-0 cursor-pointer">Indeed</button>
-        </div>
-      </div>
-
-      <!-- JOBS FEED CONTAINER -->
-      <div id="jobs-stream-container" class="space-y-3.5">
-        <!-- Rendered dynamically by app.js -->
-        <div class="text-center py-12 text-slate-400">
-          <i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-[#00E5FF] mb-2"></i>
-          <span>Loading verified opportunities...</span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ========================================================== -->
-    <!-- SECTION 2: HR OUTREACH (Recruiter Leads & Cold Emails)      -->
-    <!-- ========================================================== -->
-    <div id="sec-outreach" class="hidden space-y-6">
-      
-      <!-- Outreach Header -->
-      <div class="glass-card p-6 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <div class="flex items-center space-x-2">
-            <i data-lucide="mail-check" class="w-5 h-5 text-[#7C5CFF]"></i>
-            <h2 class="text-xl font-bold text-white">HR &amp; Recruiter Cold Outreach Engine</h2>
-          </div>
-          <p class="text-xs sm:text-sm text-slate-300 mt-1">
-            Personalized, zero-hallucination cold emails pre-drafted for verified hiring managers and talent acquisition leads.
-          </p>
-        </div>
-        <button onclick="generateFreshOutreach()" class="px-4 py-2.5 rounded-xl btn-violet text-xs font-bold flex items-center space-x-1.5 cursor-pointer">
-          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-          <span>Draft Fresh Outreach</span>
-        </button>
-      </div>
-
-      <!-- Outreach Cards Feed -->
-      <div id="outreach-list-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Rendered dynamically by app.js -->
-      </div>
-
-    </div>
-
-    <!-- ========================================================== -->
-    <!-- SECTION 3: APPLICATIONS TRACKER (Status Kanban Pipeline)   -->
-    <!-- ========================================================== -->
-    <div id="sec-tracker" class="hidden space-y-6">
-
-      <!-- Tracker Header -->
-      <div class="glass-card p-6 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <div class="flex items-center space-x-2">
-            <i data-lucide="kanban" class="w-5 h-5 text-[#00E5FF]"></i>
-            <h2 class="text-xl font-bold text-white">Application Pipeline &amp; Review Queue</h2>
-          </div>
-          <p class="text-xs sm:text-sm text-slate-300 mt-1">
-            Review tailored LuaLaTeX CVs and cover letters. Once you click approve, the application is queued for submission.
-          </p>
-        </div>
-        
-        <!-- Tab Switcher -->
-        <div class="flex items-center space-x-1.5 p-1 rounded-xl bg-white/5 border border-white/10 text-xs font-semibold">
-          <button onclick="filterTrackerTab('pending')" id="tab-t-pending" class="px-3.5 py-1.5 rounded-lg bg-[#FFAA2C]/20 text-[#FFAA2C] font-bold cursor-pointer">Pending (12)</button>
-          <button onclick="filterTrackerTab('approved')" id="tab-t-approved" class="px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white cursor-pointer">Approved (5)</button>
-          <button onclick="filterTrackerTab('submitted')" id="tab-t-submitted" class="px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white cursor-pointer">Submitted (8)</button>
-          <button onclick="filterTrackerTab('all')" id="tab-t-all" class="px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white cursor-pointer">All (25+)</button>
-        </div>
-      </div>
-
-      <!-- Tracker Items List -->
-      <div id="tracker-items-container" class="space-y-3.5">
-        <!-- Rendered dynamically by app.js -->
-      </div>
-
-    </div>
-
-    <!-- ========================================================== -->
-    <!-- SECTION 4: MY PROFILE (Ground Truth & Preferences)          -->
-    <!-- ========================================================== -->
-    <div id="sec-profile" class="hidden space-y-6">
-      
-      <div class="glass-card p-6 sm:p-8 rounded-3xl space-y-6">
-        <div class="flex items-center space-x-3 pb-4 border-b border-white/10">
-          <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#7C5CFF] to-[#00E5FF] flex items-center justify-center text-lg font-black text-white">
-            AS
-          </div>
           <div>
-            <h2 class="text-xl font-extrabold text-white">Candidate Ground Truth &bull; Zero Hallucination</h2>
-            <p class="text-xs text-slate-400 font-mono">The agent only cites these verified facts when drafting applications &amp; cold emails.</p>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-          <!-- Profile Facts -->
-          <div class="space-y-4">
-            <div>
-              <label class="block text-slate-400 font-mono text-[11px] mb-1">Full Name</label>
-              <input type="text" id="prof-name" value="Aarav Sharma" class="w-full px-3.5 py-2.5 app-input text-xs" />
-            </div>
-            <div>
-              <label class="block text-slate-400 font-mono text-[11px] mb-1">Education &amp; Degree</label>
-              <input type="text" id="prof-edu" value="B.Tech Computer Science (AI & ML) · VTU Bengaluru (CGPA 8.75)" class="w-full px-3.5 py-2.5 app-input text-xs" />
-            </div>
-            <div>
-              <label class="block text-slate-400 font-mono text-[11px] mb-1">Internship / Work Experience</label>
-              <input type="text" id="prof-exp" value="Tech Innovations Lab (Machine Learning Intern, 6 Months)" class="w-full px-3.5 py-2.5 app-input text-xs" />
-            </div>
-            <div>
-              <label class="block text-slate-400 font-mono text-[11px] mb-1">Verified Production Projects</label>
-              <div class="p-3 rounded-xl bg-black/40 border border-white/5 space-y-1.5 text-slate-300">
-                <div>&bull; <strong>NeuralMatch:</strong> Semantic candidate-job vector retrieval with FAISS &amp; BERT.</div>
-                <div>&bull; <strong>FraudLens:</strong> UPI scam &amp; QR fraud detection system with 98.4% accuracy.</div>
-                <div>&bull; <strong>Med-Verify:</strong> Clinical report integrity checking pipeline.</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Preferences & Daily Limits -->
-          <div class="space-y-4">
-            <div>
-              <label class="block text-slate-400 font-mono text-[11px] mb-1">Target Roles</label>
-              <input type="text" id="prof-roles" value="AI Engineer, Machine Learning Intern, Data Scientist, GenAI Engineer" class="w-full px-3.5 py-2.5 app-input text-xs" />
-            </div>
-            <div>
-              <label class="block text-slate-400 font-mono text-[11px] mb-1">Preferred Locations</label>
-              <input type="text" id="prof-locations" value="Bengaluru, Karnataka (Onsite/Hybrid) · Remote (Global/India)" class="w-full px-3.5 py-2.5 app-input text-xs" />
-            </div>
-            <div>
-              <label class="block text-slate-400 font-mono text-[11px] mb-1">Daily Application Cadence</label>
-              <div class="p-3 rounded-xl bg-black/40 border border-white/5 space-y-2">
-                <div class="flex items-center justify-between">
-                  <span class="text-white font-semibold">Daily Discovery Run:</span>
-                  <span class="text-[#00E5FF] font-mono font-bold">08:00 AM Auto-Schedule</span>
-                </div>
-                <div class="flex items-center justify-between">
-                  <span class="text-white font-semibold">Daily Application Target:</span>
-                  <span class="text-[#30DC97] font-mono font-bold">25+ Applications</span>
-                </div>
-                <div class="flex items-center justify-between">
-                  <span class="text-white font-semibold">Approval Requirement:</span>
-                  <span class="text-[#FFAA2C] font-mono font-bold">Mandatory 1-Click Confirmation</span>
-                </div>
-              </div>
-            </div>
-            <div class="pt-2">
-              <button onclick="saveProfileSettings()" class="w-full py-3 rounded-xl btn-cyan text-xs font-bold cursor-pointer">
-                Save Candidate Ground Truth
-              </button>
+            <div class="section-label">Target Roles & Daily Goal</div>
+            <div style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 8px;">
+              <span class="skill-tag">Machine Learning Intern</span>
+              <span class="skill-tag">AI Engineer Intern</span>
+              <span class="skill-tag">Data Science Intern</span>
+              <span class="skill-tag">Python Developer</span>
+              <span class="skill-tag">Target: 25 Applications / Day</span>
             </div>
           </div>
         </div>
-
       </div>
-
-    </div>
+    </section>
 
   </main>
 
-  <!-- ============================================================ -->
-  <!-- SLIDEOUT DRAWER: REVIEW & APPROVE APPLICATION (460px)        -->
-  <!-- ============================================================ -->
-  <div id="application-drawer" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex justify-end transition-opacity">
-    <div class="w-full max-w-[480px] bg-[#0A0D18] border-l border-white/10 h-full overflow-y-auto p-6 space-y-5 flex flex-col justify-between shadow-2xl animate-in slide-in-from-right duration-200">
-      
-      <div class="space-y-4">
-        <!-- Drawer Header -->
-        <div class="flex items-center justify-between pb-3 border-b border-white/10">
-          <div>
-            <span class="text-[10px] font-mono text-[#00E5FF] uppercase tracking-wider font-bold">Human Approval Gate</span>
-            <h3 id="drawer-job-title" class="text-lg font-bold text-white mt-0.5">AI Implementation Intern</h3>
-            <p id="drawer-company" class="text-xs text-slate-400">Sprinto &bull; Bengaluru (Hybrid)</p>
-          </div>
-          <button onclick="closeApplicationDrawer()" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition cursor-pointer">
-            <i data-lucide="x" class="w-4 h-4"></i>
-          </button>
+  <!-- ====================================================================
+       SLIDEOUT DRAWER: HUMAN-IN-THE-LOOP APPLICATION REVIEW
+       ==================================================================== -->
+  <div id="review-drawer-backdrop" class="drawer-backdrop" onclick="closeDrawer(event)">
+    <aside class="drawer" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <div class="drawer-title-box">
+          <div class="drawer-role" id="drawer-role-title">Machine Learning Intern</div>
+          <div class="drawer-company" id="drawer-company-name">Swiggy · Bengaluru</div>
         </div>
-
-        <!-- Verification & Match Summary -->
-        <div class="grid grid-cols-2 gap-2 text-xs font-mono">
-          <div class="p-3 rounded-xl bg-black/40 border border-white/5">
-            <span class="text-slate-400 text-[10px]">AUTHENTICITY</span>
-            <div id="drawer-ver-status" class="font-bold text-[#30DC97] mt-0.5">VERIFIED ATS</div>
-          </div>
-          <div class="p-3 rounded-xl bg-black/40 border border-white/5">
-            <span class="text-slate-400 text-[10px]">RESUME MATCH</span>
-            <div id="drawer-match-score" class="font-bold text-[#00E5FF] mt-0.5">95.8% Fit</div>
-          </div>
-        </div>
-
-        <!-- Tailored Cover Letter Preview -->
-        <div class="space-y-1.5">
-          <label class="block text-xs font-bold text-white uppercase tracking-wider">Tailored Cover Letter</label>
-          <div id="drawer-cover-letter" class="p-4 rounded-xl bg-black/50 border border-white/10 text-xs text-slate-300 font-mono whitespace-pre-wrap leading-relaxed max-h-52 overflow-y-auto">
-            <!-- Rendered by app.js -->
-          </div>
-        </div>
-
-        <!-- STAR Talking Points Preview -->
-        <div class="space-y-1.5">
-          <label class="block text-xs font-bold text-white uppercase tracking-wider">STAR Talking Points</label>
-          <div id="drawer-star-story" class="p-3.5 rounded-xl bg-black/50 border border-white/10 text-xs text-slate-300 leading-relaxed">
-            <!-- Rendered by app.js -->
-          </div>
-        </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="pt-4 border-t border-white/10 space-y-2">
-        <button id="btn-drawer-approve" onclick="confirmDrawerApproval()" class="w-full py-3 rounded-xl btn-cyan text-xs font-bold flex items-center justify-center space-x-2 cursor-pointer shadow-lg shadow-[#00E5FF]/20">
-          <i data-lucide="check" class="w-4 h-4"></i>
-          <span>Approve &amp; Submit Application</span>
-        </button>
-        <button onclick="closeApplicationDrawer()" class="w-full py-2.5 rounded-xl btn-ghost text-xs font-semibold cursor-pointer">
-          Dismiss for Now
+        <button class="btn-close-drawer" onclick="closeDrawer()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
       </div>
 
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- MODAL: VERIFICATION DOSSIER INSPECTOR                        -->
-  <!-- ============================================================ -->
-  <div id="verification-inspect-modal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="w-full max-w-xl bg-[#0C0F1A] border border-white/15 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5">
-      
-      <div class="flex items-start justify-between">
-        <div>
-          <span class="text-[10px] font-mono text-[#00E5FF] uppercase font-bold">FraudLens Authenticity Guard</span>
-          <h3 id="vmodal-title" class="text-lg font-bold text-white mt-0.5">Verification Dossier</h3>
-          <p id="vmodal-company" class="text-xs text-slate-400">Sprinto &bull; Bengaluru</p>
+      <div class="drawer-body">
+        <!-- AI Match Rationale -->
+        <div class="ai-match-box">
+          <div class="match-score-badge" id="drawer-match-badge">96% MATCH</div>
+          <div class="match-reason-text" id="drawer-match-reason">
+            Matches Aarav's VTU AI/ML degree, PyTorch proficiency, and NeuralMatch FAISS project.
+          </div>
         </div>
-        <button onclick="closeVerificationModal()" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition cursor-pointer">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
+
+        <!-- Tailored Resume Highlights -->
+        <div class="drawer-section-card">
+          <div class="section-label">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <span>Tailored CV Bullets for this Role</span>
+          </div>
+          <ul class="bullet-points-list" id="drawer-cv-bullets">
+            <!-- Injected dynamically -->
+          </ul>
+        </div>
+
+        <!-- Personalized Cover Letter -->
+        <div class="drawer-section-card">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div class="section-label">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <span>Personalized Cover Letter</span>
+            </div>
+            <button class="btn-secondary" style="padding: 4px 10px; font-size: 0.76rem;" onclick="copyCoverLetter()">Copy Letter</button>
+          </div>
+          <div class="cover-letter-text" id="drawer-cover-letter">
+            Loading tailored cover letter...
+          </div>
+        </div>
+
+        <!-- STAR Interview Prep -->
+        <div class="drawer-section-card">
+          <div class="section-label">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+            <span>STAR Interview Talking Points</span>
+          </div>
+          <ul class="bullet-points-list" id="drawer-star-points">
+            <!-- Injected dynamically -->
+          </ul>
+        </div>
       </div>
 
-      <div class="space-y-2.5 text-xs">
-        <div class="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between font-mono">
-          <span class="text-slate-300">TRUST SCORE:</span>
-          <span id="vmodal-trust-score" class="text-[#30DC97] font-bold">96 / 100</span>
-        </div>
-        <div class="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1">
-          <div class="text-white font-bold">&check; Domain &amp; Destination Authenticity</div>
-          <p class="text-slate-400 text-[11px]">Application destination matches official company career portal infrastructure.</p>
-        </div>
-        <div class="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1">
-          <div class="text-white font-bold">&check; Zero Pay-To-Work / Fee Guarantee</div>
-          <p class="text-slate-400 text-[11px]">Zero registration fees, deposit requests, or crypto payment traps detected.</p>
-        </div>
-        <div class="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1">
-          <div class="text-white font-bold">&check; Active Listing Confirmation</div>
-          <p class="text-slate-400 text-[11px]">Direct HTTP 200 verification on destination application endpoint.</p>
-        </div>
-      </div>
-
-      <div class="pt-3 border-t border-white/10 flex items-center justify-between">
-        <a id="vmodal-url-link" href="#" target="_blank" class="text-xs text-[#00E5FF] hover:underline flex items-center space-x-1">
-          <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-          <span>View Source Posting</span>
+      <div class="drawer-footer">
+        <a id="drawer-portal-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          <span>View Job on Portal</span>
         </a>
-        <button onclick="closeVerificationModal()" class="px-5 py-2.5 rounded-xl btn-cyan text-xs font-bold cursor-pointer">
-          Close Dossier
+        <button id="drawer-btn-approve" class="btn-primary" onclick="approveCurrentDrawerApplication()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span>Approve & Submit Application</span>
         </button>
       </div>
-
-    </div>
+    </aside>
   </div>
 
-  <!-- TOAST NOTIFICATION CONTAINER -->
-  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
 
-  <!-- App JavaScript -->
-  <script src="/static/app.js"></script>
-
+  <!-- Zero-lag Controller with Cache Buster -->
+  <script src="/static/app.js?v=3.1.0"></script>
 </body>
 </html>
